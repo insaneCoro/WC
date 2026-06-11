@@ -1082,7 +1082,7 @@ function renderGroups(){
   $('groupsBox').innerHTML=html+'</div>';
 }
 
-function restoreAdmin(){if(ADMIN_PIN){$('adminLoginBox').classList.add('hidden');$('adminBox').classList.remove('hidden');renderAdmin()}else{$('adminLoginBox').classList.remove('hidden');$('adminBox').classList.add('hidden')}}async function adminLogin(){let pin=$('adminPin').value.trim();let r=await call('adminLogin',pin);if(!r.ok)return toast(tr('wrongAdmin'),true);ADMIN_PIN=pin;localStorage.setItem('wc26admin',pin);applyHiddenTabs();restoreAdmin()}function renderAdmin(section='players'){let items=[['players','adminTabPlayers'],['matrix','adminTabMatrix'],['matches','adminTabMatches'],['results','adminTabResults'],['predictions','adminTabPreds'],['bets','adminTabBets'],['adjust','adminTabAdjust'],['tabs','adminTabHide'],['sync','adminTabSync'],['reset','adminTabReset']];$('adminSide').innerHTML=items.map(([k,l])=>`<button class="ghost ${section===k?'active':''}" onclick="renderAdmin('${k}')">${tr(l)}</button>`).join('');({players:adminPlayers,matrix:adminMatrix,matches:adminMatches,results:adminResults,predictions:adminPredictions,bets:adminBets,adjust:adminAdjustUI,tabs:adminHideTabsUI,sync:adminSync,reset:adminReset}[section])()}
+function restoreAdmin(){if(ADMIN_PIN){$('adminLoginBox').classList.add('hidden');$('adminBox').classList.remove('hidden');applyHiddenTabs();renderAdmin()}else{$('adminLoginBox').classList.remove('hidden');$('adminBox').classList.add('hidden')}}async function adminLogin(){let pin=$('adminPin').value.trim();let r=await call('adminLogin',pin);if(!r.ok)return toast(tr('wrongAdmin'),true);ADMIN_PIN=pin;localStorage.setItem('wc26admin',pin);applyHiddenTabs();restoreAdmin()}function renderAdmin(section='players'){let items=[['players','adminTabPlayers'],['matrix','adminTabMatrix'],['matches','adminTabMatches'],['results','adminTabResults'],['predictions','adminTabPreds'],['bets','adminTabBets'],['adjust','adminTabAdjust'],['tabs','adminTabHide'],['sync','adminTabSync'],['reset','adminTabReset']];$('adminSide').innerHTML=items.map(([k,l])=>`<button class="ghost ${section===k?'active':''}" onclick="renderAdmin('${k}')">${tr(l)}</button>`).join('');({players:adminPlayers,matrix:adminMatrix,matches:adminMatches,results:adminResults,predictions:adminPredictions,bets:adminBets,adjust:adminAdjustUI,tabs:adminHideTabsUI,sync:adminSync,reset:adminReset}[section])()}
 function adminPlayers(){$('adminContent').innerHTML='<div class=\"grid\">'+STATE.players.map(p=>`<div class=\"card soft\"><div class=\"between\"><b>#${p.id} ${esc(p.name)}</b><span class=\"tiny\">${p.hasPin?'🔐 '+tr('pinSet'):'⬜ '+tr('noPin')}</span></div><div class=\"row\" style=\"margin-top:8px\"><input style=\"flex:1\" data-player=\"${p.id}\" value=\"${esc(p.name)}\"><button class=\"ghost\" onclick=\"renamePlayer(${p.id})\">${tr('renamePlayer')}</button></div><div class=\"row\" style=\"margin-top:6px\"><input maxlength=\"4\" inputmode=\"numeric\" id=\"fp_${p.id}\" placeholder=\"New PIN\" style=\"width:100px\"><button class=\"ghost\" onclick=\"forcePin(${p.id})\">${tr('forcePin')}</button><button class=\"ghost\" onclick=\"resetPin(${p.id})\">${tr('resetPin')}</button></div><button class=\"danger wide\" style=\"margin-top:6px\" onclick=\"clearPreds(${p.id},${esc(JSON.stringify(p.name))})\">${tr('clearPreds')}</button></div>`).join('')+'</div>'}async function savePlayers(){let n={};document.querySelectorAll('[data-player]').forEach(i=>n[i.dataset.player]=i.value);let r=await call('adminSavePlayers',ADMIN_PIN,n);if(!r.ok)return toast(r.msg,true);toast('OK');init()}
 async function resetPin(id){let r=await call('adminResetPin',ADMIN_PIN,id);if(!r.ok)return toast(r.msg,true);toast('OK');init()}
 async function renamePlayer(id){const el=document.querySelector(`[data-player="${id}"]`);if(!el)return;const r=await call('adminRenamePlayer',ADMIN_PIN,id,el.value);if(!r.ok)return toast(r.msg,true);toast('OK ✓ '+r.name);init()}
@@ -1285,10 +1285,16 @@ function applyHiddenTabs() {
   allTabs.forEach(t => {
     const btn = $('tab' + t[0].toUpperCase() + t.slice(1));
     if (!btn) return;
-    // Admin always sees all tabs; players only see non-hidden ones
     const hide = !isAdmin && HIDDEN_TABS.includes(t);
     btn.style.display = hide ? 'none' : '';
+    // Also hide the section element itself
+    const sec = $(t);
+    if (sec && hide) sec.classList.add('hidden');
   });
+  // If current active tab is now hidden, redirect to pred
+  if (!isAdmin && HIDDEN_TABS.includes(ACTIVE)) {
+    showTab('pred');
+  }
 }
 
 async function adminHideTabsUI() {
