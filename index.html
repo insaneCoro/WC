@@ -1061,7 +1061,7 @@ function _scoreOnClient(pred, result, matchNo, stage) {
 
 
 const URGENT_MS=2*60*60*1000;
-function timeUntilLock(m){if(!m.iso)return Infinity;return new Date(m.iso).getTime()-LOCK_MS-Date.now();}
+function timeUntilLock(m){if(!m.iso)return Infinity;return new Date(m.iso).getTime()-5*60*1000-Date.now();}
 function isUrgent(m){if(locked(m))return false;const t=timeUntilLock(m);return t>0&&t<=URGENT_MS;}
 function hasPick(m){const p=myPred(m.no);return p.hg!==''&&p.hg!=null&&p.ag!==''&&p.ag!=null;}
 function fmtCountdown(ms){if(ms<=0)return LANG==='ar'?'مغلق':'Locked';const h=Math.floor(ms/3600000),min=Math.floor((ms%3600000)/60000);if(h>0)return LANG==='ar'?`${h}س ${min}د`:`${h}h ${min}m`;return LANG==='ar'?`${min}د`:`${min}m`;}
