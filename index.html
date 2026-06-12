@@ -1205,10 +1205,7 @@ async function loadBoard(){
           <span class="boardSubItem">P${pl}</span>
         </div>
       </div>
-      <div style="text-align:end;flex-shrink:0">
-        <div class="boardPts">${p.total}</div>
-        <div class="boardGap">${gap<0?gap:''}</div>
-      </div>
+      <div class="boardPts">${p.total}</div>
     </div>`;
   });
   const rest=rows?`<div class="card" style="padding:0;overflow:hidden;margin-top:0">${rows}</div>`:'';
