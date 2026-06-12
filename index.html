@@ -1167,7 +1167,7 @@ async function loadBoard(){
     const p=table[idx]; if(!p)return;
     const isMe=myId&&p.id===myId;
     const gap=p.total-leader;
-    const wins=(p.wins!=null?p.wins:(p.exact||0)+(p.outcome||0)),kow=(p.koWrong!=null?p.koWrong:p.wrong||0),pl=p.played||p.predictedPlayed||0; const rec=`W${wins} L${kow} P${pl}`;
+    const wins=(p.wins!=null?p.wins:(p.exact||0)+(p.outcome||0)),kow=(p.losses!=null?p.losses:p.wrong||0),pl=p.played||p.predictedPlayed||0; const rec=`W${wins} L${kow} P${pl}`;
     let throne='';
     if(idx===0){
       // All tied leaders get the input; everyone else sees the quote
@@ -1193,7 +1193,7 @@ async function loadBoard(){
     const isMe=myId&&p.id===myId;
     const gap=p.total-leader;
     const wins=(p.wins!=null?p.wins:(p.exact||0)+(p.outcome||0));
-    const kow=(p.koWrong!=null?p.koWrong:p.wrong||0);
+    const kow=(p.losses!=null?p.losses:p.wrong||0);
     const pl=p.played||p.predictedPlayed||0;
     rows+=`<div class="boardRow${isMe?' myRow':''}">
       <span class="boardRank">${rank}</span>
@@ -1355,19 +1355,16 @@ async function loadChampion(){
 
   // Leaderboard
   const _champ_tbd=`<span class="muted">TBD</span>`;html+=`<div class="card soft"><div class="between"><h3>${tr('championWinner')}: ${winner?teamHtml(winner):_champ_tbd}</h3></div>`;
-  html+=`<div class="tableWrap" style="margin-top:10px"><table><thead><tr><th>#</th><th>${tr('player')}</th><th>${tr('championPick')}</th><th>Pts</th></tr></thead><tbody>`;
-  const picks=ch.picks||{};
-  const players=(STATE.players||[]).slice().sort((a,b)=>{
-    const ap=picks[a.id]||'',bp=picks[b.id]||'';
-    const ac=winner&&ap===winner?1:0,bc=winner&&bp===winner?1:0;
-    return bc-ac||a.name.localeCompare(b.name);
-  });
-  players.forEach((p,i)=>{
-    const pick=picks[p.id]||'';
-    const correct=winner&&pick===winner;
-    html+=`<tr><td>${i+1}</td><td>${esc(p.name)}</td><td>${pick?teamHtml(pick):`<span class="muted">${tr('championNoPick')}</span>`}</td><td><b>${correct?'+16':'—'}</b></td></tr>`;
-  });
-  html+='</tbody></table></div></div>';
+  if(!ch.locked){
+    const totalPicked=Object.keys(ch.picks||{}).length, total=(STATE.players||[]).length;
+    html+=`<div style="margin-top:10px;padding:14px;background:rgba(212,165,32,.06);border:1px solid rgba(212,165,32,.20);border-radius:10px;text-align:center"><p style="font-size:13px;color:var(--muted);margin:0 0 6px">🔒 ${LANG==='ar'?'تُكشف توقعات الجميع بعد إغلاق التصويت ١٩ يونيو':'Everyone\'s picks revealed after the June 19 deadline'}</p><span style="font-family:var(--font-display);font-size:24px;font-weight:900;color:var(--gold2)">${totalPicked}/${total}</span><p style="font-size:12px;color:var(--muted);margin:4px 0 0">${LANG==='ar'?'لاعب اختار':'players have picked'}</p></div></div>`;
+  } else {
+    html+=`<div class="tableWrap" style="margin-top:10px"><table><thead><tr><th>#</th><th>${tr('player')}</th><th>${tr('championPick')}</th><th>Pts</th></tr></thead><tbody>`;
+    const picks=ch.picks||{};
+    const players=(STATE.players||[]).slice().sort((a,b)=>{const ap=picks[a.id]||'',bp=picks[b.id]||'';const ac=winner&&ap===winner?1:0,bc=winner&&bp===winner?1:0;return bc-ac||a.name.localeCompare(b.name);});
+    players.forEach((p,i)=>{const pick=picks[p.id]||'';const correct=winner&&pick===winner;html+=`<tr><td>${i+1}</td><td>${esc(p.name)}</td><td>${pick?teamHtml(pick):`<span class="muted">${tr('championNoPick')}</span>`}</td><td><b>${correct?'+16':'—'}</b></td></tr>`;});
+    html+='</tbody></table></div></div>';
+  }
   box.innerHTML=html;
 }
 
