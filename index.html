@@ -642,24 +642,29 @@
     .podiumSub { font-size: 11px; color: var(--muted); line-height: 1.4; }
     .podiumGap { font-size: 11px; color: var(--bad); }
 
-    /* Clean rest-of-table */
-    .boardTable { width: 100%; border-collapse: collapse; }
-    .boardTable td { padding: 10px 10px; border-bottom: 1px solid var(--line2); vertical-align: middle; }
-    .boardTable tr:last-child td { border-bottom: none; }
-    .boardTable tr.myRow td { background: rgba(212,165,32,.06); }
-    .boardTable tr:hover td { background: rgba(255,255,255,.02); }
-    .boardRank { font-family: var(--font-display); font-weight: 700; font-size: 16px; color: var(--muted); width: 32px; text-align: center; }
-    .boardName { font-weight: 600; font-size: 14px; }
-    .boardPts  { font-family: var(--font-display); font-weight: 900; font-size: 18px; color: var(--gold2); text-align: end; }
-    .boardRec  { font-size: 11px; color: var(--muted); text-align: end; white-space: nowrap; }
-    .boardGap  { font-size: 11px; color: var(--bad); }
-    .youBadge  { font-size: 10px; font-family: var(--font-display); font-weight: 700; color: var(--gold2); background: rgba(212,165,32,.15); border: 1px solid rgba(212,165,32,.30); border-radius: 99px; padding: 1px 6px; margin-inline-start: 6px; }
+    /* Rest-of-board row cards */
+    .boardRow {
+      display: flex; align-items: center; gap: 10px;
+      padding: 11px 14px; border-bottom: 1px solid var(--line2);
+    }
+    .boardRow:last-child { border-bottom: none; }
+    .boardRow.myRow { background: rgba(212,165,32,.06); }
+    .boardRank { font-family: var(--font-display); font-weight: 900; font-size: 17px; color: var(--muted); min-width: 26px; text-align: center; flex-shrink: 0; }
+    .boardMain { flex: 1; min-width: 0; }
+    .boardName { font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+    .boardSub  { font-size: 12px; color: var(--muted); margin-top: 2px; display: flex; gap: 10px; }
+    .boardSubItem { display: flex; align-items: center; gap: 3px; }
+    .boardPts  { font-family: var(--font-display); font-weight: 900; font-size: 20px; color: var(--gold2); flex-shrink: 0; text-align: end; }
+    .boardGap  { font-size: 11px; color: var(--bad); flex-shrink: 0; text-align: end; min-width: 28px; }
+    .youBadge  { font-size: 10px; font-family: var(--font-display); font-weight: 700; color: var(--gold2); background: rgba(212,165,32,.15); border: 1px solid rgba(212,165,32,.30); border-radius: 99px; padding: 1px 6px; flex-shrink: 0; }
+    /* Podium sub stats — also use W/L/P */
+    .podiumSub { font-size: 11px; color: var(--muted); line-height: 1.5; }
 
   
-    .throneBox{width:100%;margin-top:8px;background:rgba(212,165,32,.08);border:1px solid rgba(212,165,32,.25);border-radius:10px;padding:8px 10px}
-    .throneQuote{font-size:13px;line-height:1.5;color:var(--text);font-style:italic;word-break:break-word}
+    .throneBox{width:100%;margin-top:10px;background:rgba(212,165,32,.08);border:1px solid rgba(212,165,32,.25);border-radius:10px;padding:10px}
+    .throneQuote{font-size:14px;line-height:1.6;color:var(--text);font-style:italic;word-break:break-word;margin:0}
     .throneQuote::before{content:'\1F4AC ';font-style:normal}
-    .throneInput{width:100%;background:rgba(0,0,0,.3);border:1px solid rgba(212,165,32,.30);border-radius:8px;padding:6px 8px;font-size:13px;color:var(--text);resize:none;font-family:var(--font-body);margin-bottom:4px;box-sizing:border-box}
+    .throneInput{width:100%;background:rgba(0,0,0,.3);border:1px solid rgba(212,165,32,.30);border-radius:8px;padding:8px 10px;font-size:16px;color:var(--text);resize:none;font-family:var(--font-body);margin-bottom:6px;box-sizing:border-box;min-height:60px;-webkit-appearance:none}
     .throneCount{font-size:11px;color:var(--muted);text-align:end;margin-bottom:4px}
 
   
@@ -671,6 +676,7 @@
     .bannerText{font-size:13px;color:var(--bad);font-weight:600}
     .bannerSub{font-size:12px;color:var(--muted)}
     @media(prefers-reduced-motion:reduce){.match.urgent,.countdownPill{animation:none!important}}
+    @media(max-width:400px){.podium{grid-template-columns:1fr 1fr}.podiumCard.p1{grid-column:1/-1;order:-1}.podiumCard.p2{order:0}.podiumCard.p3{order:1}}
 
   
     /* ── In-card result display ── */
@@ -768,7 +774,6 @@
         </div>
         <div class="card quickCard"><div class="quickHead"><h2 data-i18n="quickStats"></h2><span class="pill" id="quickHint">Live</span></div><div id="stats" class="quickStats"></div></div>
       </div>
-      <div id="missingBanner" class="missingBanner" style="display:none"></div>
       <div class="card soft">
         <div class="between"><div class="filters" id="filters"></div><input id="search" class="searchBox" oninput="renderMatches()" data-placeholder-i18n="searchTeams"></div>
       </div>
@@ -1119,7 +1124,7 @@ function urgencySort(matches){return matches.slice().sort((a,b)=>{const ra=STATE
 function renderMissingBanner(){const el=$('missingBanner');if(!el||!SESSION||!STATE){if(el)el.style.display='none';return;}const matches=STATE.matches||[];const missing=matches.filter(m=>!locked(m)&&!hasPick(m));if(!missing.length){el.style.display='none';return;}const urgentMissing=missing.filter(m=>isUrgent(m));const soonest=missing.filter(m=>m.iso&&!isNaN(new Date(m.iso))).sort((a,b)=>new Date(a.iso)-new Date(b.iso))[0];let bannerText,bannerSub='';if(urgentMissing.length){const t=timeUntilLock(urgentMissing[0]);bannerText=LANG==='ar'?`⚠️ ${urgentMissing.length} مباريات تُغلق خلال ${fmtCountdown(t)}`:`⚠️ ${urgentMissing.length} match${urgentMissing.length>1?'es':''} locking in ${fmtCountdown(t)}`;bannerSub=LANG==='ar'?'لم تدخل توقعاتك بعد!':'You haven\'t entered your picks!';}else{bannerText=LANG==='ar'?`📋 ${missing.length} مباراة بدون توقع`:`📋 ${missing.length} match${missing.length>1?'es':''} without a pick`;if(soonest){const t=timeUntilLock(soonest);bannerSub=LANG==='ar'?`أقرب إغلاق خلال ${fmtCountdown(t)}`:`Next lock in ${fmtCountdown(t)}`;}}el.style.display='';el.innerHTML=`<div><div class="bannerText">${bannerText}</div>${bannerSub?`<div class="bannerSub">${bannerSub}</div>`:''}</div><button class="ghost" style="white-space:nowrap;font-size:12px" onclick="setFilter('mine')">${LANG==='ar'?'عرض المفقودة':'Show missing'}</button>`;}
 function updatePageTitle(){if(!SESSION||!STATE){document.title="WC '26 Prediction League";return;}const missing=(STATE.matches||[]).filter(m=>!locked(m)&&!hasPick(m));const urgent=missing.filter(m=>isUrgent(m));if(urgent.length)document.title=`⚠️ ${urgent.length} locking — WC '26`;else if(missing.length)document.title=`📋 ${missing.length} missing — WC '26`;else document.title="WC '26 Prediction League";}
 
-function renderMatches(){let q=($('search')?.value||'').toLowerCase();let today=new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Riyadh'});let arr=STATE.matches.filter(m=>{let text=(m.h+' '+m.a+' '+m.stage+' '+stageLabel(m)+' '+getGroup(m)).toLowerCase();if(q&&!text.includes(q))return false;if(FILTER.startsWith('group-')||['r32','r16','qf','sf','third','final'].includes(FILTER))return stageFilterKey(m)===FILTER;if(FILTER==='today')return new Date(m.iso).toLocaleDateString('en-CA',{timeZone:'Asia/Riyadh'})===today;if(FILTER==='upcoming')return !STATE.results[m.no]&&!locked(m);if(FILTER==='completed')return !!STATE.results[m.no];if(FILTER==='mine'&&SESSION){let mp=myPred(m.no);return (mp.hg===''||mp.hg==null)&&(mp.ag===''||mp.ag==null)}return true});if(!arr.length){$('matches').innerHTML=`<div class="card"><p class="muted">${tr('empty')}</p></div>`;return}if(!FILTER||FILTER==='all'||FILTER==='today'||FILTER==='upcoming'||FILTER==='mine')arr=urgencySort(arr);renderMissingBanner();updatePageTitle();let html='';arr.forEach(m=>{let p=myPred(m.no),L=locked(m),ko=isKO(m);
+function renderMatches(){let q=($('search')?.value||'').toLowerCase();let today=new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Riyadh'});let arr=STATE.matches.filter(m=>{let text=(m.h+' '+m.a+' '+m.stage+' '+stageLabel(m)+' '+getGroup(m)).toLowerCase();if(q&&!text.includes(q))return false;if(FILTER.startsWith('group-')||['r32','r16','qf','sf','third','final'].includes(FILTER))return stageFilterKey(m)===FILTER;if(FILTER==='today')return new Date(m.iso).toLocaleDateString('en-CA',{timeZone:'Asia/Riyadh'})===today;if(FILTER==='upcoming')return !STATE.results[m.no]&&!locked(m);if(FILTER==='completed')return !!STATE.results[m.no];if(FILTER==='mine'&&SESSION){let mp=myPred(m.no);return (mp.hg===''||mp.hg==null)&&(mp.ag===''||mp.ag==null)}return true});if(!arr.length){$('matches').innerHTML=`<div class="card"><p class="muted">${tr('empty')}</p></div>`;return}if(!FILTER||FILTER==='all'||FILTER==='today'||FILTER==='upcoming'||FILTER==='mine')arr=urgencySort(arr);updatePageTitle();let html='';arr.forEach(m=>{let p=myPred(m.no),L=locked(m),ko=isKO(m);
   const res = STATE.results && STATE.results[m.no];
   const mypred = myPred(m.no);
   let resCls = '', resBadge = '';
@@ -1162,7 +1167,7 @@ async function loadBoard(){
     const p=table[idx]; if(!p)return;
     const isMe=myId&&p.id===myId;
     const gap=p.total-leader;
-    const rec=`${p.exact}\u2713\u2713 ${p.outcome}\u2713 ${p.wrong}\u2717`;
+    const wins=(p.wins!=null?p.wins:(p.exact||0)+(p.outcome||0)),kow=(p.koWrong!=null?p.koWrong:p.wrong||0),pl=p.played||p.predictedPlayed||0; const rec=`W${wins} L${kow} P${pl}`;
     let throne='';
     if(idx===0){
       // All tied leaders get the input; everyone else sees the quote
@@ -1187,15 +1192,26 @@ async function loadBoard(){
     const rank=i+4;
     const isMe=myId&&p.id===myId;
     const gap=p.total-leader;
-    const rec=`${p.exact}✓✓ · ${p.outcome}✓ · ${p.wrong}✗`;
-    rows+=`<tr class="${isMe?'myRow':''}">
-      <td class="boardRank">${rank}</td>
-      <td class="boardName">${esc(p.name)}${isMe?`<span class="youBadge">${tr('youLabel')}</span>`:''}</td>
-      <td><div class="boardPts">${p.total}</div><div class="boardRec">${rec}</div></td>
-      <td class="boardGap">${gap<0?gap:''}</td>
-    </tr>`;
+    const wins=(p.wins!=null?p.wins:(p.exact||0)+(p.outcome||0));
+    const kow=(p.koWrong!=null?p.koWrong:p.wrong||0);
+    const pl=p.played||p.predictedPlayed||0;
+    rows+=`<div class="boardRow${isMe?' myRow':''}">
+      <span class="boardRank">${rank}</span>
+      <div class="boardMain">
+        <div class="boardName">${esc(p.name)}${isMe?`<span class="youBadge">${tr('youLabel')}</span>`:''}</div>
+        <div class="boardSub">
+          <span class="boardSubItem" style="color:var(--good)">W${wins}</span>
+          <span class="boardSubItem" style="color:var(--bad)">L${kow}</span>
+          <span class="boardSubItem">P${pl}</span>
+        </div>
+      </div>
+      <div style="text-align:end;flex-shrink:0">
+        <div class="boardPts">${p.total}</div>
+        <div class="boardGap">${gap<0?gap:''}</div>
+      </div>
+    </div>`;
   });
-  const rest=rows?`<div class="card" style="padding:0;overflow:hidden;margin-top:0"><table class="boardTable">${rows}</table></div>`:'';
+  const rest=rows?`<div class="card" style="padding:0;overflow:hidden;margin-top:0">${rows}</div>`:'';
 
   $('leaderboard').innerHTML=podium+rest;
 }
@@ -1515,7 +1531,6 @@ async function adminManualSettle(matchNo){const r=await call('adminSettleBet',AD
 
 applyTheme(THEME);
 applyLang();init();setInterval(()=>{if(!STATE||ACTIVE!=='pred')return;if(DIRTY||SAVING)return;let ae=document.activeElement;if(ae&&ae.closest&&ae.closest('#matches'))return;renderMatches();refreshKoWarns()},60000);
-setInterval(()=>{if(STATE&&SESSION){renderMissingBanner();updatePageTitle();}},30000);
 </script>
 </body>
 </html>
