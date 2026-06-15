@@ -1189,7 +1189,8 @@ function updateThroneCount(){const el=document.getElementById('throneInput');if(
 async function postThroneMsg(){const el=document.getElementById('throneInput');if(!el||!SESSION)return;const r=await call('saveLeaderMessage',SESSION.id,SESSION.pin,el.value.trim());if(!r.ok){alert(r.msg);return;}loadBoard();}
 
 async function loadBoard(){
-  const [r,msgR]=await Promise.all([call('getLeaderboard'),call('getLeaderMessage')]);
+  const r=await call('getLeaderboard');
+  const msgR={ok:true,messages:r.messages||{}};
   if(!r.ok)return $('leaderboard').innerHTML=`<p class="muted">${esc(r.msg)}</p>`;
   const table=r.table||[];
   if(!table.length){$('leaderboard').innerHTML=`<p class="muted">${LANG==='ar'?'لا يوجد بيانات بعد':'No data yet'}</p>`;return;}
