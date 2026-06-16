@@ -741,9 +741,6 @@
 
     /* ── Knockout bracket ── */
     .koBar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
-    .koViewBtn{border:1px solid var(--line);background:rgba(18,43,25,.7);color:var(--muted);padding:7px 14px;border-radius:var(--r-pill);font-family:var(--font-display);font-weight:600;font-size:13px;letter-spacing:.03em;cursor:pointer;transition:all .14s}
-    .koViewBtn:hover{color:var(--text);border-color:var(--gold-line)}
-    .koViewBtn.active{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0B1F12;border-color:transparent;font-weight:900}
     .koLegend{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
     .koLegend .pill{font-size:11px}
 
@@ -795,12 +792,6 @@
     .thirdBox{display:flex;flex-direction:column;align-items:center;gap:4px;margin-top:4px}
     .koRoundCap{font:700 11px/1 var(--font-display);letter-spacing:.1em;text-transform:uppercase;color:var(--gold2)}
     .koRoundCap.muted2{color:var(--muted)}
-
-    /* rounds (stacked) view */
-    .koRounds{display:flex;flex-direction:column;gap:16px}
-    .koRoundSec .koRoundHead{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-    .koRoundSec h3{font-size:17px}
-    .koRoundGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:10px}
   </style>
 </head>
 <body>
@@ -1379,20 +1370,12 @@ function renderGroups(){
 }
 
 // ── Knockout bracket ──
-let KO_VIEW='tree';
 let KO_BY_NO={};
 const KO_FEEDERS={
   89:[73,75],90:[76,78],91:[74,77],92:[83,84],93:[79,80],94:[86,88],95:[81,82],96:[85,87],
   97:[89,90],98:[93,94],99:[91,92],100:[95,96],
   101:[97,98],102:[99,100],104:[101,102]
 };
-const KO_ROUNDS=[
-  {key:'r32',nos:[73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88]},
-  {key:'r16',nos:[89,90,91,92,93,94,95,96]},
-  {key:'qf',nos:[97,98,99,100]},
-  {key:'sf',nos:[101,102]},
-  {key:'final',nos:[104,103]}
-];
 function koWinnerSide(no){var r=STATE.results&&STATE.results[no];if(!r)return null;var hg=Number(r.hg),ag=Number(r.ag);if(r.w==='H'||r.w==='A')return r.w;if(!isNaN(hg)&&!isNaN(ag)){if(hg>ag)return 'H';if(ag>hg)return 'A';}return null;}
 function koIsPlaceholder(s){s=String(s||'').trim();if(!s||s==='TBD')return true;if(/^[WL]\d+$/i.test(s))return true;if(/^[1-3][A-L]+$/i.test(s))return true;return false;}
 function koResolve(slot,depth){depth=depth||0;if(depth>10)return null;slot=String(slot||'').trim();var wl=slot.match(/^([WL])(\d+)$/i);if(wl){var no=Number(wl[2]),mm=KO_BY_NO[no];if(!mm)return null;var side=koWinnerSide(no);if(!side)return null;if(wl[1].toUpperCase()==='L')side=(side==='H'?'A':'H');return koResolve(side==='H'?mm.h:mm.a,depth+1);}if(koIsPlaceholder(slot))return null;return slot;}
@@ -1415,30 +1398,11 @@ function koTreeHtml(){
      <div class="halfTree right">${koNode(102)}</div>
   </div></div>`;
 }
-function koRoundsHtml(){
-  var labels={r32:tr('roundOf32'),r16:tr('roundOf16'),qf:tr('quarterFinal'),sf:tr('semiFinal'),final:tr('final')};
-  var html='<div class="koRounds">';
-  KO_ROUNDS.forEach(function(rd){
-    var doneN=rd.nos.filter(function(n){return STATE.results&&STATE.results[n];}).length;
-    html+=`<div class="koRoundSec card soft"><div class="koRoundHead"><h3>${esc(labels[rd.key])}</h3><span class="pill">${doneN}/${rd.nos.length}</span></div><div class="koRoundGrid">`;
-    rd.nos.forEach(function(n){
-      if(rd.key==='final'&&n===103){html+=`<div style="grid-column:1/-1;margin-top:4px"><div class="koRoundCap muted2" style="margin:0 0 6px">${tr('thirdPlace')}</div>${koMatchCard(n)}</div>`;}
-      else{html+=koMatchCard(n);}
-    });
-    html+='</div></div>';
-  });
-  return html+'</div>';
-}
-function setKoView(v){KO_VIEW=v;renderBracket();}
 function renderBracket(){
   if(!$('bracketBox')||!STATE)return;
   KO_BY_NO={};(STATE.matches||[]).forEach(function(m){KO_BY_NO[m.no]=m;});
-  var toggle=`<div class="koBar">
-    <button class="koViewBtn ${KO_VIEW==='tree'?'active':''}" onclick="setKoView('tree')">${LANG==='ar'?'🔱 الشجرة':'🔱 Bracket'}</button>
-    <button class="koViewBtn ${KO_VIEW==='rounds'?'active':''}" onclick="setKoView('rounds')">${LANG==='ar'?'📋 الأدوار':'📋 Rounds'}</button>
-    <div class="koLegend"><span class="pill" style="background:rgba(82,201,122,.14);color:var(--good);border-color:transparent">${LANG==='ar'?'● المتأهل':'● Advances'}</span></div>
-  </div>`;
-  $('bracketBox').innerHTML=toggle+(KO_VIEW==='tree'?koTreeHtml():koRoundsHtml());
+  var bar=`<div class="koBar"><div class="koLegend"><span class="pill" style="background:rgba(82,201,122,.14);color:var(--good);border-color:transparent">${LANG==='ar'?'● المتأهل':'● Advances'}</span></div></div>`;
+  $('bracketBox').innerHTML=bar+koTreeHtml();
 }
 
 function restoreAdmin(){if(ADMIN_PIN){$('adminLoginBox').classList.add('hidden');$('adminBox').classList.remove('hidden');applyHiddenTabs();renderAdmin()}else{$('adminLoginBox').classList.remove('hidden');$('adminBox').classList.add('hidden')}}async function adminLogin(){let pin=$('adminPin').value.trim();let r=await call('adminLogin',pin);if(!r.ok)return toast(tr('wrongAdmin'),true);ADMIN_PIN=pin;localStorage.setItem('wc26admin',pin);applyHiddenTabs();restoreAdmin()}function renderAdmin(section='players'){let items=[['players','adminTabPlayers'],['matrix','adminTabMatrix'],['matches','adminTabMatches'],['results','adminTabResults'],['predictions','adminTabPreds'],['visibility','adminTabVis'],['bets','adminTabBets'],['adjust','adminTabAdjust'],['champion','adminTabChampion'],['tabs','adminTabHide'],['sync','adminTabSync'],['reset','adminTabReset']];$('adminSide').innerHTML=items.map(([k,l])=>`<button class="ghost ${section===k?'active':''}" onclick="renderAdmin('${k}')">${tr(l)}</button>`).join('');({players:adminPlayers,matrix:adminMatrix,matches:adminMatches,results:adminResults,predictions:adminPredictions,visibility:adminVisibilityUI,bets:adminBets,adjust:adminAdjustUI,champion:adminChampionPicks,tabs:adminHideTabsUI,sync:adminSync,reset:adminReset}[section])()}
