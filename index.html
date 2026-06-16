@@ -1265,7 +1265,7 @@ async function loadBoard(){
     const p=table[idx]; if(!p)return;
     const isMe=myId&&p.id===myId;
     const gap=p.total-leader;
-    const wins=(p.wins!=null?p.wins:(p.exact||0)+(p.outcome||0)),kow=(p.losses!=null?p.losses:p.wrong||0),pl=p.played||p.predictedPlayed||0; const rec=`W${wins} L${kow} P${pl}`;
+    const ex=(p.exact||0),wo=(p.outcome!=null?p.outcome:Math.max(0,(p.wins||0)-(p.exact||0))),kow=(p.losses!=null?p.losses:p.wrong||0),pl=p.played||p.predictedPlayed||0; const rec=`W${wo} E${ex} L${kow} P${pl}`;
     let throne='';
     {
       // Each tied leader (max 3) shows their OWN message in their OWN card.
@@ -1295,7 +1295,8 @@ async function loadBoard(){
     const rank=i+4;
     const isMe=myId&&p.id===myId;
     const gap=p.total-leader;
-    const wins=(p.wins!=null?p.wins:(p.exact||0)+(p.outcome||0));
+    const ex=(p.exact||0);
+    const wo=(p.outcome!=null?p.outcome:Math.max(0,(p.wins||0)-(p.exact||0)));
     const kow=(p.losses!=null?p.losses:p.wrong||0);
     const pl=p.played||p.predictedPlayed||0;
     rows+=`<div class="boardRow${isMe?' myRow':''}">
@@ -1303,7 +1304,8 @@ async function loadBoard(){
       <div class="boardMain">
         <div class="boardName">${esc(p.name)}${isMe?`<span class="youBadge">${tr('youLabel')}</span>`:''}</div>
         <div class="boardSub">
-          <span class="boardSubItem" style="color:var(--good)">W${wins}</span>
+          <span class="boardSubItem" style="color:var(--good)">W${wo}</span>
+          <span class="boardSubItem" style="color:var(--gold2)">E${ex}</span>
           <span class="boardSubItem" style="color:var(--bad)">L${kow}</span>
           <span class="boardSubItem">P${pl}</span>
         </div>
