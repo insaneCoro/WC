@@ -69,8 +69,8 @@
       color: var(--text);
       background: var(--bg);
       background-image:
-        radial-gradient(ellipse 80% 40% at 50% -10%, rgba(212,165,32,.08) 0%, transparent 60%),
-        radial-gradient(ellipse 40% 60% at 0% 50%, rgba(20,60,30,.6) 0%, transparent 50%);
+        radial-gradient(ellipse 80% 40% at 50% -10%, var(--gold-glow) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 60% at 0% 50%, rgba(0,0,0,.22) 0%, transparent 50%);
       background-attachment: fixed;
     }
     body[dir=rtl] {
@@ -92,7 +92,7 @@
     /* ── Top bar ── */
     .topbar {
       position: sticky; top: 0; z-index: 60;
-      background: rgba(11,31,18,.92);
+      background: var(--bg);
       backdrop-filter: blur(20px) saturate(1.4);
       border-bottom: 1px solid var(--line);
     }
@@ -128,7 +128,7 @@
     .tab {
       white-space: nowrap;
       border: 1px solid var(--line);
-      background: rgba(18,43,25,.7);
+      background: var(--bg2);
       color: var(--muted);
       padding: 8px 14px;
       border-radius: var(--r-pill);
@@ -153,7 +153,7 @@
       padding: 18px;
     }
     .card.soft {
-      background: rgba(18,43,25,.55);
+      background: var(--bg2);
       box-shadow: none;
       border-color: var(--line2);
     }
@@ -170,7 +170,7 @@
     button, input, select {
       border-radius: var(--r2);
       border: 1px solid var(--line);
-      background: rgba(11,25,16,.80);
+      background: var(--bg2);
       color: var(--text);
       padding: 10px 13px;
       font-size: 14px;
@@ -203,7 +203,7 @@
     .pill {
       display: inline-flex; align-items: center; gap: 5px;
       border: 1px solid var(--line);
-      background: rgba(11,25,16,.80);
+      background: var(--bg2);
       border-radius: var(--r-pill);
       padding: 4px 10px;
       color: var(--muted); font-size: 12px;
@@ -213,7 +213,7 @@
       font-size: 12px; padding: 5px 10px;
       border-radius: var(--r-pill);
       border: 1px solid var(--line);
-      background: rgba(11,25,16,.85);
+      background: var(--bg2);
       font-family: var(--font-body);
     }
     .saveBadge.good { color: var(--good); border-color: rgba(82,201,122,.30); }
@@ -345,7 +345,7 @@
     .quickStats { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; }
     .stat {
       padding: 12px; border-radius: 12px;
-      background: rgba(11,25,16,.72); border: 1px solid var(--line2);
+      background: var(--bg2); border: 1px solid var(--line2);
       min-height: 68px;
     }
     .stat b { display: block; font-family: var(--font-display); font-size: 22px; font-weight: 900; line-height: 1.05; margin-top: 4px; }
@@ -362,7 +362,7 @@
     /* ── Tables ── */
     table { width: 100%; border-collapse: collapse; min-width: 580px; }
     th, td { padding: 10px 10px; border-bottom: 1px solid var(--line2); text-align: start; vertical-align: middle; }
-    th { font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); background: rgba(11,25,16,.70); position: sticky; top: 0; }
+    th { font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); background: var(--bg2); position: sticky; top: 0; }
     tr:hover td { background: rgba(212,165,32,.03); }
     .tableWrap { overflow: auto; border: 1px solid var(--line); border-radius: var(--r); }
     .rank1 td:first-child { color: var(--gold2); font-family: var(--font-display); font-size: 18px; font-weight: 900; }
@@ -371,7 +371,7 @@
     .ruleGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 10px; }
     .ruleTile {
       padding: 16px; border-radius: 14px;
-      background: rgba(11,25,16,.72); border: 1px solid var(--line2);
+      background: var(--bg2); border: 1px solid var(--line2);
     }
     .ruleTile b { display: block; margin-top: 6px; font-family: var(--font-display); font-size: 24px; font-weight: 900; color: var(--gold2); }
 
@@ -380,7 +380,7 @@
     .side {
       position: sticky; top: 132px;
       display: grid; gap: 4px;
-      background: rgba(11,25,16,.8); border: 1px solid var(--line); border-radius: var(--r); padding: 10px;
+      background: var(--bg2); border: 1px solid var(--line); border-radius: var(--r); padding: 10px;
     }
     .side button { text-align: start; justify-content: flex-start; border-color: transparent; background: transparent; }
     .side button:hover { background: rgba(255,255,255,.04); border-color: var(--line); }
@@ -570,6 +570,39 @@
         radial-gradient(ellipse 70% 35% at 50% -8%, rgba(204,32,32,.14) 0%, transparent 55%),
         radial-gradient(ellipse 50% 60% at 100% 50%, rgba(30,5,5,.7) 0%, transparent 50%);
     }
+
+    /* ── Saudi Arabia (base theme + champion) ── */
+    html[data-theme="saudi"]{--bg:#063D21;--bg2:#0A4A2A;--panel:#0E5230;--panel2:#125F38;--text:#F4FBF6;--muted:#9CC9AC;--dim:#4E8A66;--gold:#FFFFFF;--gold2:#FFFFFF;--gold-glow:rgba(255,255,255,.14);--gold-line:rgba(255,255,255,.22);--focus:0 0 0 3px rgba(255,255,255,.30);--line:rgba(255,255,255,.12);--line2:rgba(255,255,255,.06)}
+    /* ── Team colour themes: one flag colour as the base, the other as a single solid accent ── */
+    html[data-theme="br"]{--bg:#0A4D26;--bg2:#0E5C2F;--panel:#106435;--panel2:#13723D;--text:#F4FBEF;--muted:#A6D2B0;--dim:#5BA070;--gold:#FFDF3A;--gold2:#FFDF3A;--gold-glow:rgba(255,210,0,.22);--gold-line:rgba(255,223,58,.34);--focus:0 0 0 3px rgba(255,210,0,.35);--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.04)}
+    html[data-theme="ar"]{--bg:#0E2A4D;--bg2:#143761;--panel:#16406E;--panel2:#1B4C82;--text:#F1F6FB;--muted:#9FC0DE;--dim:#4E7099;--gold:#FFD24A;--gold2:#FFD24A;--gold-glow:rgba(255,210,74,.20);--gold-line:rgba(255,210,74,.32);--focus:0 0 0 3px rgba(255,210,74,.35);--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.04)}
+    html[data-theme="fr"]{--bg:#0E1626;--bg2:#121C30;--panel:#16223A;--panel2:#1B2A46;--text:#F2F5FB;--muted:#97A8C4;--dim:#50607E;--gold:#FF5A6E;--gold2:#FF5A6E;--gold-glow:rgba(220,40,60,.22);--gold-line:rgba(255,90,110,.32);--focus:0 0 0 3px rgba(220,40,60,.35);--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.04)}
+    html[data-theme="es"]{--bg:#5A0E12;--bg2:#73161B;--panel:#801A20;--panel2:#921F26;--text:#FBF1EC;--muted:#D6AAA2;--dim:#9E5E54;--gold:#FFD24A;--gold2:#FFD24A;--gold-glow:rgba(244,180,0,.22);--gold-line:rgba(255,210,74,.34);--focus:0 0 0 3px rgba(244,180,0,.35);--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.04)}
+    html[data-theme="eng"]{--bg:#15191E;--bg2:#1E242B;--panel:#232A32;--panel2:#2A323B;--text:#F2F4F7;--muted:#9AA5B1;--dim:#5E6B78;--gold:#FF5A6A;--gold2:#FF5A6A;--gold-glow:rgba(227,59,75,.22);--gold-line:rgba(255,90,106,.34);--focus:0 0 0 3px rgba(227,59,75,.35);--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.04)}
+    html[data-theme="de"]{--bg:#14110D;--bg2:#1F1A12;--panel:#241E15;--panel2:#2C2419;--text:#F6F1E7;--muted:#B6AC97;--dim:#6E6450;--gold:#F5C542;--gold2:#F5C542;--gold-glow:rgba(245,197,66,.20);--gold-line:rgba(245,197,66,.32);--focus:0 0 0 3px rgba(245,197,66,.35);--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.04)}
+    html[data-theme="pt"]{--bg:#0B3A22;--bg2:#0F4A2C;--panel:#115332;--panel2:#15613B;--text:#F2FBF4;--muted:#97C7A7;--dim:#4E8A66;--gold:#F5C542;--gold2:#F5C542;--gold-glow:rgba(245,197,66,.18);--gold-line:rgba(245,197,66,.30);--focus:0 0 0 3px rgba(245,197,66,.35);--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.04)}
+    html[data-theme="ma"]{--bg:#4E0E12;--bg2:#651519;--panel:#721920;--panel2:#831F26;--text:#FBF0EE;--muted:#D6A7A1;--dim:#9E5E58;--gold:#43D17E;--gold2:#43D17E;--gold-glow:rgba(31,174,90,.22);--gold-line:rgba(67,209,126,.32);--focus:0 0 0 3px rgba(31,174,90,.35);--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.04)}
+    html[data-theme="qa"]{--bg:#4E0E22;--bg2:#65142D;--panel:#731634;--panel2:#841C3E;--text:#FBF0F3;--muted:#D6A0B0;--dim:#9E5E72;--gold:#FFFFFF;--gold2:#FFFFFF;--gold-glow:rgba(255,255,255,.16);--gold-line:rgba(255,255,255,.24);--focus:0 0 0 3px rgba(255,255,255,.30);--line:rgba(255,255,255,.10);--line2:rgba(255,255,255,.05)}
+    html[data-theme="jo"]{--bg:#161013;--bg2:#1F171B;--panel:#241B20;--panel2:#2C2127;--text:#F4F0F2;--muted:#B59FA8;--dim:#6E5A64;--gold:#2EC56E;--gold2:#2EC56E;--gold-glow:rgba(46,197,110,.20);--gold-line:rgba(46,197,110,.32);--focus:0 0 0 3px rgba(46,197,110,.35);--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.04)}
+    html[data-theme="ca"]{--bg:#4A0E12;--bg2:#5E1318;--panel:#6E171D;--panel2:#801C23;--text:#FBF0F0;--muted:#DBA8A4;--dim:#9E5E5A;--gold:#FFFFFF;--gold2:#FFFFFF;--gold-glow:rgba(255,255,255,.14);--gold-line:rgba(255,255,255,.22);--focus:0 0 0 3px rgba(255,255,255,.30);--line:rgba(255,255,255,.10);--line2:rgba(255,255,255,.05)}
+    html[data-theme="mx"]{--bg:#04382A;--bg2:#074733;--panel:#09533C;--panel2:#0C6146;--text:#F2FBF6;--muted:#8FCAB0;--dim:#4E8A70;--gold:#FF5A6E;--gold2:#FF5A6E;--gold-glow:rgba(224,16,48,.20);--gold-line:rgba(255,90,110,.30);--focus:0 0 0 3px rgba(224,16,48,.35);--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.04)}
+    html[data-theme="us"]{--bg:#0C1F47;--bg2:#122A5E;--panel:#14306A;--panel2:#183A7C;--text:#F2F5FB;--muted:#9AB0D6;--dim:#4E66A0;--gold:#8FB8F0;--gold2:#8FB8F0;--gold-glow:rgba(58,111,196,.20);--gold-line:rgba(143,184,240,.30);--focus:0 0 0 3px rgba(58,111,196,.35);--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.04)}
+    html[data-theme="nl"]{--bg:#3A1B00;--bg2:#4A2400;--panel:#542A02;--panel2:#633303;--text:#FBF3EA;--muted:#D2B193;--dim:#8A6A48;--gold:#FF9A3D;--gold2:#FF9A3D;--gold-glow:rgba(255,122,0,.24);--gold-line:rgba(255,140,26,.34);--focus:0 0 0 3px rgba(255,122,0,.35);--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.04)}
+    /* Japan — light theme (white + rising-sun red) */
+    html[data-theme="jp"]{--bg:#F4F1F2;--bg2:#EBE6E7;--panel:#FFFFFF;--panel2:#FBF8F9;--text:#1A1012;--muted:#8A6A6E;--dim:#C0A6AA;--gold:#E8344B;--gold2:#FF6B7A;--gold-glow:rgba(188,0,45,.12);--gold-line:rgba(188,0,45,.22);--focus:0 0 0 3px rgba(188,0,45,.25);--line:rgba(0,0,0,.10);--line2:rgba(0,0,0,.06);--shadow:0 4px 20px rgba(0,0,0,.10);--shadow-sm:0 1px 4px rgba(0,0,0,.08);--good:#18A060;--warn:#D07000;--bad:#C83030}
+    html[data-theme="jp"] body{background-image:radial-gradient(ellipse 80% 40% at 50% -10%, rgba(188,0,45,.06) 0%, transparent 55%),radial-gradient(ellipse 60% 60% at 100% 100%, rgba(255,225,230,.5) 0%, transparent 50%)}
+    html[data-theme="jp"] button, html[data-theme="jp"] input, html[data-theme="jp"] select{background:#FFFFFF}
+    html[data-theme="jp"] .ghost{background:rgba(0,0,0,.05)}
+    html[data-theme="jp"] .tab{background:rgba(0,0,0,.04)}
+    html[data-theme="jp"] .card{background:#FFFFFF}
+    html[data-theme="jp"] .card.soft{background:rgba(0,0,0,.03)}
+    html[data-theme="jp"] .scorebox{background:#1A1012}
+    html[data-theme="jp"] .scorebox input{background:transparent}
+    html[data-theme="jp"] .topbar{background:rgba(244,241,242,.92)}
+    html[data-theme="jp"] .pill{background:rgba(0,0,0,.04)}
+    html[data-theme="jp"] .stat{background:rgba(0,0,0,.04)}
+    html[data-theme="jp"] .side{background:rgba(0,0,0,.04)}
+    html[data-theme="jp"] .nav{background:linear-gradient(180deg,#F4F1F2 60%,transparent)}
   
     /* ── Match card result colour-coding ── */
     .match.res-exact  { border-color: rgba(82,201,122,.55);  box-shadow: 0 0 0 1px rgba(82,201,122,.20),  var(--shadow); }
@@ -601,7 +634,7 @@
     .matrixWrap { overflow: auto; max-height: 75vh; }
     .matrixTable { border-collapse: collapse; min-width: 900px; }
     .matrixTable th,.matrixTable td { padding: 6px 8px; border: 1px solid var(--line2); text-align: center; font-size: 12px; white-space: nowrap; }
-    .matrixTable th { background: rgba(11,25,16,.80); font-family: var(--font-display); font-weight: 700; font-size: 11px; letter-spacing:.04em; position: sticky; top: 0; z-index: 2; }
+    .matrixTable th { background: var(--bg2); font-family: var(--font-display); font-weight: 700; font-size: 11px; letter-spacing:.04em; position: sticky; top: 0; z-index: 2; }
     .matrixTable th.stickyCol { left: 0; z-index: 3; }
     .matrixTable td.stickyCol { position: sticky; left: 0; background: var(--panel); font-weight: 600; font-size: 13px; text-align: start; padding-inline: 10px; }
     .matrixTable td.mxExact   { background: rgba(82,201,122,.18);  color: var(--good); font-weight: 700; }
@@ -683,7 +716,7 @@
     .resultDisplay {
       margin-top: 10px;
       padding: 10px 12px;
-      background: rgba(11,25,16,.60);
+      background: var(--bg2);
       border: 1px solid var(--line);
       border-radius: var(--r2);
     }
@@ -857,7 +890,7 @@
 <script>
 const $=id=>document.getElementById(id);
 let STATE=null, PREDS={}, BETS_STATE={pools:{},myBets:{},balance:null}, HIDDEN_TABS=[], LANG=localStorage.getItem('wc26lang')||'en', SESSION=JSON.parse(localStorage.getItem('wc26session')||'null'), ADMIN_PIN=localStorage.getItem('wc26admin')||'', ACTIVE='pred', FILTER='all', SAVE_TIMER=null, DIRTY=false, SAVING=false;
-const T={en:{title:"WC '26 Prediction League",sub:'Riyadh time GMT+3 · Auto-save · Bilingual',refresh:'Refresh',firstSetup:'First setup',setupText:'Create the league by choosing a 4-digit admin PIN. Keep it private.',adminPin4:'Admin PIN, 4 digits',createLeague:'Create league',predictions:'Predictions',odds:'Odds',leaderboard:'Leaderboard',groups:'Groups',groupsHelp:'Group tables are calculated from the results entered by admin/API. Ranking uses points, goal difference, goals for, then team name.',bracket:'Knockout',bracketHelp:'The bracket fills in automatically as results are entered — winners advance to the next round. In the tree view, scroll sideways to follow each path to the final.',rules:'Rules',admin:'Admin',playerArea:'Player area',playerHelp:'Choose your slot, enter your PIN, and predict. Changes auto-save after you stop typing.',displayNameOnce:'Display name, first login only',pin4:'4-digit PIN',login:'Login',logout:'Logout',saveNow:'Save now',quickStats:'Quick stats',saved:'Saved',saving:'Saving…',unsaved:'Unsaved changes',loginFirst:'Login first',locked:'Locked',open:'Open',today:'Today',upcoming:'Upcoming',completed:'Completed',all:'All',mine:'Missing picks',searchTeams:'Search team or stage',group:'Group',roundOf32:'Round of 32',roundOf16:'Round of 16',quarterFinal:'Quarter-final',semiFinal:'Semi-final',thirdPlace:'Third place',final:'Final',nameLocked:'Name already chosen. You can login with PIN only.',nameAvailable:'Optional: choose your display name now. You can do this once.',odds:'Odds',oddsTitle:'Prediction odds',oddsHelp:'These odds are calculated from participant picks. They become more useful after players submit predictions.',draw:'Draw',penalties:'Penalties',winner:'Winner',predictPens:'Reaches penalties',rank:'Rank',player:'Player',points:'Points',team:'Team',exact:'Exact',outcome:'Winner/Draw',wrong:'Wrong KO',predictedPlayed:'Predicted played',rulesTitle:'Scoring rules',adminPin:'Admin PIN',players:'Players',matches:'Matches',results:'Results',viewPredictions:'View predictions',apiSync:'API Sync',reset:'Reset',savePlayerNames:'Save player names',resetPin:'Reset PIN',pinSet:'PIN set',noPin:'No PIN yet',matchSetup:'Match setup',stage:'Stage',home:'Home',away:'Away',kickoff:'Kick-off',saveMatchSetup:'Save match setup',resultsHelp:'Admin can edit API results manually here. For knockout draws, choose whether penalties happened and who advanced.',saveResults:'Save results',prediction:'Prediction',result:'Result',scorePoints:'Points',noPrediction:'No prediction',apiHelp:'Save your football-data.org token privately, then sync results. Manual edits remain available.',apiToken:'API token',saveApiToken:'Save API token',syncNow:'Sync now',enableAutoSync:'Enable hourly auto-sync',disableAutoSync:'Disable auto-sync',typeReset:'Type RESET',resetLeagueLink:'Reset league link',wrongAdmin:'Wrong admin PIN',empty:'Nothing to show yet',adminTabPlayers:'👤 Players',adminTabMatrix:'📊 Scores',adminTabMatches:'📅 Matches',adminTabResults:'⚽ Results',adminTabPreds:'🔍 Predictions',adminTabBets:'🎲 Bets',adminTabAdjust:'⚖️ Adjust',adminTabSync:'🔄 API Sync',adminTabReset:'🗑️ Reset',hideTabs:'Manage tabs',hideTabsHelp:'Show or hide tabs for all players. Admin always sees all tabs.',adminTabVis:'👁️ Pred Visibility',adminTabChampion:'🌍 Champion',adminTabHide:'👁️ Tabs',adjustPoints:'Adjust points',adjustHelp:'Add or subtract points from a player. Use for corrections, bonuses, or penalties.',adjustment:'Adjustment',reason:'Reason',note:'Note',bonus:'Bonus',penalty:'Penalty',correction:'Correction',adjustHistory:'Adjustment history',leaderboardTitle:'Leaderboard',youLabel:'You',behindLeader:'behind leader',betting:'Betting',bettingHelp:'Bet your prediction points on R16+ matches. Predictions and bets both count — place a bet on top of your prediction for extra reward or risk. Winners share the pool.',balance:'Balance',placeBet:'Place bet',cancelBet:'Cancel bet',allIn:'🔥 All In',betAmount:'Bet amount',pool:'Pool',yourBet:'Your bet',betWon:'Won',betLost:'Lost',betPending:'Pending',noBets:'No bets placed yet',betForfeits:'⚠️ Bet replaces prediction score',championTitle:'Champion Prediction',championHelp:'Pick the World Cup winner. Locks June 19 at midnight Riyadh time. Worth +16 pts if correct.',championPick:'Your pick',championLock:'Locked June 19 midnight',championCorrect:'🏆 Correct!',championWrong:'✗ Wrong',championNoPick:'No pick yet',championWinner:'Actual champion',setChampionWinner:'Set champion winner',saveChampionPick:'Save champion pick',scoreMatrix:'Score matrix',deleteResult:'Delete result',renamePlayer:'Rename',forcePin:'Set PIN',clearPreds:'Clear picks',confirmClear:'Type CLEAR to wipe this player\'s predictions',totalPoints:'Total',rulesHtml:`
+const T={en:{title:"WC '26 Prediction League",sub:'Riyadh time GMT+3 · Auto-save · Bilingual',refresh:'Refresh',firstSetup:'First setup',setupText:'Create the league by choosing a 4-digit admin PIN. Keep it private.',adminPin4:'Admin PIN, 4 digits',createLeague:'Create league',predictions:'Predictions',odds:'Odds',leaderboard:'Leaderboard',groups:'Groups',groupsHelp:'Group tables are calculated from the results entered by admin/API. Ranking uses points, goal difference, goals for, then team name.',bracket:'Knockout',bracketHelp:'The bracket fills in automatically as results are entered — winners advance to the next round. In the tree view, scroll sideways to follow each path to the final.',rules:'Rules',admin:'Admin',playerArea:'Player area',playerHelp:'Choose your slot, enter your PIN, and predict. Changes auto-save after you stop typing.',displayNameOnce:'Display name, first login only',pin4:'4-digit PIN',login:'Login',logout:'Logout',saveNow:'Save now',quickStats:'Quick stats',saved:'Saved',saving:'Saving…',unsaved:'Unsaved changes',loginFirst:'Login first',locked:'Locked',open:'Open',today:'Today',upcoming:'Upcoming',completed:'Completed',all:'All',mine:'Missing picks',searchTeams:'Search team or stage',group:'Group',roundOf32:'Round of 32',roundOf16:'Round of 16',quarterFinal:'Quarter-final',semiFinal:'Semi-final',thirdPlace:'Third place',final:'Final',nameLocked:'Name already chosen. You can login with PIN only.',nameAvailable:'Optional: choose your display name now. You can do this once.',odds:'Odds',oddsTitle:'Prediction odds',oddsHelp:'These odds are calculated from participant picks. They become more useful after players submit predictions.',draw:'Draw',penalties:'Penalties',winner:'Winner',predictPens:'Reaches penalties',rank:'Rank',player:'Player',points:'Points',team:'Team',exact:'Exact',outcome:'Winner/Draw',wrong:'Wrong KO',predictedPlayed:'Predicted played',rulesTitle:'Scoring rules',adminPin:'Admin PIN',players:'Players',matches:'Matches',results:'Results',viewPredictions:'View predictions',apiSync:'API Sync',reset:'Reset',savePlayerNames:'Save player names',resetPin:'Reset PIN',pinSet:'PIN set',noPin:'No PIN yet',matchSetup:'Match setup',stage:'Stage',home:'Home',away:'Away',kickoff:'Kick-off',saveMatchSetup:'Save match setup',resultsHelp:'Admin can edit API results manually here. For knockout draws, choose whether penalties happened and who advanced.',saveResults:'Save results',prediction:'Prediction',result:'Result',scorePoints:'Points',noPrediction:'No prediction',apiHelp:'Save your football-data.org token privately, then sync results. Manual edits remain available.',apiToken:'API token',saveApiToken:'Save API token',syncNow:'Sync now',enableAutoSync:'Enable hourly auto-sync',disableAutoSync:'Disable auto-sync',typeReset:'Type RESET',resetLeagueLink:'Reset league link',wrongAdmin:'Wrong admin PIN',empty:'Nothing to show yet',adminTabPlayers:'👤 Players',adminTabMatrix:'📊 Scores',adminTabMatches:'📅 Matches',adminTabResults:'⚽ Results',adminTabPreds:'🔍 Predictions',adminTabBets:'🎲 Bets',adminTabAdjust:'⚖️ Adjust',adminTabSync:'🔄 API Sync',adminTabReset:'🗑️ Reset',hideTabs:'Manage tabs',hideTabsHelp:'Show or hide tabs for all players. Admin always sees all tabs.',adminTabVis:'👁️ Pred Visibility',adminTabChampion:'🌍 Champion',adminTabHide:'👁️ Tabs',adjustPoints:'Adjust points',adjustHelp:'Add or subtract points from a player. Use for corrections, bonuses, or penalties.',adjustment:'Adjustment',reason:'Reason',note:'Note',bonus:'Bonus',penalty:'Penalty',correction:'Correction',adjustHistory:'Adjustment history',leaderboardTitle:'Leaderboard',youLabel:'You',behindLeader:'behind leader',betting:'Betting',bettingHelp:'Bet your prediction points on R16+ matches. Predictions and bets both count — place a bet on top of your prediction for extra reward or risk. Winners share the pool.',balance:'Balance',placeBet:'Place bet',cancelBet:'Cancel bet',allIn:'🔥 All In',betAmount:'Bet amount',pool:'Pool',yourBet:'Your bet',betWon:'Won',betLost:'Lost',betPending:'Pending',noBets:'No bets placed yet',betForfeits:'⚠️ Bet replaces prediction score',championTitle:'Champion Prediction',championHelp:'Pick the World Cup winner before June 19 midnight (Riyadh) for +20 if correct. You get one switch until July 4, 19:55 — a switched pick is worth +10.',championPick:'Your pick',championLock:'Locked June 19 midnight',championCorrect:'🏆 Correct!',championWrong:'✗ Wrong',championNoPick:'No pick yet',championWinner:'Actual champion',setChampionWinner:'Set champion winner',saveChampionPick:'Save champion pick',scoreMatrix:'Score matrix',deleteResult:'Delete result',renamePlayer:'Rename',forcePin:'Set PIN',clearPreds:'Clear picks',confirmClear:'Type CLEAR to wipe this player\'s predictions',totalPoints:'Total',rulesHtml:`
 <div style="display:flex;flex-direction:column;gap:16px">
 
   <div class="ruleTile" style="border-color:rgba(212,165,32,.35);background:rgba(212,165,32,.06)">
@@ -878,9 +911,9 @@ const T={en:{title:"WC '26 Prediction League",sub:'Riyadh time GMT+3 · Auto-sav
 
   <div style="font-family:var(--font-display);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:-8px">Scoring — Knockout Rounds</div>
   <div class="ruleGrid">
-    <div class="ruleTile">🎯 Exact score<b>R32/R16 +4 · QF +8<br>SF +16 · Final +32</b></div>
-    <div class="ruleTile">✅ Correct team advances<b>R32/R16 +2 · QF +4<br>SF +8 · Final +16</b></div>
-    <div class="ruleTile">❌ Wrong team<b>R32/R16 −2 · QF −4<br>SF −8 · Final −16</b><span style="color:var(--muted);font-size:12px">Penalty applies in KO only</span></div>
+    <div class="ruleTile">🎯 Exact score<b>R32 +6 · R16 +8 · QF +12<br>SF +20 · Final +32</b></div>
+    <div class="ruleTile">✅ Correct team advances<b>R32 +3 · R16 +4 · QF +6<br>SF +10 · Final +16</b></div>
+    <div class="ruleTile">❌ Wrong team<b>R32 −3 · R16 −4 · QF −6<br>SF −10 · Final −16</b><span style="color:var(--muted);font-size:12px">Penalty applies in KO only</span></div>
   </div>
 
   <div class="ruleTile" style="border-color:rgba(74,184,200,.35)">
@@ -893,12 +926,20 @@ const T={en:{title:"WC '26 Prediction League",sub:'Riyadh time GMT+3 · Auto-sav
     </p>
   </div>
 
+  <div class="ruleTile" style="border-color:rgba(82,201,122,.35);background:rgba(82,201,122,.05)">
+    <span style="font-size:18px">🛟</span>
+    <b style="display:block;margin:4px 0">The Zero Floor (knockouts)</b>
+    <p style="color:var(--muted);margin:0;font-size:13px;line-height:1.6">
+      Your point total can never drop below <b>0</b>. Knockout penalties and lost bets can knock you down, but never bury you — a player at 0 simply earns back up through predictions. You can only ever bet points you currently hold.
+    </p>
+  </div>
+
   <div class="ruleTile" style="border-color:rgba(212,165,32,.35)">
     <span style="font-size:18px">🌍</span>
-    <b style="display:block;margin:4px 0">Champion prediction — locks June 19</b>
+    <b style="display:block;margin:4px 0">Champion prediction</b>
     <p style="color:var(--muted);margin:0;font-size:13px;line-height:1.6">
-      Pick the World Cup winner before June 19 midnight (Riyadh time). Worth <b style="color:var(--gold2)">+16 pts</b> if correct.
-      This is separate from match predictions and locks early so everyone commits before the knockout bracket is set.
+      Pick the World Cup winner before <b>June 19 midnight</b> (Riyadh) — worth <b style="color:var(--gold2)">+20 pts</b> if correct.
+      You get <b>one switch</b> any time up to <b>July 4, 19:55</b> (just before the Round of 16); a switched pick pays <b style="color:var(--gold2)">+10</b> if correct. After that it's final. No penalty for a wrong pick.
     </p>
   </div>
 
@@ -918,11 +959,11 @@ const T={en:{title:"WC '26 Prediction League",sub:'Riyadh time GMT+3 · Auto-sav
     <b style="display:block;margin:4px 0">Deadline</b>
     <p style="color:var(--muted);margin:0;font-size:13px;line-height:1.6">
       Predictions and bets lock <b>5 minutes before kick-off</b> (Riyadh time, GMT+3).
-      Once locked you cannot change your pick for that match.
+      Champion switch locks <b>July 4, 19:55</b>. Once locked you cannot change your pick for that match.
     </p>
   </div>
 
-</div>`},ar:{title:'توقعات كأس العالم ٢٠٢٦',sub:'توقيت الرياض GMT+3 · حفظ تلقائي · عربي وإنجليزي',refresh:'تحديث',firstSetup:'الإعداد الأول',setupText:'أنشئ الدوري باختيار رقم سري للمدير من ٤ أرقام. احتفظ به بسرية.',adminPin4:'رقم المدير ٤ أرقام',createLeague:'إنشاء الدوري',predictions:'التوقعات',odds:'النسب',leaderboard:'الترتيب',groups:'المجموعات',groupsHelp:'جداول المجموعات تُحسب من النتائج المدخلة من المدير أو API. الترتيب حسب النقاط ثم فارق الأهداف ثم الأهداف المسجلة ثم الاسم.',bracket:'الإقصاء',bracketHelp:'تُملأ الشجرة تلقائياً عند إدخال النتائج — الفائز يتأهل للدور التالي. في عرض الشجرة مرّر جانبياً لتتبع كل مسار حتى النهائي.',rules:'القوانين',admin:'المدير',playerArea:'منطقة اللاعب',playerHelp:'اختر رقمك، أدخل الرقم السري، ثم توقع. يتم الحفظ تلقائياً بعد التوقف عن الكتابة.',displayNameOnce:'اسم العرض لأول دخول فقط',pin4:'رقم سري ٤ أرقام',login:'دخول',logout:'خروج',saveNow:'حفظ الآن',quickStats:'ملخص سريع',saved:'تم الحفظ',saving:'جاري الحفظ…',unsaved:'تغييرات غير محفوظة',loginFirst:'سجل الدخول أولاً',locked:'مغلقة',open:'متاحة',today:'اليوم',upcoming:'قادمة',completed:'منتهية',all:'الكل',mine:'توقعات ناقصة',searchTeams:'ابحث عن فريق أو مرحلة',group:'المجموعة',roundOf32:'دور ٣٢',roundOf16:'دور ١٦',quarterFinal:'ربع النهائي',semiFinal:'نصف النهائي',thirdPlace:'المركز الثالث',final:'النهائي',nameLocked:'تم اختيار الاسم سابقاً. يمكنك الدخول بالرقم السري فقط.',nameAvailable:'اختياري: اختر اسم العرض الآن. يمكن اختياره مرة واحدة فقط.',oddsTitle:'نسب التوقعات',oddsHelp:'هذه النسب مبنية على توقعات المشاركين، وتصبح أدق بعد إدخال التوقعات.',draw:'تعادل',penalties:'ركلات ترجيح',winner:'المتأهل',predictPens:'تصل لركلات الترجيح',rank:'المركز',player:'اللاعب',points:'النقاط',team:'الفريق',exact:'نتيجة صحيحة',outcome:'فائز/تعادل',wrong:'خطأ إقصائي',predictedPlayed:'توقعات محسوبة',rulesTitle:'قوانين النقاط',adminPin:'رقم المدير',players:'اللاعبون',matches:'المباريات',results:'النتائج',viewPredictions:'عرض التوقعات',apiSync:'مزامنة API',reset:'إعادة ضبط',savePlayerNames:'حفظ أسماء اللاعبين',resetPin:'إعادة الرقم السري',pinSet:'الرقم مفعل',noPin:'لم يحدد بعد',matchSetup:'إعداد المباراة',stage:'المرحلة',home:'الفريق الأول',away:'الفريق الثاني',kickoff:'وقت المباراة',saveMatchSetup:'حفظ إعداد المباريات',resultsHelp:'يمكن للمدير تعديل النتائج هنا حتى بعد تحديث API. في مباريات الإقصاء المتعادلة، اختر هل وصلت لركلات الترجيح ومن المتأهل.',saveResults:'حفظ النتائج',prediction:'التوقع',result:'النتيجة',scorePoints:'النقاط',noPrediction:'لا يوجد توقع',apiHelp:'احفظ رمز football-data.org بشكل خاص، ثم قم بالمزامنة. التعديل اليدوي يبقى متاحاً.',apiToken:'رمز API',saveApiToken:'حفظ الرمز',syncNow:'مزامنة الآن',enableAutoSync:'تفعيل المزامنة كل ساعة',disableAutoSync:'إيقاف المزامنة',typeReset:'اكتب RESET',resetLeagueLink:'إعادة ضبط رابط الدوري',wrongAdmin:'رقم المدير غير صحيح',empty:'لا يوجد شيء للعرض حالياً',adminTabPlayers:'👤 اللاعبون',adminTabMatrix:'📊 النقاط',adminTabMatches:'📅 المباريات',adminTabResults:'⚽ النتائج',adminTabPreds:'🔍 التوقعات',adminTabBets:'🎲 الرهانات',adminTabAdjust:'⚖️ تعديل',adminTabSync:'🔄 المزامنة',adminTabReset:'🗑️ إعادة ضبط',hideTabs:'إدارة التبويبات',hideTabsHelp:'أظهر أو أخفِ التبويبات لجميع اللاعبين. المدير يرى جميع التبويبات دائماً.',adminTabVis:'👁️ ظهور التوقعات',adminTabChampion:'🌍 البطل',adminTabHide:'👁️ التبويبات',adjustPoints:'تعديل النقاط',adjustHelp:'أضف أو اطرح نقاطاً من اللاعب. للتصحيح أو المكافآت أو الغرامات.',adjustment:'تعديل',reason:'السبب',note:'ملاحظة',bonus:'مكافأة',penalty:'غرامة',correction:'تصحيح',adjustHistory:'سجل التعديلات',leaderboardTitle:'الترتيب',youLabel:'أنت',behindLeader:'خلف المتصدر',betting:'الرهانات',bettingHelp:'راهن بنقاطك على مباريات دور الـ16 فما فوق. التوقعات والرهانات تحتسبان معاً — ضع رهاناً فوق توقعك لمكافأة أو مخاطرة إضافية. الفائزون يتقاسمون المجموع.',balance:'الرصيد',placeBet:'ضع رهان',cancelBet:'إلغاء الرهان',allIn:'🔥 كل شيء',betAmount:'مبلغ الرهان',pool:'المجموع',yourBet:'رهانك',betWon:'فاز',betLost:'خسر',betPending:'معلق',noBets:'لا رهانات بعد',betForfeits:'⚠️ الرهان يلغي نقاط التوقع',championTitle:'توقع البطل',championHelp:'توقع الفائز بكأس العالم. يُقفل في ١٩ يونيو منتصف الليل بتوقيت الرياض. يمنح +١٦ نقطة في حال الإصابة.',championPick:'توقعك',championLock:'مقفل في ١٩ يونيو',championCorrect:'🏆 صحيح!',championWrong:'✗ خطأ',championNoPick:'لم تختر بعد',championWinner:'البطل الفعلي',setChampionWinner:'تحديد البطل',saveChampionPick:'حفظ توقع البطل',scoreMatrix:'مصفوفة النقاط',deleteResult:'حذف النتيجة',renamePlayer:'إعادة تسمية',forcePin:'تعيين رقم سري',clearPreds:'مسح التوقعات',confirmClear:'اكتب CLEAR لمسح توقعات هذا اللاعب',totalPoints:'المجموع',rulesHtml:`
+</div>`},ar:{title:'توقعات كأس العالم ٢٠٢٦',sub:'توقيت الرياض GMT+3 · حفظ تلقائي · عربي وإنجليزي',refresh:'تحديث',firstSetup:'الإعداد الأول',setupText:'أنشئ الدوري باختيار رقم سري للمدير من ٤ أرقام. احتفظ به بسرية.',adminPin4:'رقم المدير ٤ أرقام',createLeague:'إنشاء الدوري',predictions:'التوقعات',odds:'النسب',leaderboard:'الترتيب',groups:'المجموعات',groupsHelp:'جداول المجموعات تُحسب من النتائج المدخلة من المدير أو API. الترتيب حسب النقاط ثم فارق الأهداف ثم الأهداف المسجلة ثم الاسم.',bracket:'الإقصاء',bracketHelp:'تُملأ الشجرة تلقائياً عند إدخال النتائج — الفائز يتأهل للدور التالي. في عرض الشجرة مرّر جانبياً لتتبع كل مسار حتى النهائي.',rules:'القوانين',admin:'المدير',playerArea:'منطقة اللاعب',playerHelp:'اختر رقمك، أدخل الرقم السري، ثم توقع. يتم الحفظ تلقائياً بعد التوقف عن الكتابة.',displayNameOnce:'اسم العرض لأول دخول فقط',pin4:'رقم سري ٤ أرقام',login:'دخول',logout:'خروج',saveNow:'حفظ الآن',quickStats:'ملخص سريع',saved:'تم الحفظ',saving:'جاري الحفظ…',unsaved:'تغييرات غير محفوظة',loginFirst:'سجل الدخول أولاً',locked:'مغلقة',open:'متاحة',today:'اليوم',upcoming:'قادمة',completed:'منتهية',all:'الكل',mine:'توقعات ناقصة',searchTeams:'ابحث عن فريق أو مرحلة',group:'المجموعة',roundOf32:'دور ٣٢',roundOf16:'دور ١٦',quarterFinal:'ربع النهائي',semiFinal:'نصف النهائي',thirdPlace:'المركز الثالث',final:'النهائي',nameLocked:'تم اختيار الاسم سابقاً. يمكنك الدخول بالرقم السري فقط.',nameAvailable:'اختياري: اختر اسم العرض الآن. يمكن اختياره مرة واحدة فقط.',oddsTitle:'نسب التوقعات',oddsHelp:'هذه النسب مبنية على توقعات المشاركين، وتصبح أدق بعد إدخال التوقعات.',draw:'تعادل',penalties:'ركلات ترجيح',winner:'المتأهل',predictPens:'تصل لركلات الترجيح',rank:'المركز',player:'اللاعب',points:'النقاط',team:'الفريق',exact:'نتيجة صحيحة',outcome:'فائز/تعادل',wrong:'خطأ إقصائي',predictedPlayed:'توقعات محسوبة',rulesTitle:'قوانين النقاط',adminPin:'رقم المدير',players:'اللاعبون',matches:'المباريات',results:'النتائج',viewPredictions:'عرض التوقعات',apiSync:'مزامنة API',reset:'إعادة ضبط',savePlayerNames:'حفظ أسماء اللاعبين',resetPin:'إعادة الرقم السري',pinSet:'الرقم مفعل',noPin:'لم يحدد بعد',matchSetup:'إعداد المباراة',stage:'المرحلة',home:'الفريق الأول',away:'الفريق الثاني',kickoff:'وقت المباراة',saveMatchSetup:'حفظ إعداد المباريات',resultsHelp:'يمكن للمدير تعديل النتائج هنا حتى بعد تحديث API. في مباريات الإقصاء المتعادلة، اختر هل وصلت لركلات الترجيح ومن المتأهل.',saveResults:'حفظ النتائج',prediction:'التوقع',result:'النتيجة',scorePoints:'النقاط',noPrediction:'لا يوجد توقع',apiHelp:'احفظ رمز football-data.org بشكل خاص، ثم قم بالمزامنة. التعديل اليدوي يبقى متاحاً.',apiToken:'رمز API',saveApiToken:'حفظ الرمز',syncNow:'مزامنة الآن',enableAutoSync:'تفعيل المزامنة كل ساعة',disableAutoSync:'إيقاف المزامنة',typeReset:'اكتب RESET',resetLeagueLink:'إعادة ضبط رابط الدوري',wrongAdmin:'رقم المدير غير صحيح',empty:'لا يوجد شيء للعرض حالياً',adminTabPlayers:'👤 اللاعبون',adminTabMatrix:'📊 النقاط',adminTabMatches:'📅 المباريات',adminTabResults:'⚽ النتائج',adminTabPreds:'🔍 التوقعات',adminTabBets:'🎲 الرهانات',adminTabAdjust:'⚖️ تعديل',adminTabSync:'🔄 المزامنة',adminTabReset:'🗑️ إعادة ضبط',hideTabs:'إدارة التبويبات',hideTabsHelp:'أظهر أو أخفِ التبويبات لجميع اللاعبين. المدير يرى جميع التبويبات دائماً.',adminTabVis:'👁️ ظهور التوقعات',adminTabChampion:'🌍 البطل',adminTabHide:'👁️ التبويبات',adjustPoints:'تعديل النقاط',adjustHelp:'أضف أو اطرح نقاطاً من اللاعب. للتصحيح أو المكافآت أو الغرامات.',adjustment:'تعديل',reason:'السبب',note:'ملاحظة',bonus:'مكافأة',penalty:'غرامة',correction:'تصحيح',adjustHistory:'سجل التعديلات',leaderboardTitle:'الترتيب',youLabel:'أنت',behindLeader:'خلف المتصدر',betting:'الرهانات',bettingHelp:'راهن بنقاطك على مباريات دور الـ16 فما فوق. التوقعات والرهانات تحتسبان معاً — ضع رهاناً فوق توقعك لمكافأة أو مخاطرة إضافية. الفائزون يتقاسمون المجموع.',balance:'الرصيد',placeBet:'ضع رهان',cancelBet:'إلغاء الرهان',allIn:'🔥 كل شيء',betAmount:'مبلغ الرهان',pool:'المجموع',yourBet:'رهانك',betWon:'فاز',betLost:'خسر',betPending:'معلق',noBets:'لا رهانات بعد',betForfeits:'⚠️ الرهان يلغي نقاط التوقع',championTitle:'توقع البطل',championHelp:'توقع الفائز بكأس العالم قبل منتصف ليل ١٩ يونيو (الرياض) لتحصل على +٢٠ إن أصبت. ولديك تبديل واحد حتى ٤ يوليو الساعة ١٩:٥٥ — والتوقع المُبدّل يساوي +١٠.',championPick:'توقعك',championLock:'مقفل في ١٩ يونيو',championCorrect:'🏆 صحيح!',championWrong:'✗ خطأ',championNoPick:'لم تختر بعد',championWinner:'البطل الفعلي',setChampionWinner:'تحديد البطل',saveChampionPick:'حفظ توقع البطل',scoreMatrix:'مصفوفة النقاط',deleteResult:'حذف النتيجة',renamePlayer:'إعادة تسمية',forcePin:'تعيين رقم سري',clearPreds:'مسح التوقعات',confirmClear:'اكتب CLEAR لمسح توقعات هذا اللاعب',totalPoints:'المجموع',rulesHtml:`
 <div style="display:flex;flex-direction:column;gap:16px">
 
   <div class="ruleTile" style="border-color:rgba(212,165,32,.35);background:rgba(212,165,32,.06)">
@@ -943,9 +984,9 @@ const T={en:{title:"WC '26 Prediction League",sub:'Riyadh time GMT+3 · Auto-sav
 
   <div style="font-family:var(--font-display);font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:-8px">النقاط — الأدوار الإقصائية</div>
   <div class="ruleGrid">
-    <div class="ruleTile">🎯 نتيجة صحيحة<b>٣٢/١٦ +٤ · ربع +٨<br>نصف +١٦ · نهائي +٣٢</b></div>
-    <div class="ruleTile">✅ الفريق المتأهل صحيح<b>٣٢/١٦ +٢ · ربع +٤<br>نصف +٨ · نهائي +١٦</b></div>
-    <div class="ruleTile">❌ الفريق الخاطئ<b>٣٢/١٦ −٢ · ربع −٤<br>نصف −٨ · نهائي −١٦</b><span style="color:var(--muted);font-size:12px">العقوبة في الإقصائي فقط</span></div>
+    <div class="ruleTile">🎯 نتيجة صحيحة<b>٣٢ +٦ · ١٦ +٨ · ربع +١٢<br>نصف +٢٠ · نهائي +٣٢</b></div>
+    <div class="ruleTile">✅ الفريق المتأهل صحيح<b>٣٢ +٣ · ١٦ +٤ · ربع +٦<br>نصف +١٠ · نهائي +١٦</b></div>
+    <div class="ruleTile">❌ الفريق الخاطئ<b>٣٢ −٣ · ١٦ −٤ · ربع −٦<br>نصف −١٠ · نهائي −١٦</b><span style="color:var(--muted);font-size:12px">العقوبة في الإقصائي فقط</span></div>
   </div>
 
   <div class="ruleTile" style="border-color:rgba(74,184,200,.35)">
@@ -958,12 +999,20 @@ const T={en:{title:"WC '26 Prediction League",sub:'Riyadh time GMT+3 · Auto-sav
     </p>
   </div>
 
+  <div class="ruleTile" style="border-color:rgba(82,201,122,.35);background:rgba(82,201,122,.05)">
+    <span style="font-size:18px">🛟</span>
+    <b style="display:block;margin:4px 0">الحد الأدنى صفر (الإقصائي)</b>
+    <p style="color:var(--muted);margin:0;font-size:13px;line-height:1.8">
+      رصيدك لا يمكن أن ينزل تحت <b>الصفر</b> أبداً. عقوبات الإقصائي والرهانات الخاسرة قد تُنزلك، لكنها لا تدفنك — من وصل إلى صفر يعود بالنقاط عبر التوقعات. ولا يمكنك الرهان إلا بنقاط تملكها فعلاً.
+    </p>
+  </div>
+
   <div class="ruleTile" style="border-color:rgba(212,165,32,.35)">
     <span style="font-size:18px">🌍</span>
-    <b style="display:block;margin:4px 0">توقع البطل — يُقفل ١٩ يونيو</b>
+    <b style="display:block;margin:4px 0">توقع البطل</b>
     <p style="color:var(--muted);margin:0;font-size:13px;line-height:1.8">
-      اختر الفائز بكأس العالم قبل منتصف ليل ١٩ يونيو بتوقيت الرياض. يمنحك <b style="color:var(--gold2)">+١٦ نقطة</b> إن أصبت.
-      مستقل عن توقعات المباريات ويُقفل مبكراً حتى يلتزم الجميع قبل تحديد الإقصائي.
+      اختر الفائز بكأس العالم قبل <b>منتصف ليل ١٩ يونيو</b> (الرياض) — يمنحك <b style="color:var(--gold2)">+٢٠ نقطة</b> إن أصبت.
+      ولديك <b>تبديل واحد</b> حتى <b>٤ يوليو الساعة ١٩:٥٥</b> (قبل دور الـ١٦)؛ التوقع المُبدّل يمنحك <b style="color:var(--gold2)">+١٠</b> إن أصبت. بعدها يصبح نهائياً. لا عقوبة على التوقع الخاطئ.
     </p>
   </div>
 
@@ -983,7 +1032,7 @@ const T={en:{title:"WC '26 Prediction League",sub:'Riyadh time GMT+3 · Auto-sav
     <b style="display:block;margin:4px 0">الموعد النهائي</b>
     <p style="color:var(--muted);margin:0;font-size:13px;line-height:1.8">
       تُغلق التوقعات والرهانات <b>قبل ٥ دقائق من بداية كل مباراة</b> بتوقيت الرياض GMT+3.
-      بعد الإغلاق لا يمكن تغيير أي توقع أو رهان لتلك المباراة.
+      ويُغلق تبديل البطل في <b>٤ يوليو الساعة ١٩:٥٥</b>. بعد الإغلاق لا يمكن تغيير أي توقع أو رهان لتلك المباراة.
     </p>
   </div>
 
@@ -998,22 +1047,42 @@ const THEMES = [
   { id: 'ice',    en: '⚪ Ice',     ar: '⚪ جليدي'    },
   { id: 'red',    en: '🔴 Red',     ar: '🔴 أحمر'     },
 ];
+// Team themes the player can pick directly (Saudi first).
+const TEAM_THEMES = [
+  { id:'saudi', code:'sa',     en:'Saudi Arabia', ar:'السعودية' },
+  { id:'br',    code:'br',     en:'Brazil',       ar:'البرازيل' },
+  { id:'ar',    code:'ar',     en:'Argentina',    ar:'الأرجنتين' },
+  { id:'fr',    code:'fr',     en:'France',        ar:'فرنسا' },
+  { id:'es',    code:'es',     en:'Spain',         ar:'إسبانيا' },
+  { id:'eng',   code:'gb-eng', en:'England',       ar:'إنجلترا' },
+  { id:'de',    code:'de',     en:'Germany',       ar:'ألمانيا' },
+  { id:'pt',    code:'pt',     en:'Portugal',      ar:'البرتغال' },
+  { id:'ma',    code:'ma',     en:'Morocco',       ar:'المغرب' },
+  { id:'qa',    code:'qa',     en:'Qatar',         ar:'قطر' },
+  { id:'jo',    code:'jo',     en:'Jordan',        ar:'الأردن' },
+  { id:'ca',    code:'ca',     en:'Canada',        ar:'كندا' },
+  { id:'mx',    code:'mx',     en:'Mexico',        ar:'المكسيك' },
+  { id:'us',    code:'us',     en:'USA',           ar:'أمريكا' },
+  { id:'nl',    code:'nl',     en:'Netherlands',   ar:'هولندا' },
+  { id:'jp',    code:'jp',     en:'Japan',         ar:'اليابان' },
+];
 let THEME = localStorage.getItem('wc26theme') || 'pitch';
 function applyTheme(id) {
   THEME = id;
   localStorage.setItem('wc26theme', id);
   document.documentElement.setAttribute('data-theme', id === 'pitch' ? '' : id);
-  // Update active state in picker if open
-  document.querySelectorAll('.themePill').forEach(b => {
-    b.classList.toggle('active', b.dataset.theme === id);
-  });
+  document.querySelectorAll('.themePill').forEach(b => b.classList.toggle('active', b.dataset.theme === id));
 }
+function setMatchChamp(on){ /* deprecated: replaced by direct team picker */ }
 function renderThemePicker() {
   const wrap = $('themePickerWrap');
   if (!wrap) return;
-  wrap.innerHTML = THEMES.map(t =>
-    `<button class="filter themePill${THEME === t.id ? ' active' : ''}" data-theme="${t.id}" onclick="applyTheme('${t.id}')">${LANG === 'ar' ? t.ar : t.en}</button>`
-  ).join('');
+  const pill = (id, label) => `<button class="filter themePill${THEME === id ? ' active' : ''}" data-theme="${id}" onclick="applyTheme('${id}')">${label}</button>`;
+  const heading = (t) => `<div style="width:100%;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:0 0 6px">${t}</div>`;
+  const base = THEMES.map(t => pill(t.id, LANG === 'ar' ? t.ar : t.en)).join('');
+  const teams = TEAM_THEMES.map(t => pill(t.id, `<img src="https://flagcdn.com/w20/${t.code}.png" alt="" style="width:18px;height:13px;border-radius:2px;vertical-align:-2px;margin-inline-end:5px;box-shadow:0 0 0 1px rgba(0,0,0,.25)">${LANG === 'ar' ? t.ar : t.en}`)).join('');
+  wrap.innerHTML = heading(LANG === 'ar' ? 'الثيمات' : 'Themes') + base
+    + `<div style="width:100%;margin-top:12px"></div>` + heading(LANG === 'ar' ? '🌍 فريقي' : '🌍 My team') + teams;
 }
 function toggleThemePicker() {
   const p = $('themePanel');
@@ -1049,10 +1118,13 @@ function renderStats(){
   const submitted=matches.filter(m=>{const p=mine[m.no]||mine[String(m.no)];return p&&p.hg!==''&&p.hg!=null&&p.ag!==''&&p.ag!=null;}).length;
   const remainingOpen=matches.filter(m=>{const p=mine[m.no]||mine[String(m.no)];return !results[m.no]&&!locked(m)&&!(p&&p.hg!==''&&p.hg!=null&&p.ag!==''&&p.ag!=null);}).length;
   const pct=total?Math.round(submitted/total*100):0;
+  const _ch=STATE.champion||{}; const _cp=SESSION?(_ch.myPick||''):''; const _co=SESSION?(_ch.myOriginal||''):''; const _cChanged=(_ch.phase&&_ch.phase!=='early')&&_cp&&((!_co)||_cp!==_co); const _cv=_cChanged?(_ch.bonusSwitched||10):(_ch.bonusEarly||20);
+  const _csub=_cp?('+'+_cv+(_ch.winner?(_cp===_ch.winner?' ✓':' ✗'):'')):quickLabel('no pick','لم تختر');
   el.innerHTML=
     statTile(quickLabel('Predicted','تم توقعها'), `${submitted}/${total}`, `${pct}%`, true)+
     statTile(quickLabel('Need picks','الناقص'), remainingOpen, quickLabel('open games','مباريات متاحة'))+
-    statTile(quickLabel('Points','النقاط'), BETS_STATE.balance!=null?BETS_STATE.balance:(STATE.myBalance!=null?STATE.myBalance:'—'), quickLabel('total balance','الرصيد الكلي'));
+    statTile(quickLabel('Points','النقاط'), BETS_STATE.balance!=null?BETS_STATE.balance:(STATE.myBalance!=null?STATE.myBalance:'—'), quickLabel('total balance','الرصيد الكلي'))+
+    statTile(quickLabel('Champion','البطل'), _cp?teamHtml(_cp):'—', _csub);
   if($('quickHint'))$('quickHint').textContent=remainingOpen?quickLabel(`${remainingOpen} left`,`${remainingOpen} متبقية`):quickLabel('All set','مكتمل');
   call('getLeaderboard').then(r=>{
     if(!r||!r.ok||!SESSION)return;
@@ -1470,37 +1542,55 @@ async function loadChampion(){
   if(!STATE)return;
   const box=$('championBox'); if(!box)return;
   const ch=STATE.champion||{};
-  const locked=ch.locked||Date.now()>=new Date(ch.lockIso||'2026-06-19T23:59:00+03:00').getTime();
   const allTeams=['Mexico','South Africa','South Korea','Czechia','Canada','Bosnia and Herzegovina','Qatar','Switzerland','Brazil','Morocco','Haiti','Scotland','United States','Paraguay','Australia','Türkiye','Germany','Curaçao',"Côte d'Ivoire",'Ecuador','Netherlands','Japan','Sweden','Tunisia','Belgium','Egypt','IR Iran','New Zealand','Spain','Cabo Verde','Saudi Arabia','Uruguay','France','Senegal','Iraq','Norway','Argentina','Algeria','Austria','Jordan','Portugal','Congo DR','Uzbekistan','Colombia','England','Croatia','Ghana','Panama'].sort();
   const myPick=SESSION?ch.myPick||'':'';
+  const myOriginal=SESSION?ch.myOriginal||'':'';
   const winner=ch.winner||'';
+  const phase=ch.phase||'early';
+  const canPick=SESSION&&(ch.canPick!=null?ch.canPick:phase!=='locked');
+  const bonusEarly=ch.bonusEarly||20, bonusSwitched=ch.bonusSwitched||10;
+  // My pick's value: +20 if it matches my frozen June-19 original, else +10. Before the freeze, it's the early pick.
+  const myChanged = phase!=='early' && myPick && ((!myOriginal)||myPick!==myOriginal);
+  const myValue = myChanged?bonusSwitched:bonusEarly;
   let html='';
 
-  // Player pick card
   if(SESSION){
+    let pillCls,pillText;
+    if(phase==='early'){ pillCls='open'; pillText=`⏰ ${LANG==='ar'?'اختيار مبكر':'Early'} +${bonusEarly} · ${localTime(ch.earlyLockIso)}`; }
+    else if(phase==='switch'){ pillCls='open'; pillText=`🔁 ${LANG==='ar'?'يمكن التغيير حتى':'Change until'} ${localTime(ch.switchLockIso)}`; }
+    else { pillCls='locked'; pillText=`🔒 ${LANG==='ar'?'مقفل':'Locked'}`; }
+    const valNote=myPick?`<span class="pill" style="background:rgba(212,165,32,.12);color:var(--gold2);border-color:transparent">+${myValue} ${LANG==='ar'?'إن أصبت':'if correct'}</span>`:'';
     html+=`<div class="card soft" style="margin-bottom:12px">
-      <div class="between"><h3>${tr('championPick')}</h3>${locked?`<span class="pill statusTag locked">🔒 ${tr('championLock')}</span>`:`<span class="pill statusTag open">⏰ ${localTime(ch.lockIso)}</span>`}</div>
-      <div class="row" style="margin-top:10px">
-        ${locked
-          ? `<span class="pill">${myPick?teamHtml(myPick):tr('championNoPick')}</span>`
-          : `<select id="champSelect"><option value="">${tr('championPick')}…</option>${allTeams.map(t=>`<option value="${esc(t)}" ${myPick===t?'selected':''}>${esc(t)}</option>`).join('')}</select>
+      <div class="between"><h3>${tr('championPick')}</h3><span class="pill statusTag ${pillCls}">${pillText}</span></div>
+      <div class="row" style="margin-top:10px;flex-wrap:wrap;gap:8px">
+        ${canPick
+          ? `<select id="champSelect"><option value="">${tr('championPick')}…</option>${allTeams.map(t=>`<option value="${esc(t)}" ${myPick===t?'selected':''}>${esc(t)}</option>`).join('')}</select>
              <button class="primary" onclick="saveChampPick()">${tr('saveChampionPick')}</button>`
-        }
+          : `<span class="pill">${myPick?teamHtml(myPick):tr('championNoPick')}</span>`}
+        ${valNote}
         ${winner&&myPick?`<span class="pill ${myPick===winner?'statusTag done':'statusTag locked'}">${myPick===winner?tr('championCorrect'):tr('championWrong')}</span>`:''}
       </div>
+      ${(phase==='switch'&&canPick)?`<p class="muted" style="font-size:12px;margin:8px 0 0">${LANG==='ar'?`يمكنك تغيير اختيارك بحرّية حتى القفل. التغيير يبقى مخفياً — يرى الآخرون اختيارك ليوم ١٩ يونيو حتى ٤ يوليو. التغيير يجعل قيمتك +${bonusSwitched} بدل +${bonusEarly}.`:`You can change your pick freely until the lock. Changes stay hidden — others see your June-19 pick until July 4. Changing makes your pick worth +${bonusSwitched} instead of +${bonusEarly}.`}</p>`:''}
     </div>`;
   }
 
-  // Leaderboard
-  const _champ_tbd=`<span class="muted">TBD</span>`;html+=`<div class="card soft"><div class="between"><h3>${tr('championWinner')}: ${winner?teamHtml(winner):_champ_tbd}</h3></div>`;
-  if(!ch.locked){
+  const _tbd=`<span class="muted">TBD</span>`;
+  html+=`<div class="card soft"><div class="between"><h3>${tr('championWinner')}: ${winner?teamHtml(winner):_tbd}</h3></div>`;
+  if(phase==='early'){
     const totalPicked=ch.pickCount!=null?ch.pickCount:Object.keys(ch.picks||{}).length, total=(STATE.players||[]).length;
-    html+=`<div style="margin-top:10px;padding:14px;background:rgba(212,165,32,.06);border:1px solid rgba(212,165,32,.20);border-radius:10px;text-align:center"><p style="font-size:13px;color:var(--muted);margin:0 0 6px">🔒 ${LANG==='ar'?'تُكشف توقعات الجميع بعد إغلاق التصويت ١٩ يونيو':'Everyone\'s picks revealed after the June 19 deadline'}</p><span style="font-family:var(--font-display);font-size:24px;font-weight:900;color:var(--gold2)">${totalPicked}/${total}</span><p style="font-size:12px;color:var(--muted);margin:4px 0 0">${LANG==='ar'?'لاعب اختار':'players have picked'}</p></div></div>`;
+    html+=`<div style="margin-top:10px;padding:14px;background:rgba(212,165,32,.06);border:1px solid rgba(212,165,32,.20);border-radius:10px;text-align:center"><p style="font-size:13px;color:var(--muted);margin:0 0 6px">🔒 ${LANG==='ar'?'تُكشف توقعات الجميع بعد قفل الاختيار المبكر ١٩ يونيو':'Everyone\'s picks revealed after the June 19 deadline'}</p><span style="font-family:var(--font-display);font-size:24px;font-weight:900;color:var(--gold2)">${totalPicked}/${total}</span><p style="font-size:12px;color:var(--muted);margin:4px 0 0">${LANG==='ar'?'لاعب اختار':'players have picked'}</p></div></div>`;
   } else {
-    html+=`<div class="tableWrap" style="margin-top:10px"><table><thead><tr><th>#</th><th>${tr('player')}</th><th>${tr('championPick')}</th><th>Pts</th></tr></thead><tbody>`;
-    const picks=ch.picks||{};
+    const picks=ch.picks||{}, changed=ch.changedMap||{}, revealed=phase==='locked';
+    if(phase==='switch'){ html+=`<p class="muted" style="font-size:12px;margin:10px 0 0">${LANG==='ar'?'هذه اختيارات ١٩ يونيو. أي تغييرات تبقى مخفية حتى الكشف في ٤ يوليو.':'These are the June-19 picks. Any changes stay hidden until the July-4 reveal.'}</p>`; }
+    html+=`<div class="tableWrap" style="margin-top:10px"><table><thead><tr><th>#</th><th>${tr('player')}</th><th>${tr('championPick')}</th>${revealed?'<th>Pts</th>':''}</tr></thead><tbody>`;
     const players=(STATE.players||[]).slice().sort((a,b)=>{const ap=picks[a.id]||'',bp=picks[b.id]||'';const ac=winner&&ap===winner?1:0,bc=winner&&bp===winner?1:0;return bc-ac||a.name.localeCompare(b.name);});
-    players.forEach((p,i)=>{const pick=picks[p.id]||'';const correct=winner&&pick===winner;html+=`<tr><td>${i+1}</td><td>${esc(p.name)}</td><td>${pick?teamHtml(pick):`<span class="muted">${tr('championNoPick')}</span>`}</td><td><b>${correct?'+16':'—'}</b></td></tr>`;});
+    players.forEach((p,i)=>{
+      const pick=picks[p.id]||'';
+      const correct=winner&&pick===winner;
+      const val=correct?(changed[p.id]?bonusSwitched:bonusEarly):0;
+      const mark=revealed&&pick&&changed[p.id]?` <span class="muted" title="${LANG==='ar'?'غيّر اختياره':'changed pick'}" style="font-size:11px">🔁</span>`:'';
+      html+=`<tr><td>${i+1}</td><td>${esc(p.name)}</td><td>${pick?teamHtml(pick)+mark:`<span class="muted">${tr('championNoPick')}</span>`}</td>${revealed?`<td><b>${correct?'+'+val:'—'}</b></td>`:''}</tr>`;
+    });
     html+='</tbody></table></div></div>';
   }
   box.innerHTML=html;
@@ -1513,10 +1603,8 @@ async function saveChampPick(){
   if(!r.ok)return toast(r.msg,true);
   STATE.champion=STATE.champion||{};
   STATE.champion.myPick=r.team;
-  STATE.champion.picks=STATE.champion.picks||{};
-  STATE.champion.picks[SESSION.id]=r.team;
-  toast('OK');
-  loadChampion();
+  toast(LANG==='ar'?`تم الحفظ · +${r.value} إن أصبت`:`Saved · +${r.value} if correct`);
+  loadChampion(); renderStats();
 }
 
 
