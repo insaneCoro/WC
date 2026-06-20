@@ -387,6 +387,14 @@
     th { font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); background: var(--bg2); position: sticky; top: 0; }
     tr:hover td { background: rgba(212,165,32,.03); }
     .tableWrap { overflow: auto; border: 1px solid var(--line); border-radius: var(--r); }
+    /* Champion picks table has only 3–4 narrow columns, so it must NOT inherit the
+       580px floor that wide tables use — that floor pushed the team column off-screen
+       on phones. Fit it to the viewport and let team names wrap instead of truncate. */
+    .champTable { min-width: 0; }
+    .champTable th, .champTable td { padding: 9px 8px; }
+    .champTable td:first-child, .champTable th:first-child { width: 30px; }
+    .champTable .team { flex-wrap: wrap; }
+    .champTable .teamName { white-space: normal; overflow: visible; text-overflow: clip; word-break: break-word; }
     .rank1 td:first-child { color: var(--gold2); font-family: var(--font-display); font-size: 18px; font-weight: 900; }
 
     /* ── Rules ── */
@@ -1616,7 +1624,7 @@ async function loadChampion(){
   } else {
     const picks=ch.picks||{}, changed=ch.changedMap||{}, revealed=phase==='locked';
     if(phase==='switch'){ html+=`<p class="muted" style="font-size:12px;margin:10px 0 0">${LANG==='ar'?'هذه اختيارات ١٩ يونيو. أي تغييرات تبقى مخفية حتى الكشف في ٤ يوليو.':'These are the June-19 picks. Any changes stay hidden until the July-4 reveal.'}</p>`; }
-    html+=`<div class="tableWrap" style="margin-top:10px"><table><thead><tr><th>#</th><th>${tr('player')}</th><th>${tr('championPick')}</th>${revealed?'<th>Pts</th>':''}</tr></thead><tbody>`;
+    html+=`<div class="tableWrap" style="margin-top:10px"><table class="champTable"><thead><tr><th>#</th><th>${tr('player')}</th><th>${tr('championPick')}</th>${revealed?'<th>Pts</th>':''}</tr></thead><tbody>`;
     const players=(STATE.players||[]).slice().sort((a,b)=>{const ap=picks[a.id]||'',bp=picks[b.id]||'';const ac=winner&&ap===winner?1:0,bc=winner&&bp===winner?1:0;return bc-ac||a.name.localeCompare(b.name);});
     players.forEach((p,i)=>{
       const pick=picks[p.id]||'';
