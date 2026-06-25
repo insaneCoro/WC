@@ -705,8 +705,9 @@
     .rankCell { font-family: var(--font-display); font-weight: 700; color: var(--muted); }
     .standingsTable { min-width: 300px; }
     .standingsTable td,.standingsTable th { padding: 8px 6px; font-size: 13px; }
-    .standingsTable td:nth-child(2) { max-width: 130px; }
-    .standingsTable td:nth-child(2) .teamName { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:90px; display:block; }
+    .standingsTable td:nth-child(2) { max-width: 130px; overflow: hidden; }
+    .standingsTable td:nth-child(2) .team { overflow: hidden; min-width: 0; max-width: 100%; }
+    .standingsTable td:nth-child(2) .teamName { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .qualified-1 td:first-child { color: var(--good); }
     .qualified-2 td:first-child { color: var(--gold2); }
 
@@ -1530,7 +1531,7 @@ function renderGroups(){
     html+=`<div class="tableWrap"><table class="standingsTable"><thead><tr><th>#</th><th>${tr('team')}</th><th title="Played">P</th><th title="Wins">W</th><th title="Draws">D</th><th title="Losses">L</th><th title="Goals for">GF</th><th title="Goals against">GA</th><th title="Goal difference">GD</th><th title="Points">Pts</th></tr></thead><tbody>`;
     teams.forEach((t,i)=>{
       const qCls=i===0?'qualified-1':i===1?'qualified-2':'';
-      html+=`<tr class="${qCls}"><td class="rankCell">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</td><td>${teamHtml(t.team)}</td><td>${t.P}</td><td>${t.W}</td><td>${t.D}</td><td>${t.L}</td><td>${t.GF}</td><td>${t.GA}</td><td>${t.GD>0?'+'+t.GD:t.GD}</td><td><b>${t.Pts}</b></td></tr>`;
+      html+=`<tr class="${qCls}"><td class="rankCell">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</td><td>${teamHtml(t.team.length>14?t.team.slice(0,13)+'…':t.team)}</td><td>${t.P}</td><td>${t.W}</td><td>${t.D}</td><td>${t.L}</td><td>${t.GF}</td><td>${t.GA}</td><td>${t.GD>0?'+'+t.GD:t.GD}</td><td><b>${t.Pts}</b></td></tr>`;
     });
     html+='</tbody></table></div></div>';
   });
