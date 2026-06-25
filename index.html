@@ -703,11 +703,11 @@
     .groupMeta { font-size: 11px; color: var(--muted); }
     .groupLetterBig { width: 40px; height: 34px; display: inline-flex; align-items: center; justify-content: center; border-radius: 10px; font-family: var(--font-display); font-size: 18px; font-weight: 900; color: #0B1F12; flex-shrink: 0; }
     .rankCell { font-family: var(--font-display); font-weight: 700; color: var(--muted); }
-    .standingsTable { min-width: 300px; }
-    .standingsTable td,.standingsTable th { padding: 8px 6px; font-size: 13px; }
-    .standingsTable td:nth-child(2) { max-width: 130px; overflow: hidden; }
-    .standingsTable td:nth-child(2) .team { overflow: hidden; min-width: 0; max-width: 100%; }
-    .standingsTable td:nth-child(2) .teamName { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .standingsTable { min-width: 0; width: 100%; }
+    .standingsTable td,.standingsTable th { padding: 5px 3px; font-size: 12px; }
+    .standingsTable th { font-size: 11px; }
+    .standingsTable td:nth-child(2) { white-space: nowrap; }
+    .teamCode { font-size: 12px; font-weight: 700; letter-spacing: .03em; }
     .qualified-1 td:first-child { color: var(--good); }
     .qualified-2 td:first-child { color: var(--gold2); }
 
@@ -1312,6 +1312,9 @@ const GROUP_ROSTERS = {
 function cleanTeamName(team){return String(team||'').replace(/\s*\(.+?\)/g,'').replace(/\s+/g,' ').trim()}
 function flagCode(team){let t=cleanTeamName(team);if(!t||t==='TBD'||/winner|runner-up|play-off|playoff|third|second|first/i.test(t))return '';return FLAG_ALIAS[t]||''}
 function flagEmoji(code){if(!code)return '🏳️';let special={'gb-eng':'🏴','gb-sct':'🏴','gb-wls':'🏴','gb-nir':'🏳️'};if(special[code])return special[code];let cc=code.toUpperCase();if(!/^[A-Z]{2}$/.test(cc))return '🏳️';return String.fromCodePoint(...[...cc].map(c=>127397+c.charCodeAt(0)))}
+const TEAM_CODES={'Mexico':'MEX','South Africa':'RSA','South Korea':'KOR','Czechia':'CZE','Canada':'CAN','Bosnia and Herzegovina':'BIH','Qatar':'QAT','Switzerland':'SUI','Brazil':'BRA','Morocco':'MAR','Haiti':'HAI','Scotland':'SCO','United States':'USA','Paraguay':'PAR','Australia':'AUS','Türkiye':'TUR','Germany':'GER','Curaçao':'CUW',"Côte d'Ivoire":'CIV','Ecuador':'ECU','Netherlands':'NED','Japan':'JPN','Sweden':'SWE','Tunisia':'TUN','Belgium':'BEL','Egypt':'EGY','IR Iran':'IRN','New Zealand':'NZL','Spain':'ESP','Cabo Verde':'CPV','Cape Verde':'CPV','Cape Verde Islands':'CPV','Saudi Arabia':'KSA','Uruguay':'URU','France':'FRA','Senegal':'SEN','Iraq':'IRQ','Norway':'NOR','Argentina':'ARG','Algeria':'ALG','Austria':'AUT','Jordan':'JOR','Portugal':'POR','Congo DR':'COD','Uzbekistan':'UZB','Colombia':'COL','England':'ENG','Croatia':'CRO','Ghana':'GHA','Panama':'PAN','Kenya':'KEN','Venezuela':'VEN','Indonesia':'IDN','Italy':'ITA','Poland':'POL','Serbia':'SRB','Greece':'GRE','Hungary':'HUN','Denmark':'DEN','Romania':'ROU','Ukraine':'UKR','Turkey':'TUR','Iran':'IRN','Peru':'PER','Chile':'CHI','Bolivia':'BOL','Costa Rica':'CRC','Honduras':'HON','Guatemala':'GUA','Jamaica':'JAM','Trinidad and Tobago':'TRI','Cameroon':'CMR','Nigeria':'NGA','Ivory Coast':'CIV','Mali':'MLI','Burkina Faso':'BFA','Tanzania':'TAN','Cuba':'CUB','Bahrain':'BHR','Oman':'OMA','Kuwait':'KUW','UAE':'UAE','China':'CHN','India':'IND','Uzbekistan':'UZB','New Caledonia':'NCL','Fiji':'FIJ','Tahiti':'TAH'};
+function teamCode(n){return TEAM_CODES[n]||(n.split(' ').length>1?n.split(' ').map(w=>w[0]).join('').slice(0,3).toUpperCase():n.slice(0,3).toUpperCase());}
+function teamHtmlCode(t){const c=flagCode(t);const emoji=flagEmoji(c);const img=c?`<img class="flagImg" alt="${esc(t)}" src="https://flagcdn.com/w40/${c}.png" onerror="this.style.display='none';this.nextElementSibling.style.display='inline'"><span class="flagFallback" style="display:none">${emoji}</span>`:`<span class="flagFallback">${emoji}</span>`;return `<span class="team">${img}<span class="teamCode">${teamCode(t)}</span></span>`;}
 function teamHtml(t,cls=''){let c=flagCode(t);let emoji=flagEmoji(c);let img=c?`<img class="flagImg" alt="${esc(t)} flag" src="https://flagcdn.com/w40/${c}.png" onerror="this.style.display='none';this.nextElementSibling.style.display='inline'"><span class="flagFallback" style="display:none">${emoji}</span>`:`<span class="flagFallback">${emoji}</span>`;return `<span class="team ${cls}">${img}<span class="teamName">${esc(t||'TBD')}</span></span>`}
 
 function _scoreOnClient(pred, result, matchNo, stage) {
@@ -1531,7 +1534,7 @@ function renderGroups(){
     html+=`<div class="tableWrap"><table class="standingsTable"><thead><tr><th>#</th><th>${tr('team')}</th><th title="Played">P</th><th title="Wins">W</th><th title="Draws">D</th><th title="Losses">L</th><th title="Goals for">GF</th><th title="Goals against">GA</th><th title="Goal difference">GD</th><th title="Points">Pts</th></tr></thead><tbody>`;
     teams.forEach((t,i)=>{
       const qCls=i===0?'qualified-1':i===1?'qualified-2':'';
-      html+=`<tr class="${qCls}"><td class="rankCell">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</td><td>${teamHtml(t.team.length>14?t.team.slice(0,13)+'…':t.team)}</td><td>${t.P}</td><td>${t.W}</td><td>${t.D}</td><td>${t.L}</td><td>${t.GF}</td><td>${t.GA}</td><td>${t.GD>0?'+'+t.GD:t.GD}</td><td><b>${t.Pts}</b></td></tr>`;
+      html+=`<tr class="${qCls}"><td class="rankCell">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</td><td>${teamHtmlCode(t.team)}</td><td>${t.P}</td><td>${t.W}</td><td>${t.D}</td><td>${t.L}</td><td>${t.GF}</td><td>${t.GA}</td><td>${t.GD>0?'+'+t.GD:t.GD}</td><td><b>${t.Pts}</b></td></tr>`;
     });
     html+='</tbody></table></div></div>';
   });
