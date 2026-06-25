@@ -874,14 +874,15 @@
     .koSlot.ph{font-size:12px;color:var(--muted);font-style:italic;padding:2px 0}
 
     /* tree (split bracket) */
-    .bracketScroll{overflow:auto;padding:8px 2px 16px;touch-action:pan-x pan-y}
+    .bracketScroll{overflow:auto;padding:8px 2px 16px;touch-action:pan-x pan-y pinch-zoom}
     .bracketScroll::-webkit-scrollbar{height:8px}
     .bracketScroll::-webkit-scrollbar-thumb{background:var(--gold-line);border-radius:999px}
     .bracketZoomCtrl{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;gap:8px}
     .bracketZoomBtns{display:flex;align-items:center;gap:4px}
     .bracketZoomBtns button{width:30px;height:30px;padding:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700}
     .bracketZoomLbl{font-size:12px;color:var(--muted);min-width:36px;text-align:center}
-    .bracketTree{transform-origin:top left;transition:transform .15s;display:inline-flex}
+    .bracketZoomWrap{position:relative;overflow:hidden}
+    .bracketTree{transform-origin:top left;display:inline-flex;transition:transform .15s}
     .bracketTree{display:flex;align-items:stretch;justify-content:center;min-width:max-content}
     .halfTree{display:flex;align-items:center}
     .branch{display:flex;align-items:center}
@@ -1553,13 +1554,21 @@ function koMatchCard(no){var m=KO_BY_NO[no];if(!m)return '';var r=STATE.results&
 function koNode(no){var f=KO_FEEDERS[no];if(!f)return `<div class="leaf">${koMatchCard(no)}</div>`;return `<div class="branch"><div class="children">${koNode(f[0])}${koNode(f[1])}</div><div class="parent">${koMatchCard(no)}</div></div>`;}
 let BRACKET_ZOOM=1;
 function setBracketZoom(z){
-  BRACKET_ZOOM=Math.max(0.15,Math.min(1,z));
+  BRACKET_ZOOM=Math.max(0.1,Math.min(1.5,z));
   const tree=document.querySelector('.bracketTree');
-  const scroll=document.querySelector('.bracketScroll');
-  if(!tree||!scroll)return;
+  const wrap=document.querySelector('.bracketZoomWrap');
+  if(!tree||!wrap)return;
+  // Reset to measure natural (unscaled) dimensions
+  tree.style.transition='none';
+  tree.style.transform='scale(1)';
+  void tree.offsetWidth; // force reflow
+  const nw=tree.scrollWidth, nh=tree.scrollHeight;
+  // Set wrapper to scaled dimensions — bracketScroll scrolls the wrapper,
+  // so its size controls exactly how far the user can scroll (no empty space)
+  wrap.style.width=Math.ceil(nw*BRACKET_ZOOM)+'px';
+  wrap.style.height=Math.ceil(nh*BRACKET_ZOOM)+'px';
+  tree.style.transition='transform .15s';
   tree.style.transform=`scale(${BRACKET_ZOOM})`;
-  // shrink the scroll container so it doesn't leave dead space below
-  scroll.style.height=Math.ceil(tree.scrollHeight*BRACKET_ZOOM+24)+'px';
   const lbl=$('bracketZoomLbl');
   if(lbl)lbl.textContent=Math.round(BRACKET_ZOOM*100)+'%';
 }
@@ -1567,7 +1576,9 @@ function fitBracket(){
   const tree=document.querySelector('.bracketTree');
   const scroll=document.querySelector('.bracketScroll');
   if(!tree||!scroll)return;
-  tree.style.transform='scale(1)'; // reset to measure natural width
+  tree.style.transition='none';
+  tree.style.transform='scale(1)';
+  void tree.offsetWidth;
   const fit=Math.min(1,scroll.clientWidth/tree.scrollWidth);
   setBracketZoom(fit);
 }
@@ -1576,9 +1587,6 @@ function scrollToActiveRound(){
   if(!scroll)return;
   const max=scroll.scrollWidth-scroll.clientWidth;
   if(max<=0)return;
-  // Find first round that still has unplayed matches → scroll toward it
-  // Bracket grows outside→in: R32 at edges, Final at center
-  // Scroll percentages: R32→0%, R16→0%, QF→20%, SF→35%, Final→50%
   const pcts={73:0,89:0,97:0.20,101:0.35,104:0.50};
   const rounds=[[73,88],[89,96],[97,100],[101,102],[104,104]];
   let startNo=73;
@@ -1589,22 +1597,42 @@ function scrollToActiveRound(){
   }
   scroll.scrollLeft=max*(pcts[startNo]||0);
 }
+function initBracketPinch(){
+  const scroll=document.querySelector('.bracketScroll');
+  if(!scroll||scroll._pinchInit)return;
+  scroll._pinchInit=true;
+  let startDist=0,startZoom=1;
+  scroll.addEventListener('touchstart',e=>{
+    if(e.touches.length===2){
+      startDist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+      startZoom=BRACKET_ZOOM;
+      e.preventDefault();
+    }
+  },{passive:false});
+  scroll.addEventListener('touchmove',e=>{
+    if(e.touches.length===2){
+      const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+      setBracketZoom(startZoom*(d/startDist));
+      e.preventDefault();
+    }
+  },{passive:false});
+}
 function koTreeHtml(){
-  return `<div class="bracketScroll"><div class="bracketTree">
+  return `<div class="bracketScroll"><div class="bracketZoomWrap"><div class="bracketTree">
      <div class="halfTree left">${koNode(101)}</div>
      <div class="centerCol">
         <div class="finalBox"><div class="champCrown">🏆</div><div class="koRoundCap">${tr('final')}</div>${koMatchCard(104)}</div>
         <div class="thirdBox"><div class="koRoundCap muted2">${tr('thirdPlace')}</div>${koMatchCard(103)}</div>
      </div>
      <div class="halfTree right">${koNode(102)}</div>
-  </div></div>`;
+  </div></div></div>`;
 }
 function renderBracket(){
   if(!$('bracketBox')||!STATE)return;
   KO_BY_NO={};(STATE.matches||[]).forEach(function(m){KO_BY_NO[m.no]=m;});
   const ar=LANG==='ar';
   const zoomCtrl=`<div class="bracketZoomCtrl">
-    <span class="tiny muted">${ar?'اسحب للتمرير':'Drag to scroll'}</span>
+    <span class="tiny muted">${ar?'اسحب للتمرير · قرّب بإصبعين':'Drag to scroll · Pinch to zoom'}</span>
     <div class="bracketZoomBtns">
       <button class="ghost" onclick="setBracketZoom(BRACKET_ZOOM-0.15)" title="Zoom out">−</button>
       <span id="bracketZoomLbl" class="bracketZoomLbl">—</span>
@@ -1614,8 +1642,7 @@ function renderBracket(){
   </div>`;
   const bar=`<div class="koBar"><div class="koLegend"><span class="pill" style="background:rgba(82,201,122,.14);color:var(--good);border-color:transparent">${LANG==='ar'?'● المتأهل':'● Advances'}</span></div></div>`;
   $('bracketBox').innerHTML=zoomCtrl+bar+koTreeHtml();
-  // Default: fit to screen then scroll to active round
-  requestAnimationFrame(()=>{fitBracket();scrollToActiveRound();});
+  requestAnimationFrame(()=>{fitBracket();scrollToActiveRound();initBracketPinch();});
 }
 
 function restoreAdmin(){if(ADMIN_PIN){$('adminLoginBox').classList.add('hidden');$('adminBox').classList.remove('hidden');applyHiddenTabs();renderAdmin()}else{$('adminLoginBox').classList.remove('hidden');$('adminBox').classList.add('hidden')}}async function adminLogin(){let pin=$('adminPin').value.trim();let r=await call('adminLogin',pin);if(!r.ok)return toast(tr('wrongAdmin'),true);ADMIN_PIN=pin;localStorage.setItem('wc26admin',pin);applyHiddenTabs();restoreAdmin()}function renderAdmin(section){if(!section)section=ADMIN_SECTION;ADMIN_SECTION=section;localStorage.setItem('wc26adminSection',section);let items=[['players','adminTabPlayers'],['matrix','adminTabMatrix'],['matches','adminTabMatches'],['results','adminTabResults'],['predictions','adminTabPreds'],['visibility','adminTabVis'],['bets','adminTabBets'],['adjust','adminTabAdjust'],['champion','adminTabChampion'],['tabs','adminTabHide'],['sync','adminTabSync'],['reset','adminTabReset']];$('adminSide').innerHTML=items.map(([k,l])=>`<button class="ghost ${section===k?'active':''}" onclick="renderAdmin('${k}')">${tr(l)}</button>`).join('');({players:adminPlayers,matrix:adminMatrix,matches:adminMatches,results:adminResults,predictions:adminPredictions,visibility:adminVisibilityUI,bets:adminBets,adjust:adminAdjustUI,champion:adminChampionPicks,tabs:adminHideTabsUI,sync:adminSync,reset:adminReset}[section])()}
