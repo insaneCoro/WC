@@ -705,6 +705,8 @@
     .rankCell { font-family: var(--font-display); font-weight: 700; color: var(--muted); }
     .standingsTable { min-width: 300px; }
     .standingsTable td,.standingsTable th { padding: 8px 6px; font-size: 13px; }
+    .standingsTable td:nth-child(2) { max-width: 130px; }
+    .standingsTable td:nth-child(2) .teamName { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:90px; display:block; }
     .qualified-1 td:first-child { color: var(--good); }
     .qualified-2 td:first-child { color: var(--gold2); }
 
@@ -713,12 +715,14 @@
     .matrixTable { border-collapse: collapse; min-width: 900px; }
     .matrixTable th,.matrixTable td { padding: 6px 8px; border: 1px solid var(--line2); text-align: center; font-size: 12px; white-space: nowrap; }
     .matrixTable th { background: var(--bg2); font-family: var(--font-display); font-weight: 700; font-size: 11px; letter-spacing:.04em; position: sticky; top: 0; z-index: 2; }
-    .matrixTable th.stickyCol { left: 0; z-index: 3; }
-    .matrixTable td.stickyCol { position: sticky; left: 0; background: var(--panel); font-weight: 600; font-size: 13px; text-align: start; padding-inline: 10px; }
+    .matrixTable th.stickyCol { position: sticky; left: 0; top: 0; z-index: 4; background: var(--bg2); border-right: 2px solid var(--gold-line); min-width: 90px; }
+    .matrixTable td.stickyCol { position: sticky; left: 0; z-index: 1; background: var(--bg2); font-weight: 600; font-size: 13px; text-align: start; padding-inline: 10px; border-right: 2px solid var(--gold-line); min-width: 90px; }
+    .matrixTable tr.mxActive td.stickyCol { background: var(--active1); color: var(--active-text); }
+    .matrixTable tr.mxActive td { outline: 1px solid var(--gold-line); }
     .matrixTable td.mxExact   { background: rgba(82,201,122,.18);  color: var(--good); font-weight: 700; }
     .matrixTable td.mxOutcome { background: rgba(212,165,32,.14);  color: var(--gold2);font-weight: 700; }
     .matrixTable td.mxWrong   { background: rgba(232,80,80,.14);   color: var(--bad);  font-weight: 700; }
-    .matrixTable td.mxNone    { color: var(--dim); }
+    .matrixInfo { font-size: 12px; padding: 6px 10px; background: var(--bg2); border: 1px solid var(--gold-line); border-radius: var(--r); margin-bottom: 6px; color: var(--gold2); min-height: 28px; transition: opacity .2s; }
     .matrixTable td.mxTotal   { background: var(--panel2); font-family: var(--font-display); font-size: 15px; font-weight: 900; position: sticky; right: 0; }
 
   
@@ -1757,16 +1761,19 @@ async function adminMatrix(){
   $('adminContent').innerHTML=`<div class="spinner">${LANG==='ar'?'جاري التحميل…':'Loading…'}</div>`;
   const r=await call('adminGetFullMatrix',ADMIN_PIN);
   if(!r.ok)return $('adminContent').innerHTML='<p class="muted">'+esc(r.msg)+'</p>';
-  const matches=r.matches.filter(m=>m.result); // only show completed
+  const matches=r.matches.filter(m=>m.result);
   if(!matches.length){$('adminContent').innerHTML='<p class="muted">'+(LANG==='ar'?'لا توجد نتائج بعد':'No results yet')+'</p>';return;}
-  let html='<div class="matrixWrap"><table class="matrixTable"><thead><tr><th class="stickyCol">'+tr('player')+'</th>';
+  const ar=LANG==='ar';
+  // Info bar — updates when user taps a row
+  let html=`<div class="matrixInfo" id="matrixInfo">${ar?'👆 اضغط على أي صف لتعريفه':'👆 Tap any row to identify the player'}</div>`;
+  html+='<div class="matrixWrap"><table class="matrixTable"><thead><tr><th class="stickyCol">'+tr('player')+'</th>';
   matches.forEach(m=>{
-    const stage=stageLabel(m); const short=m.h.split(' ')[0]+' v '+m.a.split(' ')[0];
-    html+=`<th title="#${m.no} ${esc(stage)}: ${esc(m.h)} vs ${esc(m.a)}">#${m.no}</th>`;
+    const short=m.h.split(' ')[0].slice(0,3).toUpperCase()+'-'+m.a.split(' ')[0].slice(0,3).toUpperCase();
+    html+=`<th title="#${m.no}: ${esc(m.h)} vs ${esc(m.a)}">#${m.no}</th>`;
   });
-  html+='<th class="stickyCol">'+tr('totalPoints')+'</th></tr></thead><tbody>';
-  r.players.forEach(p=>{
-    html+=`<tr><td class="stickyCol">${esc(p.name)}</td>`;
+  html+=`<th class="stickyCol" style="right:0;left:auto">${tr('totalPoints')}</th></tr></thead><tbody>`;
+  r.players.forEach((p,idx)=>{
+    html+=`<tr onclick="mxSelectRow(this,'${esc(p.name)}')" style="cursor:pointer"><td class="stickyCol">${esc(p.name)}</td>`;
     matches.forEach(m=>{
       const c=p.cells[m.no];
       if(!c){html+='<td class="mxNone">—</td>';return;}
@@ -1776,10 +1783,17 @@ async function adminMatrix(){
       const predStr=c.pred?`${c.pred.hg}-${c.pred.ag}`:'?';
       html+=`<td class="${cls}" title="${esc(predStr)}">${pts}</td>`;
     });
-    html+=`<td class="mxTotal">${p.total>0?'+':''}${p.total}</td></tr>`;
+    html+=`<td class="mxTotal stickyCol" style="right:0;left:auto">${p.total>0?'+':''}${p.total}</td></tr>`;
   });
   html+='</tbody></table></div>';
   $('adminContent').innerHTML=html;
+}
+function mxSelectRow(tr, name){
+  document.querySelectorAll('.matrixTable tr.mxActive').forEach(r=>r.classList.remove('mxActive'));
+  tr.classList.add('mxActive');
+  const info=$('matrixInfo');
+  if(info)info.textContent='👤 '+name;
+  tr.scrollIntoView({block:'nearest'});
 }
 
 async function adminSync(){let r=await call('getApiSyncStatus',ADMIN_PIN);$('adminContent').innerHTML=`<p class="muted">${tr('apiHelp')}</p><input id="apiToken" class="wide" placeholder="${tr('apiToken')}"><div class="row section"><button class="ghost" onclick="saveToken()">${tr('saveApiToken')}</button><button class="primary" onclick="syncNow()">${tr('syncNow')}</button><button class="ghost" onclick="enableSync()">${tr('enableAutoSync')}</button><button class="ghost" onclick="disableSync()">${tr('disableAutoSync')}</button><button class="ghost" onclick="rebuildBoard()">${LANG==='ar'?'إعادة حساب الترتيب':'Rebuild standings'}</button><button class="ghost" onclick="debugSync()">${LANG==='ar'?'🔍 تشخيص المزامنة':'🔍 Debug sync'}</button></div><p id="syncMsg" class="muted">Token: ${r.hasToken?'✅':'❌'} · Auto: ${r.autoSync?'ON':'OFF'}${r.lastSyncAt?` · ${LANG==='ar'?'آخر مزامنة':'Last sync'}: ${localTime(new Date(r.lastSyncAt).toISOString())} — ${esc(r.lastSyncMsg||'')}`:''}</p><div id="debugOut"></div>`}async function saveToken(){let r=await call('setFootballDataToken',ADMIN_PIN,$('apiToken').value.trim());if(!r.ok)return toast(r.msg,true);toast('OK');adminSync()}async function syncNow(){let r=await call('syncFootballData',ADMIN_PIN);if(!r.ok)return toast(r.msg,true);let um=(r.unmapped||[]);let base=`Mapped ${r.mapped}; results ${r.updatedResults}; unmapped ${um.length}${(r.locked&&r.locked.length)?'; protected #'+r.locked.join(', #'):''}`;let extra=um.length?('<br><b>'+(LANG==='ar'?'لم تُطابَق:':'Not matched:')+'</b> '+um.map(function(x){var hasTeams=x.home||x.away;var teams=hasTeams?esc((x.home||'?')+' '+(LANG==='ar'?'ضد':'vs')+' '+(x.away||'?')):('<i>'+(LANG==='ar'?'فريقان غير محددين بعد':'teams not assigned yet')+'</i>');var st=x.stage?(' ['+esc(String(x.stage))+']'):'';var when=x.date?(' · '+esc(localTime(x.date))):'';return teams+st+when;}).join('; ')):'';$('syncMsg').innerHTML=esc(base)+extra;toast('OK');init()}async function enableSync(){let r=await call('enableAutoSync',ADMIN_PIN);if(!r.ok)return toast(r.msg,true);toast('OK');adminSync()}async function disableSync(){let r=await call('disableAutoSync',ADMIN_PIN);if(!r.ok)return toast(r.msg,true);toast('OK');adminSync()}async function rebuildBoard(){let r=await call('adminRebuildBoard',ADMIN_PIN);if(!r.ok)return toast(r.msg,true);toast(LANG==='ar'?'تم تحديث الترتيب':'Standings rebuilt');init()}
