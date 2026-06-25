@@ -1595,14 +1595,21 @@ function koHealthHtml(){
   var title=ar?('فحص الأدوار الإقصائية ('+iss.length+')'):('Knockout check ('+iss.length+')');
   return '<div class="card soft" style="border:1px solid var(--gold-line);background:var(--gold-glow);margin-bottom:10px"><b>⚠️ '+title+'</b><ul style="margin:6px 0 0;padding-inline-start:18px;font-size:13px;line-height:1.5">'+rows+'</ul></div>';
 }
-async function adminResults(){adminChampionResult();let _lk=await call('adminGetResultLocks',ADMIN_PIN);let LOCKS=(_lk&&_lk.ok&&_lk.locks)||[];let html=koHealthHtml()+'<p class="muted">'+tr('resultsHelp')+' '+tr('lockResultHelp')+'</p><div class="grid">'+STATE.matches.map(m=>{let r=(STATE.results||{})[m.no]||{},ko=isKO(m),hasR=!!(STATE.results&&STATE.results[m.no]),isLk=LOCKS.indexOf(m.no)>=0;return `<div class="card soft"><div><b>#${m.no}</b> ${teamHtml(m.h)} <span class="vs">VS</span> ${teamHtml(m.a)}</div><div class="scorebox"><input data-res="${m.no}" data-k="hg" type="number" value="${r.hg??''}"><span class="scoreDash"></span><input data-res="${m.no}" data-k="ag" type="number" value="${r.ag??''}"></div>${ko?`<div class="koBox row"><label class="pill"><input data-res="${m.no}" data-k="pen" type="checkbox" ${r.pen?'checked':''}> ${tr('penalties')}</label><select data-res="${m.no}" data-k="w"><option value="">${tr('winner')}</option><option value="H" ${r.w==='H'?'selected':''}>${esc(m.h)}</option><option value="A" ${r.w==='A'?'selected':''}>${esc(m.a)}</option></select>${r.hg!=null&&r.ag!=null&&Number(r.hg)===Number(r.ag)&&!r.w?`<span class='pill warnTag'>${LANG==='ar'?'حدد المتأهل':'Winner required'}</span>`:''}</div>`:''}
-${(hasR||isLk)?`<label style='display:flex;align-items:center;gap:6px;margin-top:6px;font-size:12px;color:var(--muted)'><input type='checkbox' data-lock='${m.no}' ${isLk?'checked':''}> ${tr('lockResult')}</label>`:''}${(STATE.results&&STATE.results[m.no])?`<button class='ghost danger' style='margin-top:6px;width:100%' onclick='deleteResult(${m.no})'>${tr('deleteResult')} #${m.no}</button>`:''}</div>`}).join('')+'</div><div class="section"><button class="primary" onclick="saveResults()">'+tr('saveResults')+'</button></div>';$('adminContent').innerHTML=html}function adminChampionResult(){
+async function adminResults(){
+  $('adminContent').innerHTML=`<div class="spinner">${LANG==='ar'?'جاري التحميل…':'Loading…'}</div>`;
+  let _lk=await call('adminGetResultLocks',ADMIN_PIN);
+  let LOCKS=(_lk&&_lk.ok&&_lk.locks)||[];
+  let html=adminChampionCardHtml()+koHealthHtml()+'<p class="muted">'+tr('resultsHelp')+' '+tr('lockResultHelp')+'</p><div class="grid">'+STATE.matches.map(m=>{let r=(STATE.results||{})[m.no]||{},ko=isKO(m),hasR=!!(STATE.results&&STATE.results[m.no]),isLk=LOCKS.indexOf(m.no)>=0;return `<div class="card soft"><div><b>#${m.no}</b> ${teamHtml(m.h)} <span class="vs">VS</span> ${teamHtml(m.a)}</div><div class="scorebox"><input data-res="${m.no}" data-k="hg" type="number" value="${r.hg??''}"><span class="scoreDash"></span><input data-res="${m.no}" data-k="ag" type="number" value="${r.ag??''}"></div>${ko?`<div class="koBox row"><label class="pill"><input data-res="${m.no}" data-k="pen" type="checkbox" ${r.pen?'checked':''}> ${tr('penalties')}</label><select data-res="${m.no}" data-k="w"><option value="">${tr('winner')}</option><option value="H" ${r.w==='H'?'selected':''}>${esc(m.h)}</option><option value="A" ${r.w==='A'?'selected':''}>${esc(m.a)}</option></select>${r.hg!=null&&r.ag!=null&&Number(r.hg)===Number(r.ag)&&!r.w?`<span class='pill warnTag'>${LANG==='ar'?'حدد المتأهل':'Winner required'}</span>`:''}</div>`:''}
+${(hasR||isLk)?`<label style='display:flex;align-items:center;gap:6px;margin-top:6px;font-size:12px;color:var(--muted)'><input type='checkbox' data-lock='${m.no}' ${isLk?'checked':''}> ${tr('lockResult')}</label>`:''}${(STATE.results&&STATE.results[m.no])?`<button class='ghost danger' style='margin-top:6px;width:100%' onclick='deleteResult(${m.no})'>${tr('deleteResult')} #${m.no}</button>`:''}</div>`}).join('')+'</div><div class="section"><button class="primary" onclick="saveResults()">'+tr('saveResults')+'</button></div>';
+  $('adminContent').innerHTML=html;
+}
+function adminChampionCardHtml(){
   const allTeams=['Mexico','South Africa','South Korea','Czechia','Canada','Bosnia and Herzegovina','Qatar','Switzerland','Brazil','Morocco','Haiti','Scotland','United States','Paraguay','Australia','Türkiye','Germany','Curaçao',"Côte d'Ivoire",'Ecuador','Netherlands','Japan','Sweden','Tunisia','Belgium','Egypt','IR Iran','New Zealand','Spain','Cabo Verde','Saudi Arabia','Uruguay','France','Senegal','Iraq','Norway','Argentina','Algeria','Austria','Jordan','Portugal','Congo DR','Uzbekistan','Colombia','England','Croatia','Ghana','Panama'].sort();
   const current=(STATE.champion&&STATE.champion.winner)||'';
   const sel=`<select id="champWinnerSelect"><option value="">— ${tr('championWinner')} —</option>${allTeams.map(t=>`<option value="${esc(t)}" ${current===t?'selected':''}>${esc(t)}</option>`).join('')}</select>`;
-  const existing=$('adminContent').innerHTML;
-  $('adminContent').innerHTML=`<div class="card soft" style="margin-bottom:12px"><h3>${tr('championTitle')}</h3><div class="row" style="margin-top:8px">${sel}<button class="primary" onclick="saveChampWinner()">${tr('setChampionWinner')}</button></div>${current?`<p class="tiny">${LANG==='ar'?'البطل الحالي':'Current winner'}: <b>${esc(current)}</b></p>`:''}</div>`+existing;
+  return `<div class="card soft" style="margin-bottom:12px"><h3>${tr('championTitle')}</h3><div class="row" style="margin-top:8px">${sel}<button class="primary" onclick="saveChampWinner()">${tr('setChampionWinner')}</button></div>${current?`<p class="tiny">${LANG==='ar'?'البطل الحالي':'Current winner'}: <b>${esc(current)}</b></p>`:''}</div>`;
 }
+function adminChampionResult(){}
 async function saveChampWinner(){
   const t=$('champWinnerSelect')?.value; if(!t)return;
   const r=await call('adminSetChampionWinner',ADMIN_PIN,t);
@@ -1634,10 +1641,10 @@ function adminPredMode(mode){
     loadAdminPlayerPredictions();
   } else {
     // By Match — use matrix data for pivot (only completed matches)
-    const completed=(STATE.matches||[]).filter(m=>(STATE.results||{})[m.no]);
-    if(!completed.length){$('predViewBox').innerHTML=`<p class="muted">${ar?'لا توجد نتائج بعد':'No results yet'}</p>`;return;}
+    const allMatches=(STATE.matches||[]);
+    if(!allMatches.length){$('predViewBox').innerHTML=`<p class="muted">${ar?'لا توجد مباريات':'No matches'}</p>`;return;}
     let sel=`<select id="predMatchSelect" onchange="loadAdminMatchPredictions()"><option value="">${ar?'اختر مباراة…':'Select a match…'}</option>`;
-    completed.forEach(m=>{sel+=`<option value="${m.no}">#${m.no} ${esc(m.h)} vs ${esc(m.a)}</option>`;});
+    allMatches.forEach(m=>{const done=!!(STATE.results&&STATE.results[m.no]);sel+=`<option value="${m.no}">#${m.no} ${esc(m.h)} vs ${esc(m.a)}${done?' ✓':''}</option>`;});
     sel+='</select>';
     $('predViewBox').innerHTML=`<div class="row section">${sel}</div><div id="matchPredictionsBox"></div>`;
   }
@@ -1649,15 +1656,16 @@ async function loadAdminMatchPredictions(){
   const r=await call('adminGetFullMatrix',ADMIN_PIN);
   if(!r.ok){$('matchPredictionsBox').innerHTML='<p class="muted">'+esc(r.msg)+'</p>';return;}
   const match=STATE.matches.find(m=>m.no===no); if(!match)return;
-  const res=(STATE.results||{})[no]||{};
+  const res=(STATE.results||{})[no]||null;
+  const resStr=res?`${res.hg}-${res.ag}`:(ar?'لم تُلعب بعد':'Not played yet');
   let rows=r.players.map(p=>{
     const c=(p.cells||{})[no];
     const predStr=c&&c.pred?`${c.pred.hg}-${c.pred.ag}${c.pred.pen?' (P)':''}${c.pred.w?' · '+(c.pred.w==='H'?match.h:match.a):''}`:tr('noPrediction');
-    const pts=c&&c.points!=null?((c.points>0?'+':'')+c.points):'—';
+    const pts=c&&c.points!=null?((c.points>0?'+':'')+c.points):(res?'0':'—');
     const cls=c?c.exact?'mxExact':c.outcome?'mxOutcome':c.wrong?'mxWrong':'':'';
     return `<tr><td>${esc(p.name)}</td><td>${esc(predStr)}</td><td class="${cls}"><b>${pts}</b></td></tr>`;
   }).join('');
-  $('matchPredictionsBox').innerHTML=`<h3>#${no} ${esc(match.h)} vs ${esc(match.a)}</h3><p class="tiny muted">${ar?'النتيجة':'Result'}: ${res.hg??'?'}-${res.ag??'?'}</p><div class="tableWrap"><table><thead><tr><th>${tr('player')}</th><th>${tr('prediction')}</th><th>${tr('scorePoints')}</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  $('matchPredictionsBox').innerHTML=`<h3>#${no} ${esc(match.h)} vs ${esc(match.a)}</h3><p class="tiny muted">${ar?'النتيجة':'Result'}: ${resStr}</p><div class="tableWrap"><table><thead><tr><th>${tr('player')}</th><th>${tr('prediction')}</th><th>${tr('scorePoints')}</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }function predText(p,m){if(!p)return tr('noPrediction');let s=`${p.hg} - ${p.ag}`;if(m.isKO){if(p.pen)s+=` · ${tr('penalties')}`;if(p.w)s+=` · ${tr('winner')}: ${p.w==='H'?m.h:m.a}`}return esc(s)}function resText(r,m){if(!r)return '—';let s=`${r.hg} - ${r.ag}`;if(m.isKO){if(r.pen)s+=` · ${tr('penalties')}`;if(r.w)s+=` · ${tr('winner')}: ${r.w==='H'?m.h:m.a}`}return esc(s)}async function loadAdminPlayerPredictions(){let id=$('predPlayerSelect').value;let r=await call('adminGetPredictions',ADMIN_PIN,id);if(!r.ok)return $('playerPredictionsBox').innerHTML='<p class="muted">'+esc(r.msg)+'</p>';let rows=r.rows.map(m=>`<tr><td>#${m.no}</td><td>${esc(stageLabel(m))}</td><td>${teamHtml(m.h)} VS ${teamHtml(m.a)}<div class="tiny">${localTime(m.iso)}</div></td><td>${predText(m.pred,m)}</td><td>${resText(m.result,m)}</td><td><b>${m.points==null?'—':m.points}</b></td></tr>`).join('');$('playerPredictionsBox').innerHTML=`<h3>${esc(r.player.name)}</h3><div class="tableWrap"><table><thead><tr><th>#</th><th>${tr('stage')}</th><th>${tr('matchSetup')}</th><th>${tr('prediction')}</th><th>${tr('result')}</th><th>${tr('scorePoints')}</th></tr></thead><tbody>${rows}</tbody></table></div>`}
 
 async function adminMatrix(){
