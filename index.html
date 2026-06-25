@@ -706,7 +706,7 @@
     .qualified-2 td:first-child { color: var(--gold2); }
 
     /* ── Admin matrix ── */
-    .matrixWrap { overflow: auto; max-height: 75vh; }
+    .matrixWrap { overflow: auto; max-height: 75vh; width: 100%; max-width: 100%; }
     .matrixTable { border-collapse: collapse; min-width: 900px; }
     .matrixTable th,.matrixTable td { padding: 6px 8px; border: 1px solid var(--line2); text-align: center; font-size: 12px; white-space: nowrap; }
     .matrixTable th { background: var(--bg2); font-family: var(--font-display); font-weight: 700; font-size: 11px; letter-spacing:.04em; position: sticky; top: 0; z-index: 2; }
@@ -964,7 +964,7 @@
 </div>
 <script>
 const $=id=>document.getElementById(id);
-let STATE=null, PREDS={}, BETS_STATE={pools:{},myBets:{},balance:null}, HIDDEN_TABS=[], LANG=localStorage.getItem('wc26lang')||'en', SESSION=JSON.parse(localStorage.getItem('wc26session')||'null'), ADMIN_PIN=localStorage.getItem('wc26admin')||'', ACTIVE='pred', FILTER='all', SAVE_TIMER=null, DIRTY=false, SAVING=false;
+let STATE=null, PREDS={}, BETS_STATE={pools:{},myBets:{},balance:null}, HIDDEN_TABS=[], LANG=localStorage.getItem('wc26lang')||'en', SESSION=JSON.parse(localStorage.getItem('wc26session')||'null'), ADMIN_PIN=localStorage.getItem('wc26admin')||'', ADMIN_SECTION=localStorage.getItem('wc26adminSection')||'players', ACTIVE='pred', FILTER='all', SAVE_TIMER=null, DIRTY=false, SAVING=false;
 let PRED_BETTING_LOADING=false, PRED_BETTING_LOADED=false;
 const T={en:{title:"WC '26 Prediction League",sub:'Riyadh time GMT+3 · Auto-save · Bilingual',refresh:'Refresh',firstSetup:'First setup',setupText:'Create the league by choosing a 4-digit admin PIN. Keep it private.',adminPin4:'Admin PIN, 4 digits',createLeague:'Create league',predictions:'Predictions',odds:'Odds',leaderboard:'Leaderboard',groups:'Groups',groupsHelp:'Group tables are calculated from the results entered by admin/API. Ranking uses points, goal difference, goals for, then team name.',bracket:'Knockout',bracketHelp:'The bracket fills in automatically as results are entered — winners advance to the next round. In the tree view, scroll sideways to follow each path to the final.',rules:'Rules',admin:'Admin',playerArea:'Player area',playerHelp:'Choose your slot, enter your PIN, and predict. Changes auto-save after you stop typing.',displayNameOnce:'Display name, first login only',pin4:'4-digit PIN',login:'Login',logout:'Logout',saveNow:'Save now',quickStats:'Quick stats',saved:'Saved',saving:'Saving…',unsaved:'Unsaved changes',loginFirst:'Login first',locked:'Locked',open:'Open',today:'Today',upcoming:'Upcoming',completed:'Completed',all:'All',mine:'Missing picks',searchTeams:'Search team or stage',group:'Group',roundOf32:'Round of 32',roundOf16:'Round of 16',quarterFinal:'Quarter-final',semiFinal:'Semi-final',thirdPlace:'Third place',final:'Final',nameLocked:'Name already chosen. You can login with PIN only.',nameAvailable:'Optional: choose your display name now. You can do this once.',odds:'Odds',oddsTitle:'Prediction odds',oddsHelp:'These odds are calculated from participant picks. They become more useful after players submit predictions.',draw:'Draw',penalties:'Penalties',winner:'Winner',predictPens:'Reaches penalties',rank:'Rank',player:'Player',points:'Points',team:'Team',exact:'Exact',outcome:'Winner/Draw',wrong:'Wrong',predictedPlayed:'Predicted played',rulesTitle:'Scoring rules',adminPin:'Admin PIN',players:'Players',matches:'Matches',results:'Results',viewPredictions:'View predictions',apiSync:'API Sync',reset:'Reset',savePlayerNames:'Save player names',resetPin:'Reset PIN',pinSet:'PIN set',noPin:'No PIN yet',matchSetup:'Match setup',stage:'Stage',home:'Home',away:'Away',kickoff:'Kick-off',saveMatchSetup:'Save match setup',resultsHelp:'Admin can edit API results manually here. For knockout draws, choose whether penalties happened and who advanced.',saveResults:'Save results',prediction:'Prediction',result:'Result',scorePoints:'Points',noPrediction:'No prediction',apiHelp:'Save your football-data.org token privately, then sync results. Manual edits remain available.',apiToken:'API token',saveApiToken:'Save API token',syncNow:'Sync now',enableAutoSync:'Enable hourly auto-sync',disableAutoSync:'Disable auto-sync',typeReset:'Type RESET',resetLeagueLink:'Reset league link',wrongAdmin:'Wrong admin PIN',empty:'Nothing to show yet',adminTabPlayers:'👤 Players',adminTabMatrix:'📊 Scores',adminTabMatches:'📅 Matches',adminTabResults:'⚽ Results',adminTabPreds:'🔍 Predictions',adminTabBets:'🎲 Bets',adminTabAdjust:'⚖️ Adjust',adminTabSync:'🔄 API Sync',adminTabReset:'🗑️ Reset',hideTabs:'Manage tabs',hideTabsHelp:'Show or hide tabs for all players. Admin always sees all tabs.',adminTabVis:'👁️ Pred Visibility',adminTabChampion:'🌍 Champion',adminTabHide:'👁️ Tabs',adjustPoints:'Adjust points',adjustHelp:'Add or subtract points from a player. Use for corrections, bonuses, or penalties.',adjustment:'Adjustment',reason:'Reason',note:'Note',bonus:'Bonus',penalty:'Penalty',correction:'Correction',adjustHistory:'Adjustment history',leaderboardTitle:'Leaderboard',youLabel:'You',behindLeader:'behind leader',betting:'Betting',bettingHelp:'Bet your prediction points on R16+ matches. Predictions and bets both count — place a bet on top of your prediction for extra reward or risk. Winners share the pool.',balance:'Balance',placeBet:'Place bet',cancelBet:'Cancel bet',allIn:'🔥 All In',betAmount:'Bet amount',pool:'Pool',yourBet:'Your bet',betWon:'Won',betLost:'Lost',betPending:'Pending',noBets:'No bets placed yet',betForfeits:'⚠️ Bet is extra — prediction points still count',championTitle:'Champion Prediction',championHelp:'Pick the World Cup winner before June 19 midnight (Riyadh) for +20 if correct. You get one switch until July 4, 19:55 — a switched pick is worth +10.',championPick:'Your pick',championLock:'Locked June 19 midnight',championCorrect:'🏆 Correct!',championWrong:'✗ Wrong',championNoPick:'No pick yet',championWinner:'Actual champion',setChampionWinner:'Set champion winner',saveChampionPick:'Save champion pick',scoreMatrix:'Score matrix',deleteResult:'Delete result',lockResult:'🔒 Lock from auto-sync',lockResultHelp:'Tip: tick 🔒 on a match to stop the football-data sync from overwriting it — use this when the API has a wrong result. Correct the score, tick 🔒, then Save.',renamePlayer:'Rename',forcePin:'Set PIN',clearPreds:'Clear picks',confirmClear:'Type CLEAR to wipe this player\'s predictions',totalPoints:'Total',rulesHtml:`
 <div style="display:flex;flex-direction:column;gap:16px">
@@ -1560,7 +1560,7 @@ function renderBracket(){
   $('bracketBox').innerHTML=bar+koTreeHtml();
 }
 
-function restoreAdmin(){if(ADMIN_PIN){$('adminLoginBox').classList.add('hidden');$('adminBox').classList.remove('hidden');applyHiddenTabs();renderAdmin()}else{$('adminLoginBox').classList.remove('hidden');$('adminBox').classList.add('hidden')}}async function adminLogin(){let pin=$('adminPin').value.trim();let r=await call('adminLogin',pin);if(!r.ok)return toast(tr('wrongAdmin'),true);ADMIN_PIN=pin;localStorage.setItem('wc26admin',pin);applyHiddenTabs();restoreAdmin()}function renderAdmin(section='players'){let items=[['players','adminTabPlayers'],['matrix','adminTabMatrix'],['matches','adminTabMatches'],['results','adminTabResults'],['predictions','adminTabPreds'],['visibility','adminTabVis'],['bets','adminTabBets'],['adjust','adminTabAdjust'],['champion','adminTabChampion'],['tabs','adminTabHide'],['sync','adminTabSync'],['reset','adminTabReset']];$('adminSide').innerHTML=items.map(([k,l])=>`<button class="ghost ${section===k?'active':''}" onclick="renderAdmin('${k}')">${tr(l)}</button>`).join('');({players:adminPlayers,matrix:adminMatrix,matches:adminMatches,results:adminResults,predictions:adminPredictions,visibility:adminVisibilityUI,bets:adminBets,adjust:adminAdjustUI,champion:adminChampionPicks,tabs:adminHideTabsUI,sync:adminSync,reset:adminReset}[section])()}
+function restoreAdmin(){if(ADMIN_PIN){$('adminLoginBox').classList.add('hidden');$('adminBox').classList.remove('hidden');applyHiddenTabs();renderAdmin()}else{$('adminLoginBox').classList.remove('hidden');$('adminBox').classList.add('hidden')}}async function adminLogin(){let pin=$('adminPin').value.trim();let r=await call('adminLogin',pin);if(!r.ok)return toast(tr('wrongAdmin'),true);ADMIN_PIN=pin;localStorage.setItem('wc26admin',pin);applyHiddenTabs();restoreAdmin()}function renderAdmin(section){if(!section)section=ADMIN_SECTION;ADMIN_SECTION=section;localStorage.setItem('wc26adminSection',section);let items=[['players','adminTabPlayers'],['matrix','adminTabMatrix'],['matches','adminTabMatches'],['results','adminTabResults'],['predictions','adminTabPreds'],['visibility','adminTabVis'],['bets','adminTabBets'],['adjust','adminTabAdjust'],['champion','adminTabChampion'],['tabs','adminTabHide'],['sync','adminTabSync'],['reset','adminTabReset']];$('adminSide').innerHTML=items.map(([k,l])=>`<button class="ghost ${section===k?'active':''}" onclick="renderAdmin('${k}')">${tr(l)}</button>`).join('');({players:adminPlayers,matrix:adminMatrix,matches:adminMatches,results:adminResults,predictions:adminPredictions,visibility:adminVisibilityUI,bets:adminBets,adjust:adminAdjustUI,champion:adminChampionPicks,tabs:adminHideTabsUI,sync:adminSync,reset:adminReset}[section])()}
 function adminPlayers(){$('adminContent').innerHTML='<div class=\"grid\">'+STATE.players.map(p=>`<div class=\"card soft\"><div class=\"between\"><b>#${p.id} ${esc(p.name)}</b><span class=\"tiny\">${p.hasPin?'🔐 '+tr('pinSet'):'⬜ '+tr('noPin')}</span></div><div class=\"row\" style=\"margin-top:8px\"><input style=\"flex:1\" data-player=\"${p.id}\" value=\"${esc(p.name)}\"><button class=\"ghost\" onclick=\"renamePlayer(${p.id})\">${tr('renamePlayer')}</button></div><div class=\"row\" style=\"margin-top:6px\"><input maxlength=\"4\" inputmode=\"numeric\" id=\"fp_${p.id}\" placeholder=\"New PIN\" style=\"width:100px\"><button class=\"ghost\" onclick=\"forcePin(${p.id})\">${tr('forcePin')}</button><button class=\"ghost\" onclick=\"resetPin(${p.id})\">${tr('resetPin')}</button></div><button class=\"danger wide\" style=\"margin-top:6px\" onclick=\"clearPreds(${p.id},${esc(JSON.stringify(p.name))})\">${tr('clearPreds')}</button></div>`).join('')+'</div>'}async function savePlayers(){let n={};document.querySelectorAll('[data-player]').forEach(i=>n[i.dataset.player]=i.value);let r=await call('adminSavePlayers',ADMIN_PIN,n);if(!r.ok)return toast(r.msg,true);toast('OK');init()}
 async function resetPin(id){let r=await call('adminResetPin',ADMIN_PIN,id);if(!r.ok)return toast(r.msg,true);toast('OK');init()}
 async function renamePlayer(id){const el=document.querySelector(`[data-player="${id}"]`);if(!el)return;const r=await call('adminRenamePlayer',ADMIN_PIN,id,el.value);if(!r.ok)return toast(r.msg,true);toast('OK ✓ '+r.name);init()}
@@ -1608,14 +1608,60 @@ async function saveChampWinner(){
   const r=await call('adminSetChampionWinner',ADMIN_PIN,t);
   if(!r.ok)return toast(r.msg,true);
   STATE.champion=STATE.champion||{}; STATE.champion.winner=r.team;
-  toast('OK'); renderAdmin('results');
+  toast('OK'); renderAdmin(ADMIN_SECTION);
 }
 async function saveResults(){let res={};document.querySelectorAll('[data-res]').forEach(i=>{let no=i.dataset.res,k=i.dataset.k;res[no]=res[no]||{};res[no][k]=i.type==='checkbox'?i.checked:i.value});Object.keys(res).forEach(no=>{if(res[no].hg===''||res[no].ag==='')delete res[no]});let locks=[];document.querySelectorAll('[data-lock]').forEach(i=>{if(i.checked)locks.push(Number(i.dataset.lock))});let r=await call('adminSaveResults',ADMIN_PIN,res);if(!r.ok)return toast(r.msg,true);let lr=await call('adminSetResultLocks',ADMIN_PIN,locks);if(!lr.ok)return toast(lr.msg,true);toast('OK');init()}
 async function deleteResult(no){if(!confirm((LANG==='ar'?'حذف نتيجة #':'Delete result #')+no+'?'))return;const r=await call('adminDeleteResult',ADMIN_PIN,no);if(!r.ok)return toast(r.msg,true);toast('Deleted');init()}
-async function adminPredictions(){let r=await call('adminGetAllPredictions',ADMIN_PIN);if(!r.ok){$('adminContent').innerHTML='<p class="muted">'+esc(r.msg)+'</p>';return}$('adminContent').innerHTML=`<div class="row"><select id="predPlayerSelect">${r.players.map(p=>`<option value="${p.id}">${p.id}. ${esc(p.name)}</option>`).join('')}</select><button class="primary" onclick="loadAdminPlayerPredictions()">${tr('viewPredictions')}</button></div><div id="playerPredictionsBox" class="section"></div>`;loadAdminPlayerPredictions()}function predText(p,m){if(!p)return tr('noPrediction');let s=`${p.hg} - ${p.ag}`;if(m.isKO){if(p.pen)s+=` · ${tr('penalties')}`;if(p.w)s+=` · ${tr('winner')}: ${p.w==='H'?m.h:m.a}`}return esc(s)}function resText(r,m){if(!r)return '—';let s=`${r.hg} - ${r.ag}`;if(m.isKO){if(r.pen)s+=` · ${tr('penalties')}`;if(r.w)s+=` · ${tr('winner')}: ${r.w==='H'?m.h:m.a}`}return esc(s)}async function loadAdminPlayerPredictions(){let id=$('predPlayerSelect').value;let r=await call('adminGetPredictions',ADMIN_PIN,id);if(!r.ok)return $('playerPredictionsBox').innerHTML='<p class="muted">'+esc(r.msg)+'</p>';let rows=r.rows.map(m=>`<tr><td>#${m.no}</td><td>${esc(stageLabel(m))}</td><td>${teamHtml(m.h)} VS ${teamHtml(m.a)}<div class="tiny">${localTime(m.iso)}</div></td><td>${predText(m.pred,m)}</td><td>${resText(m.result,m)}</td><td><b>${m.points==null?'—':m.points}</b></td></tr>`).join('');$('playerPredictionsBox').innerHTML=`<h3>${esc(r.player.name)}</h3><div class="tableWrap"><table><thead><tr><th>#</th><th>${tr('stage')}</th><th>${tr('matchSetup')}</th><th>${tr('prediction')}</th><th>${tr('result')}</th><th>${tr('scorePoints')}</th></tr></thead><tbody>${rows}</tbody></table></div>`}
+async function adminPredictions(){
+  $('adminContent').innerHTML=`<div class="spinner">${LANG==='ar'?'جاري التحميل…':'Loading…'}</div>`;
+  const r=await call('adminGetAllPredictions',ADMIN_PIN);
+  if(!r.ok){$('adminContent').innerHTML='<p class="muted">'+esc(r.msg)+'</p>';return;}
+  window._adminPredData=r;
+  const ar=LANG==='ar';
+  $('adminContent').innerHTML=`
+    <div class="row section">
+      <button class="filter tab active" id="predModePlayer" onclick="adminPredMode('player')">${ar?'حسب اللاعب':'By Player'}</button>
+      <button class="filter tab" id="predModeMatch" onclick="adminPredMode('match')">${ar?'حسب المباراة':'By Match'}</button>
+    </div>
+    <div id="predViewBox"></div>`;
+  adminPredMode('player');
+}
+function adminPredMode(mode){
+  ['player','match'].forEach(m=>{const b=$('predMode'+m[0].toUpperCase()+m.slice(1));if(b)b.classList.toggle('active',m===mode);});
+  const r=window._adminPredData; const ar=LANG==='ar';
+  if(mode==='player'){
+    $('predViewBox').innerHTML=`<div class="row"><select id="predPlayerSelect">${r.players.map(p=>`<option value="${p.id}">${p.id}. ${esc(p.name)}</option>`).join('')}</select><button class="primary" onclick="loadAdminPlayerPredictions()">${tr('viewPredictions')}</button></div><div id="playerPredictionsBox" class="section"></div>`;
+    loadAdminPlayerPredictions();
+  } else {
+    // By Match — use matrix data for pivot (only completed matches)
+    const completed=(STATE.matches||[]).filter(m=>(STATE.results||{})[m.no]);
+    if(!completed.length){$('predViewBox').innerHTML=`<p class="muted">${ar?'لا توجد نتائج بعد':'No results yet'}</p>`;return;}
+    let sel=`<select id="predMatchSelect" onchange="loadAdminMatchPredictions()"><option value="">${ar?'اختر مباراة…':'Select a match…'}</option>`;
+    completed.forEach(m=>{sel+=`<option value="${m.no}">#${m.no} ${esc(m.h)} vs ${esc(m.a)}</option>`;});
+    sel+='</select>';
+    $('predViewBox').innerHTML=`<div class="row section">${sel}</div><div id="matchPredictionsBox"></div>`;
+  }
+}
+async function loadAdminMatchPredictions(){
+  const no=Number($('predMatchSelect').value); if(!no)return;
+  const ar=LANG==='ar';
+  $('matchPredictionsBox').innerHTML=`<div class="spinner">${ar?'جاري التحميل…':'Loading…'}</div>`;
+  const r=await call('adminGetFullMatrix',ADMIN_PIN);
+  if(!r.ok){$('matchPredictionsBox').innerHTML='<p class="muted">'+esc(r.msg)+'</p>';return;}
+  const match=STATE.matches.find(m=>m.no===no); if(!match)return;
+  const res=(STATE.results||{})[no]||{};
+  let rows=r.players.map(p=>{
+    const c=(p.cells||{})[no];
+    const predStr=c&&c.pred?`${c.pred.hg}-${c.pred.ag}${c.pred.pen?' (P)':''}${c.pred.w?' · '+(c.pred.w==='H'?match.h:match.a):''}`:tr('noPrediction');
+    const pts=c&&c.points!=null?((c.points>0?'+':'')+c.points):'—';
+    const cls=c?c.exact?'mxExact':c.outcome?'mxOutcome':c.wrong?'mxWrong':'':'';
+    return `<tr><td>${esc(p.name)}</td><td>${esc(predStr)}</td><td class="${cls}"><b>${pts}</b></td></tr>`;
+  }).join('');
+  $('matchPredictionsBox').innerHTML=`<h3>#${no} ${esc(match.h)} vs ${esc(match.a)}</h3><p class="tiny muted">${ar?'النتيجة':'Result'}: ${res.hg??'?'}-${res.ag??'?'}</p><div class="tableWrap"><table><thead><tr><th>${tr('player')}</th><th>${tr('prediction')}</th><th>${tr('scorePoints')}</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}function predText(p,m){if(!p)return tr('noPrediction');let s=`${p.hg} - ${p.ag}`;if(m.isKO){if(p.pen)s+=` · ${tr('penalties')}`;if(p.w)s+=` · ${tr('winner')}: ${p.w==='H'?m.h:m.a}`}return esc(s)}function resText(r,m){if(!r)return '—';let s=`${r.hg} - ${r.ag}`;if(m.isKO){if(r.pen)s+=` · ${tr('penalties')}`;if(r.w)s+=` · ${tr('winner')}: ${r.w==='H'?m.h:m.a}`}return esc(s)}async function loadAdminPlayerPredictions(){let id=$('predPlayerSelect').value;let r=await call('adminGetPredictions',ADMIN_PIN,id);if(!r.ok)return $('playerPredictionsBox').innerHTML='<p class="muted">'+esc(r.msg)+'</p>';let rows=r.rows.map(m=>`<tr><td>#${m.no}</td><td>${esc(stageLabel(m))}</td><td>${teamHtml(m.h)} VS ${teamHtml(m.a)}<div class="tiny">${localTime(m.iso)}</div></td><td>${predText(m.pred,m)}</td><td>${resText(m.result,m)}</td><td><b>${m.points==null?'—':m.points}</b></td></tr>`).join('');$('playerPredictionsBox').innerHTML=`<h3>${esc(r.player.name)}</h3><div class="tableWrap"><table><thead><tr><th>#</th><th>${tr('stage')}</th><th>${tr('matchSetup')}</th><th>${tr('prediction')}</th><th>${tr('result')}</th><th>${tr('scorePoints')}</th></tr></thead><tbody>${rows}</tbody></table></div>`}
 
 async function adminMatrix(){
-  $('adminContent').innerHTML='<div class="skeleton"></div>';
+  $('adminContent').innerHTML=`<div class="spinner">${LANG==='ar'?'جاري التحميل…':'Loading…'}</div>`;
   const r=await call('adminGetFullMatrix',ADMIN_PIN);
   if(!r.ok)return $('adminContent').innerHTML='<p class="muted">'+esc(r.msg)+'</p>';
   const matches=r.matches.filter(m=>m.result); // only show completed
@@ -1797,7 +1843,7 @@ async function doPlaceBet(matchNo,allIn,source){if(!SESSION)return toast(tr('log
 async function doCancelBet(matchNo){if(!SESSION)return;if(!confirm(LANG==='ar'?'إلغاء الرهان؟':'Cancel this bet?'))return;const r=await call('cancelBet',SESSION.id,SESSION.pin,matchNo);if(!r.ok)return toast(r.msg,true);toast(LANG==='ar'?'تم الإلغاء':'Cancelled');PRED_BETTING_LOADED=false;if(ACTIVE==='pred')loadPredCardBetting(true);else loadBetting();}
 
 async function adminAdjustUI() {
-  $('adminContent').innerHTML = '<div class="skeleton"></div>';
+  $('adminContent').innerHTML = `<div class="spinner">${LANG==='ar'?'جاري التحميل…':'Loading…'}</div>`;
   const r = await call('adminGetAdjustments', ADMIN_PIN);
   if (!r.ok) { $('adminContent').innerHTML = `<p class="muted">${esc(r.msg)}</p>`; return; }
   const players = STATE.players || [];
@@ -1891,7 +1937,7 @@ function applyHiddenTabs() {
 }
 
 async function adminHideTabsUI() {
-  $('adminContent').innerHTML = '<div class="skeleton"></div>';
+  $('adminContent').innerHTML = `<div class="spinner">${LANG==='ar'?'جاري التحميل…':'Loading…'}</div>`;
   const r = await call('adminGetHiddenTabs', ADMIN_PIN);
   if (!r.ok) { $('adminContent').innerHTML = `<p class="muted">${esc(r.msg)}</p>`; return; }
   HIDDEN_TABS = r.hidden || [];
@@ -1936,7 +1982,7 @@ async function toggleHideTab(tabId) {
 
 
 async function adminVisibilityUI(){
-  $('adminContent').innerHTML='<div class="skeleton"></div>';
+  $('adminContent').innerHTML=`<div class="spinner">${LANG==='ar'?'جاري التحميل…':'Loading…'}</div>`;
   const r=await call('adminGetPredVisibility',ADMIN_PIN);
   if(!r.ok){$('adminContent').innerHTML=`<p class="muted">${esc(r.msg)}</p>`;return;}
   const mode=r.mode||'anon';
@@ -1961,7 +2007,7 @@ async function setPredVis(mode){
 }
 
 async function adminChampionPicks() {
-  $('adminContent').innerHTML = '<div class="skeleton"></div>';
+  $('adminContent').innerHTML = `<div class="spinner">${LANG==='ar'?'جاري التحميل…':'Loading…'}</div>`;
   const r = await call('adminGetChampionPicks', ADMIN_PIN);
   if (!r.ok) { $('adminContent').innerHTML = `<p class="muted">${esc(r.msg)}</p>`; return; }
   let html = `<div class="between" style="margin-bottom:12px">
@@ -1986,7 +2032,69 @@ async function adminChampionPicks() {
   $('adminContent').innerHTML = html;
 }
 
-async function adminBets(){$('adminContent').innerHTML='<div class="skeleton"></div>';const r=await call('adminGetBets',ADMIN_PIN);if(!r.ok){$('adminContent').innerHTML=`<p class="muted">${esc(r.msg)}</p>`;return;}const bets=r.bets||[];if(!bets.length){$('adminContent').innerHTML=`<p class="muted">${tr('noBets')}</p>`;return;}let html=`<div class="tableWrap"><table><thead><tr><th>${tr('player')}</th><th>#</th><th>${tr('team')}</th><th>${tr('betAmount')}</th><th>Status</th><th>Net</th><th></th></tr></thead><tbody>`;bets.forEach(b=>{const teamName=b.team==='H'?b.h:b.a,tagCls=!b.settled?'pending':b.payout>=b.amount?'won':'lost',netStr=b.net!==null?(b.net>=0?'+'+b.net:String(b.net)):'—';html+=`<tr><td>${esc(b.playerName)}</td><td>#${b.matchNo}</td><td>${esc(teamName)}</td><td>${b.amount}</td><td><span class="betTag ${tagCls}">${b.settled?(b.payout>=b.amount?tr('betWon'):tr('betLost')):tr('betPending')}</span></td><td>${netStr}</td><td>${!b.settled?`<button class="ghost" onclick="adminManualSettle(${b.matchNo})">Settle</button>`:''}</td></tr>`;});$('adminContent').innerHTML=html+'</tbody></table></div>';}
+async function adminBets(){
+  $('adminContent').innerHTML=`<div class="spinner">${LANG==='ar'?'جاري التحميل…':'Loading…'}</div>`;
+  const r=await call('adminGetBets',ADMIN_PIN);
+  if(!r.ok){$('adminContent').innerHTML=`<p class="muted">${esc(r.msg)}</p>`;return;}
+  const bets=r.bets||[]; const ar=LANG==='ar';
+  // Group by match
+  const byMatch={};
+  bets.forEach(b=>{if(!byMatch[b.matchNo])byMatch[b.matchNo]={info:b,bets:[]};byMatch[b.matchNo].bets.push(b);});
+  let html='';
+  if(!bets.length){html=`<p class="muted">${tr('noBets')}</p>`;}
+  else{
+    Object.keys(byMatch).sort((a,b)=>Number(a)-Number(b)).forEach(no=>{
+      const {info,bets:mb}=byMatch[no];
+      const pool=mb.reduce((s,b)=>s+b.amount,0);
+      const pending=mb.filter(b=>!b.settled).length;
+      html+=`<div class="card soft" style="margin-bottom:10px">
+        <div class="between"><b>#${no} ${esc(info.h)} vs ${esc(info.a)}</b><span class="tiny muted">${ar?'المجموع':'Pool'}: ${pool} · ${ar?'معلق':'Pending'}: ${pending}</span></div>
+        <div class="tableWrap" style="margin-top:8px"><table><thead><tr>
+          <th>${tr('player')}</th><th>${ar?'على':'On'}</th><th>${tr('betAmount')}</th>
+          <th>Status</th><th>Net</th><th style="min-width:220px">${ar?'إجراءات':'Actions'}</th>
+        </tr></thead><tbody>`;
+      mb.forEach(b=>{
+        const tn=b.team==='H'?b.h:b.a;
+        const tag=!b.settled?'pending':b.payout>=b.amount?'won':'lost';
+        const net=b.net!=null?(b.net>=0?'+'+b.net:String(b.net)):'—';
+        html+=`<tr>
+          <td>${esc(b.playerName)}</td>
+          <td>${esc(tn)}</td>
+          <td>${b.amount}</td>
+          <td><span class="betTag ${tag}">${b.settled?(b.payout>=b.amount?tr('betWon'):tr('betLost')):tr('betPending')}</span></td>
+          <td>${net}</td>
+          <td>
+            <div class="row" style="gap:4px;flex-wrap:wrap">
+              <button class="ghost danger" style="font-size:11px" onclick="adminForceCancel(${b.playerId},${no})">${ar?'إلغاء قسري':'Force Cancel'}</button>
+              <input id="po_${b.playerId}_${no}" type="number" style="width:60px;font-size:11px" placeholder="${ar?'مكافأة':'Payout'}" value="${b.payout||''}">
+              <button class="ghost" style="font-size:11px" onclick="adminSetPayout(${b.playerId},${no})">${ar?'تعيين':'Set'}</button>
+            </div>
+          </td>
+        </tr>`;
+      });
+      html+=`</tbody></table></div>
+        ${pending?`<button class="ghost" style="margin-top:6px" onclick="adminManualSettle(${no})">${ar?'تسوية الكل':'Settle All #'+no}</button>`:''}
+      </div>`;
+    });
+  }
+  // Place bet for player section
+  const players=STATE.players||[];
+  const matches=(STATE.matches||[]).filter(m=>m.no>=89);
+  html+=`<div class="card soft" style="margin-top:16px">
+    <b>${ar?'وضع رهان لأحد اللاعبين':'Place Bet for Player'}</b>
+    <div class="row section" style="flex-wrap:wrap;gap:8px">
+      <select id="abPlayer">${players.map(p=>`<option value="${p.id}">${p.id}. ${esc(p.name)}</option>`).join('')}</select>
+      <select id="abMatch">${matches.map(m=>`<option value="${m.no}">#${m.no} ${esc(m.h)} vs ${esc(m.a)}</option>`).join('')}</select>
+      <select id="abTeam"><option value="H">${ar?'الفريق الأول':'Home'}</option><option value="A">${ar?'الفريق الثاني':'Away'}</option></select>
+      <input id="abAmount" type="number" placeholder="${ar?'المبلغ':'Amount'}" style="width:80px">
+      <button class="primary" onclick="adminDoPlaceBet()">${ar?'وضع رهان':'Place Bet'}</button>
+    </div>
+  </div>`;
+  $('adminContent').innerHTML=html;
+}
+async function adminForceCancel(playerId,matchNo){if(!confirm((LANG==='ar'?'إلغاء رهان اللاعب #':'Force cancel bet for player #')+playerId+' on match #'+matchNo+'?'))return;const r=await call('adminForceCancelBet',ADMIN_PIN,playerId,matchNo);if(!r.ok)return toast(r.msg,true);toast('OK');adminBets();}
+async function adminSetPayout(playerId,matchNo){const v=Number($('po_'+playerId+'_'+matchNo)?.value);if(isNaN(v))return toast('Enter a number',true);const r=await call('adminSetBetPayout',ADMIN_PIN,playerId,matchNo,v);if(!r.ok)return toast(r.msg,true);toast('OK');adminBets();}
+async function adminDoPlaceBet(){const pid=$('abPlayer').value,mn=$('abMatch').value,team=$('abTeam').value,amt=Number($('abAmount').value);if(!amt||amt<1)return toast(LANG==='ar'?'أدخل مبلغاً':'Enter an amount',true);const r=await call('adminPlaceBet',ADMIN_PIN,pid,mn,team,amt);if(!r.ok)return toast(r.msg,true);toast('OK');adminBets();}
 async function adminManualSettle(matchNo){const r=await call('adminSettleBet',ADMIN_PIN,0,matchNo);if(!r.ok)return toast(r.msg,true);toast('OK');adminBets();}
 
 applyTheme(THEME);
