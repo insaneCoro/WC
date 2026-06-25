@@ -143,8 +143,10 @@
       /* Navy is the fallback for all unlisted themes */
       background-image: url('/icon-navy-192.png');
     }
-    /* Default stadium theme + all green-background themes */
+    /* Default Pitch theme + all green-background themes */
     html:not([data-theme]) .site-logo,
+    html[data-theme=""]      .site-logo,
+    html[data-theme="pitch"] .site-logo,
     html[data-theme="saudi"] .site-logo,
     html[data-theme="br"]    .site-logo,
     html[data-theme="pt"]    .site-logo,
