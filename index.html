@@ -1444,7 +1444,6 @@ async function loadBoard(){
   let podium='<div class="podium">';
   // Reorder visually: 2nd | 1st | 3rd
   const order=[1,0,2];
-  const leaderMsg=msgR&&msgR.ok?msgR.message:null;
   order.forEach(idx=>{
     const p=table[idx]; if(!p)return;
     const isMe=myId&&p.id===myId;
@@ -1452,7 +1451,6 @@ async function loadBoard(){
     const ex=(p.exact||0),wo=(p.outcome!=null?p.outcome:Math.max(0,(p.wins||0)-(p.exact||0))),kow=(p.losses!=null?p.losses:p.wrong||0),pl=p.played||p.predictedPlayed||0; const rec=`W${wo} E${ex} L${kow} P${pl}`;
     let throne='';
     {
-      // Each tied leader (max 3) shows their OWN message in their OWN card.
       const msgs=(msgR&&msgR.ok&&msgR.messages)?msgR.messages:{};
       const leaderIds=r.leaderIds||[];
       const tooMany=leaderIds.length>3;
@@ -1460,11 +1458,10 @@ async function loadBoard(){
       const myMsg=msgs[p.id]||msgs[String(p.id)]||null;
       if(isThisLeader && !tooMany){
         if(SESSION && p.id===myId){
-          // This is me and I'm a tied leader — show input prefilled with my message
-          const cur=myMsg?esc(myMsg.msg):'';
-          throne='<div class="throneBox">'+(myMsg&&myMsg.msg?'<p class="throneQuote" style="margin-bottom:8px">'+esc(myMsg.msg)+'</p>':'')+'<textarea class="throneInput" id="throneInput" maxlength="140" rows="2" oninput="updateThroneCount()" placeholder="'+(LANG==='ar'?'قل شيئاً للمجموعة...':'Say something to the group...')+'"></textarea><div class="throneCount"><span id="throneCount">0</span>/140</div><button class="primary wide" onclick="postThroneMsg()">'+(LANG==='ar'?'نشر':'Post')+'</button></div>';
+          // Leader's own card — textarea pre-filled with existing message so they can edit in place
+          const cur=myMsg?myMsg.msg:'';
+          throne='<div class="throneBox"><textarea class="throneInput" id="throneInput" maxlength="140" rows="2" oninput="updateThroneCount()" placeholder="'+(LANG==='ar'?'قل شيئاً للمجموعة...':'Say something to the group...')+'">'+esc(cur)+'</textarea><div class="throneCount"><span id="throneCount">'+cur.length+'</span>/140</div><button class="primary wide" onclick="postThroneMsg()">'+(LANG==='ar'?'نشر':'Post')+'</button></div>';
         } else if(myMsg && myMsg.msg){
-          // Another tied leader's message — read only
           throne='<div class="throneBox"><p class="throneQuote">'+esc(myMsg.msg)+'</p></div>';
         }
       }
