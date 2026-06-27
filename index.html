@@ -929,62 +929,74 @@
     .koRoundCap{font:700 11px/1 var(--font-display);letter-spacing:.1em;text-transform:uppercase;color:var(--gold2)}
     .koRoundCap.muted2{color:var(--muted)}
 
-    /* ── Bracket Pro board view: compact, visual, easier to navigate ── */
-    .bracketModeBtns{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
-    .bracketModeBtns button{min-height:30px;padding:6px 10px;font-size:12px}
-    .bracketModeBtns button.active{background:linear-gradient(135deg,var(--active1),var(--active2));color:var(--active-text);border-color:transparent}
-    .bracketQuickNav{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:0 0 10px}
-    .bracketQuickNav button{min-height:28px;padding:5px 10px;font-size:11px;color:var(--muted)}
-    .bracketQuickNav .navHint{font-size:11px;color:var(--dim);margin-inline-start:4px}
+    /* ── Bracket board view: compact, theme-safe, stage-filtered ── */
+    .bracketModeBtns{display:none}
+    .bracketQuickNav{display:none}
     .koBoardScroll .bracketZoomWrap{overflow:hidden}
     .koBoardTree{display:inline-block!important;align-items:initial!important;justify-content:initial!important}
-    .koBoard{position:relative;width:1545px;height:860px;border-radius:24px;overflow:hidden;background:
-      radial-gradient(circle at 50% 43%,rgba(212,165,32,.18),transparent 17%),
-      radial-gradient(circle at 50% 43%,rgba(212,165,32,.08),transparent 28%),
-      radial-gradient(ellipse at 50% 8%,rgba(74,184,200,.10),transparent 35%),
-      linear-gradient(135deg,rgba(255,255,255,.04),rgba(0,0,0,.20)),var(--bg2);
-      border:1px solid var(--line);box-shadow:var(--shadow)}
-    .koBoard::before{content:'🏆';position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);font-size:132px;line-height:1;opacity:.07;filter:drop-shadow(0 8px 22px rgba(0,0,0,.55));pointer-events:none;z-index:0}
-    .koFinalHalo{position:absolute;left:50%;top:394px;transform:translate(-50%,-50%);width:300px;height:265px;border-radius:42px;background:radial-gradient(circle,rgba(212,165,32,.18),rgba(212,165,32,.07) 34%,transparent 72%);filter:blur(.2px);opacity:.70;z-index:0;pointer-events:none}
-    .koFinalLabel{position:absolute;left:50%;top:308px;transform:translateX(-50%);z-index:3;padding:5px 16px;border-radius:999px;background:linear-gradient(135deg,rgba(212,165,32,.24),rgba(240,200,66,.08));border:1px solid var(--gold-line);font-family:var(--font-display);font-weight:800;font-size:18px;letter-spacing:.10em;text-transform:uppercase;color:var(--gold2);box-shadow:0 0 22px var(--gold-glow)}
-    .koThirdLabel{position:absolute;left:50%;top:552px;transform:translateX(-50%);z-index:3;font-family:var(--font-display);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);opacity:.82}
+    .koBoard{position:relative;width:1290px;height:760px;border-radius:22px;overflow:hidden;background:
+      radial-gradient(circle at 50% 43%,rgba(212,165,32,.14),transparent 18%),
+      radial-gradient(circle at 50% 43%,rgba(212,165,32,.07),transparent 30%),
+      linear-gradient(135deg,rgba(255,255,255,.04),rgba(0,0,0,.16)),var(--panel);
+      border:1px solid var(--line);box-shadow:var(--shadow);isolation:isolate}
+    .koBoard::before{content:'🏆';position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);font-size:104px;line-height:1;opacity:.055;filter:drop-shadow(0 8px 20px rgba(0,0,0,.50));pointer-events:none;z-index:0}
+    .koFinalHalo{position:absolute;transform:translate(-50%,-50%);width:250px;height:220px;border-radius:38px;background:radial-gradient(circle,rgba(212,165,32,.17),rgba(212,165,32,.07) 34%,transparent 72%);filter:blur(.2px);opacity:.65;z-index:0;pointer-events:none}
+    .koFinalLabel{position:absolute;transform:translateX(-50%);z-index:3;padding:4px 14px;border-radius:999px;background:linear-gradient(135deg,rgba(212,165,32,.22),rgba(240,200,66,.08));border:1px solid var(--gold-line);font-family:var(--font-display);font-weight:700;font-size:16px;letter-spacing:.09em;text-transform:uppercase;color:var(--gold2);box-shadow:0 0 18px var(--gold-glow);pointer-events:none}
+    .koThirdLabel{position:absolute;transform:translateX(-50%);z-index:3;font-family:var(--font-display);font-weight:600;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);opacity:.80;pointer-events:none}
     .koBoardSvg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
-    .koWire{fill:none;stroke:rgba(212,165,32,.26);stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 2px rgba(0,0,0,.25))}
-    .koWire.dim{stroke:rgba(255,255,255,.11)}
-    .koWire.final{stroke:var(--gold);stroke-width:3;filter:drop-shadow(0 0 6px var(--gold-glow))}
-    .koWire.third{stroke:var(--muted);stroke-dasharray:5 5;opacity:.38}
-    .koRoundTitle{position:absolute;top:14px;height:22px;display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--font-display);font-weight:800;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold2);z-index:3;opacity:.92}
-    .koRoundTitle.center{font-size:16px;color:var(--text)}
-    .koBoardCard{position:absolute;z-index:2;width:146px;height:76px;min-height:0;border-radius:13px;background:linear-gradient(180deg,rgba(0,0,0,.28),rgba(0,0,0,.06)),var(--panel);border:1px solid var(--line);box-shadow:0 5px 18px rgba(0,0,0,.23);padding:5px 6px;transition:transform .12s,border-color .12s,box-shadow .12s}
-    .koBoardCard:hover{transform:translateY(-1px);border-color:var(--gold-line);box-shadow:0 7px 20px rgba(0,0,0,.32)}
-    .koBoardCard.done{border-color:rgba(82,201,122,.34)}
-    .koBoardCard.open{border-color:rgba(82,201,122,.22)}
-    .koBoardCard.locked{border-color:rgba(232,160,32,.24)}
-    .koBoardCard.final{width:188px;height:96px;min-height:0;border-color:var(--gold);border-width:1.5px;background:linear-gradient(180deg,rgba(212,165,32,.12),rgba(0,0,0,.15)),var(--panel);box-shadow:0 0 0 1px var(--gold-line),0 10px 32px var(--gold-glow),0 8px 28px rgba(0,0,0,.32);padding:8px}
-    .koBoardCard.third{width:170px;height:78px;opacity:.82;border-style:dashed;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(0,0,0,.10)),var(--panel)}
-    .koMiniTop{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:3px}
-    .koMiniNo{font:800 11px/1 var(--font-display);background:rgba(212,165,32,.13);border:1px solid var(--gold-line);border-radius:999px;padding:3px 7px;color:var(--gold2);letter-spacing:.04em}
-    .koMiniState{font-size:9.5px;color:var(--muted);white-space:nowrap;max-width:84px;overflow:hidden;text-overflow:ellipsis}
-    .koBoardCard.final .koMiniNo{background:linear-gradient(135deg,var(--active1),var(--active2));color:var(--active-text);border-color:transparent;font-size:12px;padding:4px 9px}
-    .koBoardCard.final .koMiniState{color:var(--gold2);font-weight:600;max-width:96px}
-    .koMiniTeam{display:flex;align-items:center;justify-content:space-between;gap:4px;padding:2px 4px;border-radius:8px;min-height:20px}
+    .koWire{fill:none;stroke:var(--gold-line);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;opacity:.72;filter:drop-shadow(0 0 2px rgba(0,0,0,.18))}
+    .koWire.dim{stroke:var(--line);opacity:.50}
+    .koWire.final{stroke:var(--gold);stroke-width:2.5;filter:drop-shadow(0 0 5px var(--gold-glow));opacity:.88}
+    .koWire.third{stroke:var(--muted);stroke-dasharray:5 5;opacity:.34}
+    .koWire.advance{stroke:var(--good);stroke-width:2.8;opacity:.96;filter:drop-shadow(0 0 5px rgba(82,201,122,.35))}
+    .koWire.third.advance{stroke:var(--warn);opacity:.62;filter:drop-shadow(0 0 4px rgba(232,160,32,.22))}
+    .koRoundTitle{position:absolute;top:13px;height:24px;display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--font-display);font-weight:650;font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--gold2);z-index:4;opacity:.92;background:transparent;border:0;border-radius:999px;padding:0 6px;min-height:0;box-shadow:none;cursor:pointer;pointer-events:auto}
+    .koRoundTitle:hover{background:rgba(212,165,32,.10);color:var(--text);transform:none;border:0}
+    .koRoundTitle.active{background:rgba(212,165,32,.16);color:var(--text);outline:1px solid var(--gold-line)}
+    .koRoundTitle.center{font-size:14px;color:var(--text)}
+    .koBoardCard{position:absolute;z-index:2;width:128px;height:68px;min-height:0;border-radius:12px;background:linear-gradient(180deg,rgba(0,0,0,.20),rgba(255,255,255,.015)),var(--panel);border:1px solid var(--line);box-shadow:0 4px 14px rgba(0,0,0,.20);padding:4px 5px;transition:border-color .12s,box-shadow .12s;pointer-events:auto;cursor:pointer}
+    .koBoardCard:hover{transform:none;border-color:var(--gold-line);box-shadow:0 5px 16px rgba(0,0,0,.24),0 0 0 1px rgba(212,165,32,.10)}
+    .koBoardCard.done{border-color:rgba(82,201,122,.30)}
+    .koBoardCard.open{border-color:rgba(82,201,122,.20)}
+    .koBoardCard.locked{border-color:rgba(232,160,32,.22)}
+    .koBoardCard.final{width:164px;height:88px;min-height:0;border-color:var(--gold);border-width:1.4px;background:linear-gradient(180deg,rgba(212,165,32,.10),rgba(0,0,0,.12)),var(--panel);box-shadow:0 0 0 1px var(--gold-line),0 8px 26px var(--gold-glow),0 7px 22px rgba(0,0,0,.28);padding:7px}
+    .koBoardCard.third{width:150px;height:72px;opacity:.82;border-style:dashed;background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(0,0,0,.08)),var(--panel)}
+    .koMiniTop{display:flex;align-items:center;justify-content:space-between;gap:4px;margin-bottom:2px}
+    .koMiniNo{font:600 10px/1 var(--font-body);background:rgba(212,165,32,.10);border:1px solid rgba(212,165,32,.22);border-radius:999px;padding:2px 6px;color:var(--gold2);letter-spacing:.015em}
+    .koMiniState{font-size:8.8px;color:var(--muted);white-space:nowrap;max-width:74px;overflow:hidden;text-overflow:ellipsis}
+    .koBoardCard.final .koMiniNo{background:linear-gradient(135deg,var(--active1),var(--active2));color:var(--active-text);border-color:transparent;font-size:10.5px;padding:3px 7px;font-weight:650}
+    .koBoardCard.final .koMiniState{color:var(--gold2);font-weight:500;max-width:82px}
+    .koMiniTeam{display:flex;align-items:center;justify-content:space-between;gap:3px;padding:2px 3px;border-radius:7px;min-height:18px}
     .koMiniTeam+.koMiniTeam{margin-top:1px}
-    .koMiniTeam .team{min-width:0;gap:5px;flex:1}
-    .koMiniTeam .flagImg{width:21px;height:15px;border-radius:4px}
-    .koMiniTeam .teamCode{font-size:11.5px;font-weight:700;letter-spacing:.035em;color:var(--text)}
-    .koBoardCard.final .koMiniTeam{min-height:24px;padding:3px 5px}
-    .koBoardCard.final .koMiniTeam .teamCode{font-size:13px;font-weight:750}
-    .koBoardCard.final .koMiniTeam .flagImg{width:23px;height:16px}
-    .koMiniTeam .flagFallback{font-size:15px}
-    .koMiniScore{font-family:var(--font-display);font-size:14px;font-weight:800;min-width:16px;text-align:end;color:var(--text)}
-    .koBoardCard.final .koMiniScore{font-size:17px;min-width:20px;color:var(--gold2)}
-    .koMiniTeam.win{background:rgba(82,201,122,.14)}
+    .koMiniTeam .team{min-width:0;gap:4px;flex:1}
+    .koMiniTeam .flagImg{width:18px;height:13px;border-radius:3px}
+    .koMiniTeam .teamCode{font-size:10.5px;font-weight:600;letter-spacing:.025em;color:var(--text)}
+    .koBoardCard.final .koMiniTeam{min-height:22px;padding:3px 4px}
+    .koBoardCard.final .koMiniTeam .teamCode{font-size:12px;font-weight:650}
+    .koBoardCard.final .koMiniTeam .flagImg{width:21px;height:15px}
+    .koMiniTeam .flagFallback{font-size:13px}
+    .koMiniScore{font-family:var(--font-display);font-size:12px;font-weight:650;min-width:13px;text-align:end;color:var(--text)}
+    .koBoardCard.final .koMiniScore{font-size:15px;min-width:18px;color:var(--gold2)}
+    .koMiniTeam.win{background:rgba(82,201,122,.12)}
     .koMiniTeam.win .teamCode,.koMiniTeam.win .koMiniScore{color:var(--good)}
-    .koMiniTeam.lose{opacity:.48}
-    .koSlotMini{font:700 11px/1.2 var(--font-display);letter-spacing:.035em;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;max-width:104px;background:rgba(255,255,255,.045);border:1px solid var(--line2);border-radius:999px;padding:3px 7px}
-    .koBoardCard.final .koSlotMini{max-width:132px;color:var(--gold2);border-color:var(--gold-line);background:rgba(212,165,32,.10)}
-    .koBoardNote{position:absolute;left:50%;top:496px;transform:translateX(-50%);z-index:2;color:var(--dim);font-size:11px;text-align:center;white-space:nowrap}
-    @media(max-width:700px){.bracketZoomCtrl{align-items:flex-start;flex-direction:column}.bracketZoomBtns,.bracketModeBtns{width:100%;overflow-x:auto;flex-wrap:nowrap}.bracketQuickNav{overflow-x:auto;flex-wrap:nowrap}.koBoardCard{box-shadow:0 3px 12px rgba(0,0,0,.22)}}
+    .koMiniTeam.lose{opacity:.50}
+    .koSlotMini{font:600 9.6px/1.2 var(--font-body);letter-spacing:.01em;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;max-width:88px;background:rgba(255,255,255,.035);border:1px solid var(--line2);border-radius:999px;padding:2px 6px}
+    .koBoardCard.final .koSlotMini{max-width:116px;color:var(--gold2);border-color:var(--gold-line);background:rgba(212,165,32,.10)}
+    .koBoardNote{display:none}
+
+    .koBoardCard:focus-visible{outline:none;box-shadow:var(--focus),0 5px 16px rgba(0,0,0,.24)}
+    .koModal{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:18px}
+    .koModalCard{width:min(440px,94vw);border-radius:18px;background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);padding:16px;color:var(--text)}
+    .koModalHead{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
+    .koModalTitle{font-family:var(--font-display);font-weight:700;font-size:20px;line-height:1.05}
+    .koModalTeams{display:grid;gap:8px;margin:12px 0}
+    .koModalTeam{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 10px;border:1px solid var(--line2);border-radius:12px;background:var(--bg2)}
+    .koModalTeam.win{border-color:rgba(82,201,122,.35);background:rgba(82,201,122,.08)}
+    .koModalTeam.lose{opacity:.62}
+    .koModalScore{font-family:var(--font-display);font-weight:700;font-size:18px;color:var(--gold2)}
+    .koModalInfo{border-top:1px solid var(--line2);padding-top:10px;margin-top:10px;display:grid;gap:6px;font-size:13px;color:var(--muted)}
+    .koModalInfo b{color:var(--text);font-weight:600}
+    @media(max-width:700px){.bracketZoomCtrl{align-items:flex-start;flex-direction:column}.bracketZoomBtns{width:100%;overflow-x:auto;flex-wrap:nowrap}.koBoardCard{box-shadow:0 3px 10px rgba(0,0,0,.18)}}
 
   </style>
 </head>
@@ -1752,6 +1764,7 @@ const KO_FEEDERS={
   97:[89,90],98:[93,94],99:[91,92],100:[95,96],
   101:[97,98],102:[99,100],104:[101,102]
 };
+const KO_NEXT={74:89,77:89,73:90,75:90,76:91,78:91,79:92,80:92,83:93,84:93,81:94,82:94,86:95,88:95,85:96,87:96,89:97,90:97,93:98,94:98,91:99,92:99,95:100,96:100,97:101,98:101,99:102,100:102,101:104,102:104};
 function koWinnerSide(no){var r=STATE.results&&STATE.results[no];if(!r)return null;var hg=Number(r.hg),ag=Number(r.ag);if(r.w==='H'||r.w==='A')return r.w;if(!isNaN(hg)&&!isNaN(ag)){if(hg>ag)return 'H';if(ag>hg)return 'A';}return null;}
 function koIsPlaceholder(s){s=String(s||'').trim();if(!s||s==='TBD')return true;if(/^[WL]\d+$/i.test(s))return true;if(/^[1-3][A-L]{2,}$/i.test(s))return true;if(/^[1-3][A-L]$/i.test(s))return true;return false;}
 function koResolve(slot,depth){depth=depth||0;if(depth>10)return null;slot=String(slot||'').trim();var wl=slot.match(/^([WL])(\d+)$/i);if(wl){var no=Number(wl[2]),mm=KO_BY_NO[no];if(!mm)return null;var side=koWinnerSide(no);if(!side)return null;if(wl[1].toUpperCase()==='L')side=(side==='H'?'A':'H');return koResolve(side==='H'?mm.h:mm.a,depth+1);}if(koIsPlaceholder(slot))return null;return slot;}
@@ -1849,43 +1862,87 @@ function koTreeHtml(){
   </div></div></div>`;
 }
 
-let BRACKET_MODE=localStorage.getItem('wc26BracketMode')||'board';
-function setBracketMode(mode){BRACKET_MODE=mode;localStorage.setItem('wc26BracketMode',mode);renderBracket();}
+let BRACKET_STAGE=localStorage.getItem('wc26BracketStage')||'r32';
+if(!['r32','r16','qf','sf','final'].includes(BRACKET_STAGE))BRACKET_STAGE='r32';
+function setBracketStage(stage){BRACKET_STAGE=(stage===BRACKET_STAGE)?'r32':stage;localStorage.setItem('wc26BracketStage',BRACKET_STAGE);renderBracket();}
 function koShortTime(iso){
   if(!iso)return '';
   const d=new Date(iso); if(isNaN(d))return '';
   return new Intl.DateTimeFormat(LANG==='ar'?'ar-SA':'en-GB',{timeZone:'Asia/Riyadh',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',hour12:false}).format(d);
 }
+const KO_STAGE_ORDER={r32:0,r16:1,qf:2,sf:3,final:4};
+function koStageForNo(no){
+  no=Number(no);
+  if(no>=73&&no<=88)return 'r32';
+  if(no>=89&&no<=96)return 'r16';
+  if(no>=97&&no<=100)return 'qf';
+  if(no>=101&&no<=102)return 'sf';
+  return 'final';
+}
+function koStageAllowed(no){return KO_STAGE_ORDER[koStageForNo(no)]>=KO_STAGE_ORDER[BRACKET_STAGE];}
+function koBoardColumns(){
+  const min=KO_STAGE_ORDER[BRACKET_STAGE]??0;
+  const all=[
+    {key:'l32',stage:'r32',label:tr('roundOf32'),cls:''},
+    {key:'l16',stage:'r16',label:tr('roundOf16'),cls:''},
+    {key:'lqf',stage:'qf',label:LANG==='ar'?'ربع النهائي':'QF',cls:''},
+    {key:'lsf',stage:'sf',label:LANG==='ar'?'نصف النهائي':'SF',cls:''},
+    {key:'final',stage:'final',label:'🏆 '+tr('final'),cls:'center'},
+    {key:'rsf',stage:'sf',label:LANG==='ar'?'نصف النهائي':'SF',cls:''},
+    {key:'rqf',stage:'qf',label:LANG==='ar'?'ربع النهائي':'QF',cls:''},
+    {key:'r16',stage:'r16',label:tr('roundOf16'),cls:''},
+    {key:'r32',stage:'r32',label:tr('roundOf32'),cls:''}
+  ];
+  return all.filter(c=>KO_STAGE_ORDER[c.stage]>=min);
+}
 function koBoardPositions(){
-  const cw=146,ch=76,cwThird=170,cwFinal=188;
-  const y={a:62,b:160,c:258,d:356,e:466,f:564,g:662,h:760,r1:111,r2:307,r3:515,r4:711,q1:209,q2:613,s:411,final:350,third:585};
-  const x={l32:20,l16:185,lqf:350,lsf:515,center:685,final:676,third:685,rsf:880,rqf:1045,r16:1210,r32:1375};
-  const p={
-    74:[x.l32,y.a],77:[x.l32,y.b],73:[x.l32,y.c],75:[x.l32,y.d],83:[x.l32,y.e],84:[x.l32,y.f],81:[x.l32,y.g],82:[x.l32,y.h],
-    89:[x.l16,y.r1],90:[x.l16,y.r2],93:[x.l16,y.r3],94:[x.l16,y.r4],97:[x.lqf,y.q1],98:[x.lqf,y.q2],101:[x.lsf,y.s],
-    104:[x.final,y.final],103:[x.third,y.third],
-    102:[x.rsf,y.s],99:[x.rqf,y.q1],100:[x.rqf,y.q2],91:[x.r16,y.r1],92:[x.r16,y.r2],95:[x.r16,y.r3],96:[x.r16,y.r4],
-    76:[x.r32,y.a],78:[x.r32,y.b],79:[x.r32,y.c],80:[x.r32,y.d],86:[x.r32,y.e],88:[x.r32,y.f],85:[x.r32,y.g],87:[x.r32,y.h]
+  const cardW=128, cardH=68, finalW=164, finalH=88, thirdW=150, thirdH=72;
+  const margin=18,gap=34,boardH=760;
+  const cols=koBoardColumns();
+  const colX={}, colW={};
+  let x=margin;
+  cols.forEach(c=>{const w=c.key==='final'?finalW:cardW;colX[c.key]=x;colW[c.key]=w;x+=w+gap;});
+  const boardW=Math.max(310,x-gap+margin);
+  const y={a:58,b:145,c:232,d:319,e:428,f:515,g:602,h:689,r1:102,r2:276,r3:470,r4:644,q1:189,q2:557,s:373,final:322,third:540};
+  const raw={
+    74:['l32',y.a],77:['l32',y.b],73:['l32',y.c],75:['l32',y.d],83:['l32',y.e],84:['l32',y.f],81:['l32',y.g],82:['l32',y.h],
+    89:['l16',y.r1],90:['l16',y.r2],93:['l16',y.r3],94:['l16',y.r4],97:['lqf',y.q1],98:['lqf',y.q2],101:['lsf',y.s],
+    104:['final',y.final],103:['final',y.third],
+    102:['rsf',y.s],99:['rqf',y.q1],100:['rqf',y.q2],91:['r16',y.r1],92:['r16',y.r2],95:['r16',y.r3],96:['r16',y.r4],
+    76:['r32',y.a],78:['r32',y.b],79:['r32',y.c],80:['r32',y.d],86:['r32',y.e],88:['r32',y.f],85:['r32',y.g],87:['r32',y.h]
   };
-  const obj={};Object.keys(p).forEach(k=>{const n=Number(k);obj[n]={x:p[k][0],y:p[k][1],w:n===104?cwFinal:(n===103?cwThird:cw),h:n===104?96:(n===103?78:ch)};});
+  const obj={__w:boardW,__h:boardH,__cols:cols.map(c=>({key:c.key,stage:c.stage,label:c.label,cls:c.cls,x:colX[c.key],w:colW[c.key]}))};
+  Object.keys(raw).forEach(k=>{const n=Number(k),col=raw[k][0]; if(colX[col]==null)return; obj[n]={x:colX[col],y:raw[k][1],w:n===104?finalW:(n===103?thirdW:cardW),h:n===104?finalH:(n===103?thirdH:cardH)};});
   return obj;
 }
 function koMiniSlot(slot){var team=koResolve(slot);if(team)return teamHtmlCode(team);return `<span class="koSlotMini">${esc(koSlotLabel(slot))}</span>`;}
 function koBoardCard(no){
+  if(!koStageAllowed(no))return '';
   const pos=koBoardPositions()[no],m=KO_BY_NO[no]; if(!pos||!m)return '';
   const r=STATE.results&&STATE.results[no],done=!!r,L=locked(m),win=done?koWinnerSide(no):null;
   const hCls=win==='H'?'win':(done&&win&&win!=='H'?'lose':'');
   const aCls=win==='A'?'win':(done&&win&&win!=='A'?'lose':'');
   const special=no===104?' final':(no===103?' third':'');
   const status=done?(LANG==='ar'?'انتهت':'FT'):(STATE.liveScores&&STATE.liveScores[no])?`${STATE.liveScores[no].hg}–${STATE.liveScores[no].ag}`:koShortTime(m.iso);
-  return `<div class="koBoardCard ${done?'done':(L?'locked':'open')}${special}" style="left:${pos.x}px;top:${pos.y}px;width:${pos.w}px">
+  return `<div class="koBoardCard ${done?'done':(L?'locked':'open')}${special}" style="left:${pos.x}px;top:${pos.y}px;width:${pos.w}px;height:${pos.h}px" role="button" tabindex="0" aria-label="Match ${dispNoFromNo(no)}" onclick="openKoMatchInfo(${no})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openKoMatchInfo(${no});}">
     <div class="koMiniTop"><span class="koMiniNo">#${dispNoFromNo(no)}</span>${r&&r.pen?`<span class="koPen">PEN</span>`:''}<span class="koMiniState">${esc(status)}</span></div>
     <div class="koMiniTeam ${hCls}">${koMiniSlot(m.h)}<span class="koMiniScore">${done?r.hg:''}</span></div>
     <div class="koMiniTeam ${aCls}">${koMiniSlot(m.a)}<span class="koMiniScore">${done?r.ag:''}</span></div>
   </div>`;
 }
-function koBoardTitle(txt,x,w,cls){return `<div class="koRoundTitle ${cls||''}" style="left:${x}px;width:${w}px">${txt}</div>`;}
+function koBoardTitle(col){
+  const active=BRACKET_STAGE===col.stage?'active':'';
+  return `<button type="button" class="koRoundTitle ${col.cls||''} ${active}" style="left:${col.x}px;width:${col.w}px" onclick="setBracketStage('${col.stage}')">${col.label}</button>`;
+}
+
+function koWireAdvanceClass(from,to,kind){
+  const r=STATE.results&&STATE.results[from];
+  if(!r)return kind==='third'?'third':'';
+  if(kind==='third')return 'third advance';
+  return (kind==='final'?'final ':'')+'advance';
+}
 function koWirePath(pos,from,to,side,extraCls){
+  if(!koStageAllowed(from)||!koStageAllowed(to))return '';
   const a=pos[from],b=pos[to]; if(!a||!b)return '';
   let x1,x2,y1=a.y+a.h/2,y2=b.y+b.h/2,mid;
   if(side==='L'){x1=a.x+a.w;x2=b.x;mid=(x1+x2)/2;}
@@ -1893,6 +1950,7 @@ function koWirePath(pos,from,to,side,extraCls){
   return `<path class="koWire ${extraCls||''}" d="M${x1} ${y1} H${mid} V${y2} H${x2}"/>`;
 }
 function koFinalWire(pos,from,to,side,cls){
+  if(!koStageAllowed(from)||!koStageAllowed(to))return '';
   const a=pos[from],b=pos[to]; if(!a||!b)return '';
   const y1=a.y+a.h/2,y2=b.y+b.h/2;
   if(side==='L'){const x1=a.x+a.w,x2=b.x,mid=(x1+x2)/2;return `<path class="koWire ${cls||'final'}" d="M${x1} ${y1} H${mid} V${y2} H${x2}"/>`;}
@@ -1901,42 +1959,59 @@ function koFinalWire(pos,from,to,side,cls){
 function koBoardSvg(){
   const p=koBoardPositions();
   const pairs=[[74,89,'L'],[77,89,'L'],[73,90,'L'],[75,90,'L'],[89,97,'L'],[90,97,'L'],[83,93,'L'],[84,93,'L'],[81,94,'L'],[82,94,'L'],[93,98,'L'],[94,98,'L'],[97,101,'L'],[98,101,'L'],[76,91,'R'],[78,91,'R'],[79,92,'R'],[80,92,'R'],[91,99,'R'],[92,99,'R'],[86,95,'R'],[88,95,'R'],[85,96,'R'],[87,96,'R'],[95,100,'R'],[96,100,'R'],[99,102,'R'],[100,102,'R']];
-  let paths=pairs.map(x=>koWirePath(p,x[0],x[1],x[2])).join('');
-  paths+=koFinalWire(p,101,104,'L','final')+koFinalWire(p,102,104,'R','final');
-  paths+=koFinalWire(p,101,103,'L','third')+koFinalWire(p,102,103,'R','third');
-  return `<svg class="koBoardSvg" viewBox="0 0 1545 860" preserveAspectRatio="none">${paths}</svg>`;
+  let paths=pairs.map(x=>koWirePath(p,x[0],x[1],x[2],koWireAdvanceClass(x[0],x[1]))).join('');
+  paths+=koFinalWire(p,101,104,'L',koWireAdvanceClass(101,104,'final'))+koFinalWire(p,102,104,'R',koWireAdvanceClass(102,104,'final'));
+  paths+=koFinalWire(p,101,103,'L',koWireAdvanceClass(101,103,'third'))+koFinalWire(p,102,103,'R',koWireAdvanceClass(102,103,'third'));
+  return `<svg class="koBoardSvg" viewBox="0 0 ${p.__w} ${p.__h}" preserveAspectRatio="none">${paths}</svg>`;
 }
+
+function koDisplayTeamName(slot){return koResolve(slot)||koSlotLabel(slot);}
+function koModalTeamRow(slot,side,no){
+  const m=KO_BY_NO[no],r=STATE.results&&STATE.results[no],win=r?koWinnerSide(no):null;
+  const cls=win===side?'win':(r&&win&&win!==side?'lose':'');
+  const score=r?(side==='H'?r.hg:r.ag):'';
+  return `<div class="koModalTeam ${cls}"><span>${koMiniSlot(slot)} <span class="tiny" style="margin-inline-start:6px">${esc(koDisplayTeamName(slot))}</span></span><span class="koModalScore">${esc(String(score))}</span></div>`;
+}
+function openKoMatchInfo(no){
+  const m=KO_BY_NO[no]; if(!m)return;
+  const r=STATE.results&&STATE.results[no],win=r?koWinnerSide(no):null;
+  const winner=win?(win==='H'?koDisplayTeamName(m.h):koDisplayTeamName(m.a)):'';
+  const loser=win?(win==='H'?koDisplayTeamName(m.a):koDisplayTeamName(m.h)):'';
+  const next=KO_NEXT[no];
+  let info=[];
+  info.push(`<div><b>${LANG==='ar'?'الوقت':'Time'}:</b> ${esc(localTime(m.iso))}</div>`);
+  if(r){
+    info.push(`<div><b>${LANG==='ar'?'النتيجة':'Result'}:</b> ${esc(String(r.hg))}–${esc(String(r.ag))}${r.pen?' · PEN':''}</div>`);
+    if(winner){
+      if(no===104)info.push(`<div><b>${LANG==='ar'?'البطل':'Champion'}:</b> ${esc(winner)}</div><div><b>${LANG==='ar'?'الوصيف':'Runner-up'}:</b> ${esc(loser)}</div>`);
+      else if(no===103)info.push(`<div><b>${LANG==='ar'?'المركز الثالث':'Third place'}:</b> ${esc(winner)}</div><div><b>${LANG==='ar'?'المركز الرابع':'Fourth place'}:</b> ${esc(loser)}</div>`);
+      else if(no===101||no===102)info.push(`<div><b>${LANG==='ar'?'المتأهل':'Winner advances'}:</b> ${esc(winner)} → M104</div><div><b>${LANG==='ar'?'الخاسر':'Loser'}:</b> ${esc(loser)} → M103</div>`);
+      else info.push(`<div><b>${LANG==='ar'?'المتأهل':'Winner advances'}:</b> ${esc(winner)}${next?' → M'+next:''}</div><div><b>${LANG==='ar'?'الخاسر':'Loser'}:</b> ${esc(loser)} ${LANG==='ar'?'خرج من البطولة':'eliminated'}</div>`);
+    }
+  }else{
+    info.push(`<div>${LANG==='ar'?'لم تُدخل نتيجة المباراة بعد.':'No result has been entered yet.'}</div>`);
+    if(next)info.push(`<div><b>${LANG==='ar'?'الفائز يتأهل إلى':'Winner advances to'}:</b> M${next}</div>`);
+    if(no===101||no===102)info.push(`<div><b>${LANG==='ar'?'الخاسر يذهب إلى':'Loser goes to'}:</b> M103</div>`);
+  }
+  const html=`<div id="koMatchModal" class="koModal" onclick="if(event.target===this)closeKoMatchInfo()"><div class="koModalCard"><div class="koModalHead"><div><div class="pill">#${dispNoFromNo(no)}</div><div class="koModalTitle">${esc(stageLabel(m))}</div></div><button class="ghost" onclick="closeKoMatchInfo()">×</button></div><div class="koModalTeams">${koModalTeamRow(m.h,'H',no)}${koModalTeamRow(m.a,'A',no)}</div><div class="koModalInfo">${info.join('')}</div></div></div>`;
+  const old=document.getElementById('koMatchModal'); if(old)old.remove(); document.body.insertAdjacentHTML('beforeend',html);
+}
+function closeKoMatchInfo(){const el=document.getElementById('koMatchModal');if(el)el.remove();}
 function koBoardHtml(){
+  const p=koBoardPositions();
   const cards=[74,77,73,75,83,84,81,82,89,90,93,94,97,98,101,104,103,102,99,100,91,92,95,96,76,78,79,80,86,88,85,87].map(koBoardCard).join('');
-  const titles=[
-    koBoardTitle(tr('roundOf32'),20,146),koBoardTitle(tr('roundOf16'),185,146),koBoardTitle(LANG==='ar'?'ربع النهائي':'QF',350,146),koBoardTitle(LANG==='ar'?'نصف النهائي':'SF',515,146),
-    koBoardTitle('🏆 '+tr('final'),676,188,'center'),koBoardTitle(LANG==='ar'?'نصف النهائي':'SF',880,146),koBoardTitle(LANG==='ar'?'ربع النهائي':'QF',1045,146),koBoardTitle(tr('roundOf16'),1210,146),koBoardTitle(tr('roundOf32'),1375,146)
-  ].join('');
-  const centerDecor=`<div class="koFinalHalo"></div><div class="koFinalLabel">${LANG==='ar'?'النهائي':'FINAL'}</div><div class="koThirdLabel">${LANG==='ar'?'المركز الثالث':'Third place'}</div>`;
-  return `<div class="bracketScroll koBoardScroll" dir="ltr"><div class="bracketZoomWrap"><div class="bracketTree koBoardTree"><div class="koBoard">${koBoardSvg()}${centerDecor}${titles}<div class="koBoardNote">${LANG==='ar'?'الفائزون يتجهون نحو النهائي · الخاسرون من نصف النهائي إلى مباراة المركز الثالث':'Winners move to the Final · semifinal losers move to Third place'}</div>${cards}</div></div></div></div>`;
+  const titles=(p.__cols||[]).map(koBoardTitle).join('');
+  const finalPos=p[104]||{x:p.__w/2-82,y:322,w:164,h:88},thirdPos=p[103]||{x:p.__w/2-75,y:540,w:150,h:72};
+  const centerX=finalPos.x+finalPos.w/2;
+  const centerDecor=`<div class="koFinalHalo" style="left:${centerX}px;top:${finalPos.y+finalPos.h/2}px"></div><div class="koFinalLabel" style="left:${centerX}px;top:${Math.max(44,finalPos.y-36)}px">${LANG==='ar'?'النهائي':'FINAL'}</div><div class="koThirdLabel" style="left:${thirdPos.x+thirdPos.w/2}px;top:${Math.max(44,thirdPos.y-28)}px">${LANG==='ar'?'المركز الثالث':'Third place'}</div>`;
+  return `<div class="bracketScroll koBoardScroll" dir="ltr"><div class="bracketZoomWrap"><div class="bracketTree koBoardTree"><div class="koBoard" style="width:${p.__w}px;height:${p.__h}px">${koBoardSvg()}${centerDecor}${titles}${cards}</div></div></div></div>`;
 }
 function fitBracketReadable(){
   const tree=document.querySelector('.bracketTree'),scroll=document.querySelector('.bracketScroll');
   if(!tree||!scroll)return;
   tree.style.transition='none';tree.style.transform='scale(1)';void tree.offsetWidth;
   const fit=Math.min(1,scroll.clientWidth/tree.scrollWidth);
-  const min=BRACKET_MODE==='board'?0.62:0.35;
-  setBracketZoom(Math.max(min,fit));
-}
-function scrollBracketToArea(area){
-  const scroll=document.querySelector('.bracketScroll');
-  const board=document.querySelector('.koBoard');
-  if(!scroll||!board)return;
-  if(area==='full'){
-    fitBracket();
-    setTimeout(()=>scroll.scrollTo({left:0,top:0,behavior:'smooth'}),60);
-    return;
-  }
-  if(BRACKET_ZOOM<0.72)setBracketZoom(0.72);
-  const targets={left:360,final:772,right:1188};
-  const x=(targets[area]??772)*BRACKET_ZOOM-scroll.clientWidth/2;
-  const y=area==='final'?260*BRACKET_ZOOM:0;
-  scroll.scrollTo({left:Math.max(0,x),top:Math.max(0,y),behavior:'smooth'});
+  setBracketZoom(Math.max(0.28,fit));
 }
 function renderBracket(){
   if(!$('bracketBox')||!STATE)return;
@@ -1944,11 +2019,7 @@ function renderBracket(){
   const ar=LANG==='ar';
   const zoomCtrl=`<div class="bracketZoomCtrl">
     <div>
-      <span class="tiny muted">${ar?'عرض لوحة جديد · اسحب للتمرير · قرّب بإصبعين':'New board view · drag to scroll · pinch to zoom'}</span>
-      <div class="bracketModeBtns" style="margin-top:6px">
-        <button class="ghost ${BRACKET_MODE==='board'?'active':''}" onclick="setBracketMode('board')">${ar?'لوحة':'Board'}</button>
-        <button class="ghost ${BRACKET_MODE==='tree'?'active':''}" onclick="setBracketMode('tree')">${ar?'شجرة':'Tree'}</button>
-      </div>
+      <span class="tiny muted">${ar?'اضغط اسم الدور للتركيز؛ اضغط الدور النشط مرة أخرى لعرض اللوحة كاملة. اسحب للتمرير وقرّب بإصبعين.':'Tap a round title to focus; tap the active title again to show full board. Drag to scroll and pinch to zoom.'}</span>
     </div>
     <div class="bracketZoomBtns">
       <button class="ghost" onclick="setBracketZoom(BRACKET_ZOOM-0.15)" title="Zoom out">−</button>
@@ -1957,16 +2028,9 @@ function renderBracket(){
       <button class="ghost" style="width:auto;padding:0 8px;font-size:12px" onclick="fitBracket()">${ar?'ملاءمة':'Fit'}</button>
     </div>
   </div>`;
-  const quick=`<div class="bracketQuickNav">
-    <button class="ghost" onclick="scrollBracketToArea('full')">${ar?'عرض كامل':'Full board'}</button>
-    <button class="ghost" onclick="scrollBracketToArea('left')">${ar?'الجهة اليسرى':'Left side'}</button>
-    <button class="ghost" onclick="scrollBracketToArea('final')">${tr('final')}</button>
-    <button class="ghost" onclick="scrollBracketToArea('right')">${ar?'الجهة اليمنى':'Right side'}</button>
-    <span class="navHint">${ar?'الأدوار موجودة يمين ويسار، لذلك التنقل صار حسب الجهة.':'Rounds exist on both sides, so navigation is by area.'}</span>
-  </div>`;
   const bar=`<div class="koBar"><div class="koLegend"><span class="pill" style="background:rgba(82,201,122,.14);color:var(--good);border-color:transparent">${LANG==='ar'?'● المتأهل':'● Advances'}</span></div></div>`;
-  $('bracketBox').innerHTML=zoomCtrl+quick+bar+(BRACKET_MODE==='tree'?koTreeHtml():koBoardHtml());
-  requestAnimationFrame(()=>{fitBracketReadable();if(BRACKET_MODE==='tree')scrollToActiveRound();else scrollBracketToArea('final');initBracketPinch();});
+  $('bracketBox').innerHTML=zoomCtrl+bar+koBoardHtml();
+  requestAnimationFrame(()=>{fitBracketReadable();initBracketPinch();});
 }
 
 function restoreAdmin(){if(ADMIN_PIN){$('adminLoginBox').classList.add('hidden');$('adminBox').classList.remove('hidden');applyHiddenTabs();renderAdmin()}else{$('adminLoginBox').classList.remove('hidden');$('adminBox').classList.add('hidden')}}async function adminLogin(){let pin=$('adminPin').value.trim();let r=await call('adminLogin',pin);if(!r.ok)return toast(tr('wrongAdmin'),true);ADMIN_PIN=pin;localStorage.setItem('wc26admin',pin);applyHiddenTabs();restoreAdmin()}function renderAdmin(section){if(!section)section=ADMIN_SECTION;ADMIN_SECTION=section;localStorage.setItem('wc26adminSection',section);let items=[['players','adminTabPlayers'],['matrix','adminTabMatrix'],['matches','adminTabMatches'],['results','adminTabResults'],['predictions','adminTabPreds'],['visibility','adminTabVis'],['bets','adminTabBets'],['adjust','adminTabAdjust'],['champion','adminTabChampion'],['tabs','adminTabHide'],['sync','adminTabSync'],['reset','adminTabReset']];$('adminSide').innerHTML=items.map(([k,l])=>`<button class="ghost ${section===k?'active':''}" onclick="renderAdmin('${k}')">${tr(l)}</button>`).join('');({players:adminPlayers,matrix:adminMatrix,matches:adminMatches,results:adminResults,predictions:adminPredictions,visibility:adminVisibilityUI,bets:adminBets,adjust:adminAdjustUI,champion:adminChampionPicks,tabs:adminHideTabsUI,sync:adminSync,reset:adminReset}[section])()}
