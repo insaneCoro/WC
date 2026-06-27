@@ -1564,7 +1564,7 @@ const KO_FEEDERS={
   101:[97,98],102:[99,100],104:[101,102]
 };
 function koWinnerSide(no){var r=STATE.results&&STATE.results[no];if(!r)return null;var hg=Number(r.hg),ag=Number(r.ag);if(r.w==='H'||r.w==='A')return r.w;if(!isNaN(hg)&&!isNaN(ag)){if(hg>ag)return 'H';if(ag>hg)return 'A';}return null;}
-function koIsPlaceholder(s){s=String(s||'').trim();if(!s||s==='TBD')return true;if(/^[WL]\d+$/i.test(s))return true;if(/^[1-3][A-L]+$/i.test(s))return true;return false;}
+function koIsPlaceholder(s){s=String(s||'').trim();if(!s||s==='TBD')return true;if(/^[WL]\d+$/i.test(s))return true;if(/^[1-3][A-L]{2,}$/i.test(s))return true;return false;}
 function koResolve(slot,depth){depth=depth||0;if(depth>10)return null;slot=String(slot||'').trim();var wl=slot.match(/^([WL])(\d+)$/i);if(wl){var no=Number(wl[2]),mm=KO_BY_NO[no];if(!mm)return null;var side=koWinnerSide(no);if(!side)return null;if(wl[1].toUpperCase()==='L')side=(side==='H'?'A':'H');return koResolve(side==='H'?mm.h:mm.a,depth+1);}if(koIsPlaceholder(slot))return null;return slot;}
 function koSlotLabel(slot){var s=String(slot||'').trim();var wl=s.match(/^([WL])(\d+)$/i);if(wl){var t=wl[1].toUpperCase()==='W'?(LANG==='ar'?'الفائز':'Winner'):(LANG==='ar'?'الخاسر':'Loser');return t+' #'+wl[2];}if(!s||s==='TBD')return 'TBD';return s;}
 function koSlotInner(slot){var team=koResolve(slot);if(team)return teamHtmlCode(team);return `<span class="koSlot ph">${esc(koSlotLabel(slot))}</span>`;}
