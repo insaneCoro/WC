@@ -988,36 +988,15 @@
     .koSlotMini{font:450 8.5px/1.2 var(--font-body);letter-spacing:0;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;max-width:70px;background:rgba(255,255,255,.035);border:1px solid var(--line2);border-radius:999px;padding:2px 5px}
     .koBoardCard.final .koSlotMini{max-width:116px;color:var(--gold2);border-color:var(--gold-line);background:rgba(212,165,32,.10)}
     .koBoardNote{display:none}
-    /* ── Phone round-by-round knockout view (≤700px) ── */
-    .koPhone{padding:2px 0 8px}
-    .koPhoneRounds{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 10px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-    .koPhoneRounds::-webkit-scrollbar{display:none}
-    .koPhoneRoundBtn{flex:0 0 auto;font-family:var(--font-display);font-weight:700;font-size:13px;letter-spacing:.03em;padding:8px 15px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--muted);white-space:nowrap;cursor:pointer;min-height:0}
-    .koPhoneRoundBtn.active{background:linear-gradient(135deg,var(--active1),var(--active2));color:var(--active-text);border-color:transparent}
-    .koPhoneSecLabel{font-family:var(--font-display);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:12px 2px 6px}
-    .koPhoneList{display:flex;flex-direction:column;gap:10px}
-    .koCard{border-radius:14px;background:linear-gradient(180deg,rgba(0,0,0,.10),rgba(255,255,255,.015)),var(--panel);border:1px solid var(--line);padding:9px 12px;box-shadow:0 2px 10px rgba(0,0,0,.14)}
-    .koCard.done{border-color:rgba(82,201,122,.32)}
-    .koCard.locked{border-color:rgba(232,160,32,.22)}
-    .koCard.final{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold-line),0 6px 18px var(--gold-glow)}
-    .koCard.third{border-style:dashed;opacity:.94}
-    .koCardHead{display:flex;align-items:center;gap:8px;margin-bottom:7px}
-    .koCardNo{font-family:var(--font-body);font-size:11px;font-weight:600;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid var(--line2);border-radius:999px;padding:3px 9px}
-    .koCard.final .koCardNo{background:linear-gradient(135deg,var(--active1),var(--active2));color:var(--active-text);border-color:transparent}
-    .koCardTime{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-inline-start:auto}
-    .koPhonePen{font-family:var(--font-body);font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--gold2);border:1px solid var(--gold-line);background:rgba(212,165,32,.10);border-radius:999px;padding:2px 7px}
-    .koCardRow{display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:9px}
-    .koCardRow+.koCardRow{margin-top:3px}
-    .koCardRow .team{gap:8px;min-width:0;flex:1}
-    .koCardRow .teamName{font-size:15px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-    .koCardRow .flagImg{width:26px;height:18px;border-radius:4px;flex:0 0 auto}
-    .koCardRow .flagFallback{font-size:20px}
-    .koCardScore{font-family:var(--font-display);font-weight:800;font-size:20px;color:var(--text);min-width:16px;text-align:end;margin-inline-start:auto}
-    .koCardRow.win{background:rgba(82,201,122,.12)}
-    .koCardRow.win .teamName,.koCardRow.win .koCardScore{color:var(--good)}
-    .koCardRow.lose{opacity:.5}
-    .koPhoneSlot{font-size:13px;color:var(--muted);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
-    .koCardFoot{margin-top:7px;font-size:12.5px;font-weight:600;color:var(--good);display:flex;align-items:center;gap:5px}
+    /* ── Phone half-bracket tree view (≤700px) ── */
+    .koPhoneTree{padding:2px 0 8px}
+    .koSeg{display:inline-flex;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:3px;margin:0 0 8px}
+    .koSegBtn{font-family:var(--font-display);font-weight:700;font-size:13px;letter-spacing:.03em;padding:7px 16px;border-radius:999px;border:0;background:transparent;color:var(--muted);cursor:pointer;min-height:0}
+    .koSegBtn.active{background:linear-gradient(135deg,var(--active1),var(--active2));color:var(--active-text)}
+    .koHalfScroll{overflow:auto;-webkit-overflow-scrolling:touch;padding:2px 0 12px;touch-action:pan-x pan-y;border-radius:14px}
+    .koHalfScroll::-webkit-scrollbar{height:8px;width:8px}
+    .koHalfScroll::-webkit-scrollbar-thumb{background:var(--gold-line);border-radius:999px}
+    .koHalfBoard{display:inline-block}
 
     @media(max-width:700px){.bracketZoomCtrl{align-items:flex-start;flex-direction:column;gap:6px}.bracketZoomBtns{width:100%;overflow-x:auto;flex-wrap:nowrap}.koBoard{border-radius:14px}.koBoardCard{box-shadow:0 2px 8px rgba(0,0,0,.16)}.koRoundTitle{top:10px;font-size:9.5px}.koFinalLabel{font-size:13px}.koBoard::before{font-size:82px;opacity:.04}}
 
@@ -2023,63 +2002,104 @@ function fitBracketReadable(){
     if(max>0)scroll.scrollLeft=max/2;
   });
 }
-let KO_PHONE_ROUND=localStorage.getItem('wc26KoPhoneRound')||'';
+let KO_PHONE_SIDE=localStorage.getItem('wc26KoPhoneSide')||'';
 let KO_LAST_PHONE=!!(window.matchMedia&&window.matchMedia('(max-width:700px)').matches);
 function koIsPhone(){return !!(window.matchMedia&&window.matchMedia('(max-width:700px)').matches);}
-function setKoPhoneRound(k){KO_PHONE_ROUND=k;localStorage.setItem('wc26KoPhoneRound',k);renderBracket();}
-function koPhoneRoundDefault(){
-  const rounds=[['r32',73,88],['r16',89,96],['qf',97,100],['sf',101,102],['final',103,104]];
-  for(const [key,s,e] of rounds){for(let n=s;n<=e;n++){if(KO_BY_NO[n]&&!((STATE.results||{})[n]))return key;}}
-  return 'final';
+function setKoPhoneSide(k){KO_PHONE_SIDE=k;localStorage.setItem('wc26KoPhoneSide',k);renderBracket();}
+const KO_HALF_Y={a:52,b:128,c:204,d:280,e:376,f:452,g:528,h:604,r1:90,r2:242,r3:430,r4:582,q1:166,q2:506,s:336,fin:292,third:504};
+const KO_FEED=[[74,89],[77,89],[73,90],[75,90],[89,97],[90,97],[83,93],[84,93],[81,94],[82,94],[93,98],[94,98],[97,101],[98,101],[76,91],[78,91],[79,92],[80,92],[86,95],[88,95],[85,96],[87,96],[91,99],[92,99],[95,100],[96,100],[99,102],[100,102],[101,104],[102,104]];
+function koHalfLayout(side){
+  const Y=KO_HALF_Y,ar=LANG==='ar';
+  const L32=ar?'دور ٣٢':'R32',L16=ar?'دور ١٦':'R16',QF=ar?'ربع':'QF',SF=ar?'نصف':'SF',FIN=ar?'النهائي':'FINAL';
+  if(side==='left')return[
+    {key:'l32',label:L32,matches:[[74,Y.a],[77,Y.b],[73,Y.c],[75,Y.d],[83,Y.e],[84,Y.f],[81,Y.g],[82,Y.h]]},
+    {key:'l16',label:L16,matches:[[89,Y.r1],[90,Y.r2],[93,Y.r3],[94,Y.r4]]},
+    {key:'lqf',label:QF,matches:[[97,Y.q1],[98,Y.q2]]},
+    {key:'lsf',label:SF,matches:[[101,Y.s]]},
+    {key:'final',label:FIN,cls:'center',matches:[[104,Y.fin]]}];
+  if(side==='right')return[
+    {key:'r32',label:L32,matches:[[76,Y.a],[78,Y.b],[79,Y.c],[80,Y.d],[86,Y.e],[88,Y.f],[85,Y.g],[87,Y.h]]},
+    {key:'r16',label:L16,matches:[[91,Y.r1],[92,Y.r2],[95,Y.r3],[96,Y.r4]]},
+    {key:'rqf',label:QF,matches:[[99,Y.q1],[100,Y.q2]]},
+    {key:'rsf',label:SF,matches:[[102,Y.s]]},
+    {key:'final',label:FIN,cls:'center',matches:[[104,Y.fin]]}];
+  return[
+    {key:'lsf',label:SF,matches:[[101,Y.s]]},
+    {key:'final',label:FIN,cls:'center',matches:[[104,Y.fin],[103,Y.third]]},
+    {key:'rsf',label:SF,matches:[[102,Y.s]]}];
 }
-function koPhoneSlotRow(slot,cls,score){
-  const team=koResolve(slot);
-  const inner=team?teamHtml(team):`<span class="koPhoneSlot">${esc(koSlotLabel(slot))}</span>`;
-  return `<div class="koCardRow ${cls||''}">${inner}<span class="koCardScore">${score}</span></div>`;
+function koHalfPositions(side){
+  const cardW=108,cardH=58,finalW=138,finalH=78,thirdW=124,thirdH=62,margin=14,gap=26;
+  const cols=koHalfLayout(side);const pos={};const colMeta=[];let x=margin,maxBottom=0;
+  cols.forEach(c=>{
+    const cw=c.key==='final'?finalW:cardW;
+    colMeta.push({key:c.key,label:c.label,cls:c.cls||'',x:x,w:cw});
+    c.matches.forEach(mm=>{
+      const no=mm[0],yy=mm[1],isF=no===104,isT=no===103;
+      const w=isF?finalW:(isT?thirdW:cardW),h=isF?finalH:(isT?thirdH:cardH);
+      pos[no]={x:x,y:yy,w:w,h:h};maxBottom=Math.max(maxBottom,yy+h);
+    });
+    x+=cw+gap;
+  });
+  pos.__w=Math.max(310,x-gap+margin);pos.__h=maxBottom+margin;pos.__cols=colMeta;return pos;
 }
-function koPhoneCard(no){
-  const m=KO_BY_NO[no]; if(!m)return '';
+function koHalfWire(pos,from,to,cls){
+  const a=pos[from],b=pos[to];if(!a||!b)return '';
+  const ay=a.y+a.h/2,by=b.y+b.h/2;let x1,x2;
+  if(a.x<b.x){x1=a.x+a.w;x2=b.x;}else{x1=a.x;x2=b.x+b.w;}
+  const mid=(x1+x2)/2;
+  return `<path class="koWire ${cls||''}" d="M${x1} ${ay} H${mid} V${by} H${x2}"/>`;
+}
+function koHalfSvg(pos){
+  const wires=KO_FEED.filter(p=>pos[p[0]]&&pos[p[1]]).map(p=>{
+    const kind=p[1]===104?'final':'';const adv=koWireAdvanceClass(p[0],p[1],kind);
+    const cls=p[1]===104?(adv||'final'):adv;return koHalfWire(pos,p[0],p[1],cls);
+  });
+  if(pos[103]){[101,102].forEach(f=>{if(pos[f])wires.push(koHalfWire(pos,f,103,koWireAdvanceClass(f,103,'third')));});}
+  return `<svg class="koBoardSvg" viewBox="0 0 ${pos.__w} ${pos.__h}" preserveAspectRatio="none">${wires.join('')}</svg>`;
+}
+function koSideCard(no,pos){
+  const m=KO_BY_NO[no],p=pos[no];if(!m||!p)return '';
   const r=STATE.results&&STATE.results[no],done=!!r,L=locked(m),win=done?koWinnerSide(no):null;
+  const hCls=win==='H'?'win':(done&&win&&win!=='H'?'lose':'');
+  const aCls=win==='A'?'win':(done&&win&&win!=='A'?'lose':'');
   const special=no===104?' final':(no===103?' third':'');
   const live=STATE.liveScores&&STATE.liveScores[no];
-  const status=done?(LANG==='ar'?'انتهت':'FT'):(live?`🔴 ${live.hg}–${live.ag}`:koShortTime(m.iso));
-  const hCls=win==='H'?'win':(done&&win?'lose':'');
-  const aCls=win==='A'?'win':(done&&win?'lose':'');
-  const hScore=done?r.hg:(live?live.hg:'');
-  const aScore=done?r.ag:(live?live.ag:'');
-  const pen=r&&r.pen?`<span class="koPhonePen">${LANG==='ar'?'ر.ت':'PEN'}</span>`:'';
-  const winName=done&&win?(win==='H'?koResolve(m.h):koResolve(m.a)):null;
-  const foot=winName?`<div class="koCardFoot">✓ ${esc(winName)} ${LANG==='ar'?'تأهل':'advances'}</div>`:'';
-  return `<div class="koCard ${done?'done':(L?'locked':'open')}${special}">
-    <div class="koCardHead"><span class="koCardNo">#${dispNoFromNo(no)}</span>${pen}<span class="koCardTime">${esc(status)}</span></div>
-    ${koPhoneSlotRow(m.h,hCls,hScore)}
-    ${koPhoneSlotRow(m.a,aCls,aScore)}
-    ${foot}
+  const status=done?(LANG==='ar'?'انتهت':'FT'):(live?`${live.hg}–${live.ag}`:koShortTime(m.iso));
+  return `<div class="koBoardCard ${done?'done':(L?'locked':'open')}${special}" style="left:${p.x}px;top:${p.y}px;width:${p.w}px;height:${p.h}px" aria-label="Match ${dispNoFromNo(no)}">
+    <div class="koMiniTop"><span class="koMiniNo">#${dispNoFromNo(no)}</span>${r&&r.pen?`<span class="koPen">PEN</span>`:''}<span class="koMiniState">${esc(status)}</span></div>
+    <div class="koMiniTeam ${hCls}">${koMiniSlot(m.h)}<span class="koMiniScore">${done?r.hg:''}</span></div>
+    <div class="koMiniTeam ${aCls}">${koMiniSlot(m.a)}<span class="koMiniScore">${done?r.ag:''}</span></div>
   </div>`;
 }
-function koPhoneHtml(){
+function koHalfTitle(col){return `<div class="koRoundTitle ${col.cls||''}" style="left:${col.x}px;width:${col.w}px;pointer-events:none">${col.label}</div>`;}
+function koHalfBoardHtml(side){
+  const pos=koHalfPositions(side);
+  const order=koHalfLayout(side).reduce((a,c)=>a.concat(c.matches.map(m=>m[0])),[]);
+  const cards=order.map(no=>koSideCard(no,pos)).join('');
+  const titles=(pos.__cols||[]).map(koHalfTitle).join('');
+  return `<div class="koBoard koHalfBoard" style="width:${pos.__w}px;height:${pos.__h}px">${koHalfSvg(pos)}${titles}${cards}</div>`;
+}
+function koPhoneSideDefault(){
+  const left=[73,74,75,77,81,82,83,84,89,90,93,94,97,98,101];
+  const right=[76,78,79,80,85,86,87,88,91,92,95,96,99,100,102];
+  const open=arr=>arr.some(n=>KO_BY_NO[n]&&!((STATE.results||{})[n]));
+  if(open(left))return 'left';if(open(right))return 'right';return 'final';
+}
+function koPhoneTreeHtml(){
   const ar=LANG==='ar';
-  const tabs=[['r32',ar?'دور ٣٢':'R32'],['r16',ar?'دور ١٦':'R16'],['qf',ar?'ربع':'QF'],['sf',ar?'نصف':'SF'],['final',ar?'النهائي':'Final']];
-  const keys=tabs.map(t=>t[0]);
-  const cur=(KO_PHONE_ROUND&&keys.includes(KO_PHONE_ROUND))?KO_PHONE_ROUND:koPhoneRoundDefault();
-  const tabRow=`<div class="koPhoneRounds">${tabs.map(([k,l])=>`<button type="button" class="koPhoneRoundBtn ${k===cur?'active':''}" onclick="setKoPhoneRound('${k}')">${l}</button>`).join('')}</div>`;
-  const ranges={r32:[73,88],r16:[89,96],qf:[97,100],sf:[101,102]};
-  let body='';
-  if(cur==='final'){
-    body=`<div class="koPhoneSecLabel">🏆 ${ar?'النهائي':'Final'}</div><div class="koPhoneList">${koPhoneCard(104)}</div>`
-        +`<div class="koPhoneSecLabel">${ar?'المركز الثالث':'Third place'}</div><div class="koPhoneList">${koPhoneCard(103)}</div>`;
-  }else{
-    const rg=ranges[cur];const cards=[];for(let n=rg[0];n<=rg[1];n++){if(KO_BY_NO[n])cards.push(koPhoneCard(n));}
-    body=`<div class="koPhoneList">${cards.join('')}</div>`;
-  }
-  const hint=`<p class="tiny muted" style="margin:0 2px 8px">${ar?'اختر الدور لعرض مبارياته. يتحدّث تلقائياً عند إدخال النتائج.':'Pick a round to see its matches. Updates automatically as results are entered.'}</p>`;
-  return `<div class="koPhone">${hint}${tabRow}${body}</div>`;
+  const cur=(KO_PHONE_SIDE&&['left','right','final'].includes(KO_PHONE_SIDE))?KO_PHONE_SIDE:koPhoneSideDefault();
+  const segs=[['left',ar?'يسار':'Left'],['final',ar?'النهائي':'Final'],['right',ar?'يمين':'Right']];
+  const seg=`<div class="koSeg">${segs.map(s=>`<button type="button" class="koSegBtn ${s[0]===cur?'active':''}" onclick="setKoPhoneSide('${s[0]}')">${s[1]}</button>`).join('')}</div>`;
+  const hint=`<p class="tiny muted" style="margin:0 2px 8px">${ar?'يعرض نصف المسار بحجم مقروء — اسحب للتنقل، وبدّل بين الجانبين والنهائي.':'One half of the draw at readable size — drag to pan, switch sides or the final.'}</p>`;
+  const legend=`<div class="koBar" style="margin:0 0 8px"><span class="pill" style="background:rgba(82,201,122,.14);color:var(--good);border-color:transparent">${ar?'● المتأهل':'● Advances'}</span></div>`;
+  return `<div class="koPhoneTree">${hint}${seg}${legend}<div class="koHalfScroll" dir="ltr">${koHalfBoardHtml(cur)}</div></div>`;
 }
 function renderBracket(){
   if(!$('bracketBox')||!STATE)return;
   KO_BY_NO={};(STATE.matches||[]).forEach(function(m){KO_BY_NO[m.no]=m;});
   KO_LAST_PHONE=koIsPhone();
-  if(KO_LAST_PHONE){$('bracketBox').innerHTML=koPhoneHtml();return;}
+  if(KO_LAST_PHONE){$('bracketBox').innerHTML=koPhoneTreeHtml();return;}
   const ar=LANG==='ar';
   const zoomCtrl=`<div class="bracketZoomCtrl">
     <div>
