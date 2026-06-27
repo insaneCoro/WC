@@ -988,6 +988,36 @@
     .koSlotMini{font:450 8.5px/1.2 var(--font-body);letter-spacing:0;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;max-width:70px;background:rgba(255,255,255,.035);border:1px solid var(--line2);border-radius:999px;padding:2px 5px}
     .koBoardCard.final .koSlotMini{max-width:116px;color:var(--gold2);border-color:var(--gold-line);background:rgba(212,165,32,.10)}
     .koBoardNote{display:none}
+    /* ── Phone round-by-round knockout view (≤700px) ── */
+    .koPhone{padding:2px 0 8px}
+    .koPhoneRounds{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 10px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+    .koPhoneRounds::-webkit-scrollbar{display:none}
+    .koPhoneRoundBtn{flex:0 0 auto;font-family:var(--font-display);font-weight:700;font-size:13px;letter-spacing:.03em;padding:8px 15px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--muted);white-space:nowrap;cursor:pointer;min-height:0}
+    .koPhoneRoundBtn.active{background:linear-gradient(135deg,var(--active1),var(--active2));color:var(--active-text);border-color:transparent}
+    .koPhoneSecLabel{font-family:var(--font-display);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:12px 2px 6px}
+    .koPhoneList{display:flex;flex-direction:column;gap:10px}
+    .koCard{border-radius:14px;background:linear-gradient(180deg,rgba(0,0,0,.10),rgba(255,255,255,.015)),var(--panel);border:1px solid var(--line);padding:9px 12px;box-shadow:0 2px 10px rgba(0,0,0,.14)}
+    .koCard.done{border-color:rgba(82,201,122,.32)}
+    .koCard.locked{border-color:rgba(232,160,32,.22)}
+    .koCard.final{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold-line),0 6px 18px var(--gold-glow)}
+    .koCard.third{border-style:dashed;opacity:.94}
+    .koCardHead{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+    .koCardNo{font-family:var(--font-body);font-size:11px;font-weight:600;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid var(--line2);border-radius:999px;padding:3px 9px}
+    .koCard.final .koCardNo{background:linear-gradient(135deg,var(--active1),var(--active2));color:var(--active-text);border-color:transparent}
+    .koCardTime{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-inline-start:auto}
+    .koPhonePen{font-family:var(--font-body);font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--gold2);border:1px solid var(--gold-line);background:rgba(212,165,32,.10);border-radius:999px;padding:2px 7px}
+    .koCardRow{display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:9px}
+    .koCardRow+.koCardRow{margin-top:3px}
+    .koCardRow .team{gap:8px;min-width:0;flex:1}
+    .koCardRow .teamName{font-size:15px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .koCardRow .flagImg{width:26px;height:18px;border-radius:4px;flex:0 0 auto}
+    .koCardRow .flagFallback{font-size:20px}
+    .koCardScore{font-family:var(--font-display);font-weight:800;font-size:20px;color:var(--text);min-width:16px;text-align:end;margin-inline-start:auto}
+    .koCardRow.win{background:rgba(82,201,122,.12)}
+    .koCardRow.win .teamName,.koCardRow.win .koCardScore{color:var(--good)}
+    .koCardRow.lose{opacity:.5}
+    .koPhoneSlot{font-size:13px;color:var(--muted);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+    .koCardFoot{margin-top:7px;font-size:12.5px;font-weight:600;color:var(--good);display:flex;align-items:center;gap:5px}
 
     @media(max-width:700px){.bracketZoomCtrl{align-items:flex-start;flex-direction:column;gap:6px}.bracketZoomBtns{width:100%;overflow-x:auto;flex-wrap:nowrap}.koBoard{border-radius:14px}.koBoardCard{box-shadow:0 2px 8px rgba(0,0,0,.16)}.koRoundTitle{top:10px;font-size:9.5px}.koFinalLabel{font-size:13px}.koBoard::before{font-size:82px;opacity:.04}}
 
@@ -1993,9 +2023,63 @@ function fitBracketReadable(){
     if(max>0)scroll.scrollLeft=max/2;
   });
 }
+let KO_PHONE_ROUND=localStorage.getItem('wc26KoPhoneRound')||'';
+let KO_LAST_PHONE=!!(window.matchMedia&&window.matchMedia('(max-width:700px)').matches);
+function koIsPhone(){return !!(window.matchMedia&&window.matchMedia('(max-width:700px)').matches);}
+function setKoPhoneRound(k){KO_PHONE_ROUND=k;localStorage.setItem('wc26KoPhoneRound',k);renderBracket();}
+function koPhoneRoundDefault(){
+  const rounds=[['r32',73,88],['r16',89,96],['qf',97,100],['sf',101,102],['final',103,104]];
+  for(const [key,s,e] of rounds){for(let n=s;n<=e;n++){if(KO_BY_NO[n]&&!((STATE.results||{})[n]))return key;}}
+  return 'final';
+}
+function koPhoneSlotRow(slot,cls,score){
+  const team=koResolve(slot);
+  const inner=team?teamHtml(team):`<span class="koPhoneSlot">${esc(koSlotLabel(slot))}</span>`;
+  return `<div class="koCardRow ${cls||''}">${inner}<span class="koCardScore">${score}</span></div>`;
+}
+function koPhoneCard(no){
+  const m=KO_BY_NO[no]; if(!m)return '';
+  const r=STATE.results&&STATE.results[no],done=!!r,L=locked(m),win=done?koWinnerSide(no):null;
+  const special=no===104?' final':(no===103?' third':'');
+  const live=STATE.liveScores&&STATE.liveScores[no];
+  const status=done?(LANG==='ar'?'انتهت':'FT'):(live?`🔴 ${live.hg}–${live.ag}`:koShortTime(m.iso));
+  const hCls=win==='H'?'win':(done&&win?'lose':'');
+  const aCls=win==='A'?'win':(done&&win?'lose':'');
+  const hScore=done?r.hg:(live?live.hg:'');
+  const aScore=done?r.ag:(live?live.ag:'');
+  const pen=r&&r.pen?`<span class="koPhonePen">${LANG==='ar'?'ر.ت':'PEN'}</span>`:'';
+  const winName=done&&win?(win==='H'?koResolve(m.h):koResolve(m.a)):null;
+  const foot=winName?`<div class="koCardFoot">✓ ${esc(winName)} ${LANG==='ar'?'تأهل':'advances'}</div>`:'';
+  return `<div class="koCard ${done?'done':(L?'locked':'open')}${special}">
+    <div class="koCardHead"><span class="koCardNo">#${dispNoFromNo(no)}</span>${pen}<span class="koCardTime">${esc(status)}</span></div>
+    ${koPhoneSlotRow(m.h,hCls,hScore)}
+    ${koPhoneSlotRow(m.a,aCls,aScore)}
+    ${foot}
+  </div>`;
+}
+function koPhoneHtml(){
+  const ar=LANG==='ar';
+  const tabs=[['r32',ar?'دور ٣٢':'R32'],['r16',ar?'دور ١٦':'R16'],['qf',ar?'ربع':'QF'],['sf',ar?'نصف':'SF'],['final',ar?'النهائي':'Final']];
+  const keys=tabs.map(t=>t[0]);
+  const cur=(KO_PHONE_ROUND&&keys.includes(KO_PHONE_ROUND))?KO_PHONE_ROUND:koPhoneRoundDefault();
+  const tabRow=`<div class="koPhoneRounds">${tabs.map(([k,l])=>`<button type="button" class="koPhoneRoundBtn ${k===cur?'active':''}" onclick="setKoPhoneRound('${k}')">${l}</button>`).join('')}</div>`;
+  const ranges={r32:[73,88],r16:[89,96],qf:[97,100],sf:[101,102]};
+  let body='';
+  if(cur==='final'){
+    body=`<div class="koPhoneSecLabel">🏆 ${ar?'النهائي':'Final'}</div><div class="koPhoneList">${koPhoneCard(104)}</div>`
+        +`<div class="koPhoneSecLabel">${ar?'المركز الثالث':'Third place'}</div><div class="koPhoneList">${koPhoneCard(103)}</div>`;
+  }else{
+    const rg=ranges[cur];const cards=[];for(let n=rg[0];n<=rg[1];n++){if(KO_BY_NO[n])cards.push(koPhoneCard(n));}
+    body=`<div class="koPhoneList">${cards.join('')}</div>`;
+  }
+  const hint=`<p class="tiny muted" style="margin:0 2px 8px">${ar?'اختر الدور لعرض مبارياته. يتحدّث تلقائياً عند إدخال النتائج.':'Pick a round to see its matches. Updates automatically as results are entered.'}</p>`;
+  return `<div class="koPhone">${hint}${tabRow}${body}</div>`;
+}
 function renderBracket(){
   if(!$('bracketBox')||!STATE)return;
   KO_BY_NO={};(STATE.matches||[]).forEach(function(m){KO_BY_NO[m.no]=m;});
+  KO_LAST_PHONE=koIsPhone();
+  if(KO_LAST_PHONE){$('bracketBox').innerHTML=koPhoneHtml();return;}
   const ar=LANG==='ar';
   const zoomCtrl=`<div class="bracketZoomCtrl">
     <div>
@@ -2012,6 +2096,7 @@ function renderBracket(){
   $('bracketBox').innerHTML=zoomCtrl+bar+koBoardHtml();
   requestAnimationFrame(()=>{fitBracketReadable();initBracketPinch();});
 }
+window.addEventListener('resize',()=>{if(ACTIVE!=='bracket')return;const p=koIsPhone();if(p!==KO_LAST_PHONE)renderBracket();});
 
 function restoreAdmin(){if(ADMIN_PIN){$('adminLoginBox').classList.add('hidden');$('adminBox').classList.remove('hidden');applyHiddenTabs();renderAdmin()}else{$('adminLoginBox').classList.remove('hidden');$('adminBox').classList.add('hidden')}}async function adminLogin(){let pin=$('adminPin').value.trim();let r=await call('adminLogin',pin);if(!r.ok)return toast(tr('wrongAdmin'),true);ADMIN_PIN=pin;localStorage.setItem('wc26admin',pin);applyHiddenTabs();restoreAdmin()}function renderAdmin(section){if(!section)section=ADMIN_SECTION;ADMIN_SECTION=section;localStorage.setItem('wc26adminSection',section);let items=[['players','adminTabPlayers'],['matrix','adminTabMatrix'],['matches','adminTabMatches'],['results','adminTabResults'],['predictions','adminTabPreds'],['visibility','adminTabVis'],['bets','adminTabBets'],['adjust','adminTabAdjust'],['champion','adminTabChampion'],['tabs','adminTabHide'],['sync','adminTabSync'],['reset','adminTabReset']];$('adminSide').innerHTML=items.map(([k,l])=>`<button class="ghost ${section===k?'active':''}" onclick="renderAdmin('${k}')">${tr(l)}</button>`).join('');({players:adminPlayers,matrix:adminMatrix,matches:adminMatches,results:adminResults,predictions:adminPredictions,visibility:adminVisibilityUI,bets:adminBets,adjust:adminAdjustUI,champion:adminChampionPicks,tabs:adminHideTabsUI,sync:adminSync,reset:adminReset}[section])()}
 function adminPlayers(){$('adminContent').innerHTML='<div class=\"grid\">'+STATE.players.map(p=>`<div class=\"card soft\"><div class=\"between\"><b>#${p.id} ${esc(p.name)}</b><span class=\"tiny\">${p.hasPin?'🔐 '+tr('pinSet'):'⬜ '+tr('noPin')}</span></div><div class=\"row\" style=\"margin-top:8px\"><input style=\"flex:1\" data-player=\"${p.id}\" value=\"${esc(p.name)}\"><button class=\"ghost\" onclick=\"renamePlayer(${p.id})\">${tr('renamePlayer')}</button></div><div class=\"row\" style=\"margin-top:6px\"><input maxlength=\"4\" inputmode=\"numeric\" id=\"fp_${p.id}\" placeholder=\"New PIN\" style=\"width:100px\"><button class=\"ghost\" onclick=\"forcePin(${p.id})\">${tr('forcePin')}</button><button class=\"ghost\" onclick=\"resetPin(${p.id})\">${tr('resetPin')}</button></div><button class=\"danger wide\" style=\"margin-top:6px\" onclick=\"clearPreds(${p.id},${esc(JSON.stringify(p.name))})\">${tr('clearPreds')}</button></div>`).join('')+'</div>'}
