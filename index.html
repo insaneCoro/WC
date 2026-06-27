@@ -1010,13 +1010,6 @@
     .koBoardCard.ko-sf .koMiniScore{font-size:14px}
     .koBoardCard.ko-sf .koMiniTeam .flagImg{width:19px;height:14px}
     .koBoardCard.ko-sf .koMiniTeam,.koBoardCard.ko-qf .koMiniTeam{min-height:18px}
-    /* third-place footer card (shown below the board on every mobile view) */
-    .koThirdFoot{margin:10px 2px 0;border:1px dashed var(--line);border-radius:12px;padding:8px 11px;background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(0,0,0,.04)),var(--panel)}
-    .koThirdFootLabel{font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
-    .koThirdFootCard .koMiniTeam{min-height:24px;padding:4px 5px}
-    .koThirdFootCard .koMiniTeam .teamCode{font-size:13px}
-    .koThirdFootCard .koMiniTeam .flagImg{width:22px;height:15px}
-    .koThirdFootCard .koMiniScore{font-size:14px}
 
     @media(max-width:700px){.bracketZoomCtrl{align-items:flex-start;flex-direction:column;gap:6px}.bracketZoomBtns{width:100%;overflow-x:auto;flex-wrap:nowrap}.koBoard{border-radius:14px}.koBoardCard{box-shadow:0 2px 8px rgba(0,0,0,.16)}.koRoundTitle{top:10px;font-size:9.5px}.koFinalLabel{font-size:13px}.koBoard::before{font-size:82px;opacity:.04}}
 
@@ -2058,7 +2051,7 @@ function koHalfLayout(side){
     {key:'r32',label:L32,matches:[[76,Y.a],[78,Y.b],[79,Y.c],[80,Y.d],[86,Y.e],[88,Y.f],[85,Y.g],[87,Y.h]]}];
   return[
     {key:'lsf',label:SF,matches:[[101,Y.s]]},
-    {key:'final',label:FIN,cls:'center',matches:[[104,Y.fin]]},
+    {key:'final',label:FIN,cls:'center',matches:[[104,Y.fin],[103,Y.third]]},
     {key:'rsf',label:SF,matches:[[102,Y.s]]}];
 }
 function koHalfPositions(side){
@@ -2119,22 +2112,6 @@ function koPhoneSideDefault(){
   const open=arr=>arr.some(n=>KO_BY_NO[n]&&!((STATE.results||{})[n]));
   if(open(left))return 'left';if(open(right))return 'right';return 'final';
 }
-function koThirdFooterHtml(){
-  const m=KO_BY_NO[103]; if(!m)return '';
-  const ar=LANG==='ar';
-  const r=STATE.results&&STATE.results[103],done=!!r,win=done?koWinnerSide(103):null;
-  const live=STATE.liveScores&&STATE.liveScores[103];
-  const hCls=win==='H'?'win':(done&&win&&win!=='H'?'lose':'');
-  const aCls=win==='A'?'win':(done&&win&&win!=='A'?'lose':'');
-  const status=done?(ar?'انتهت':'FT'):(live?`${live.hg}–${live.ag}`:koShortTime(m.iso));
-  return `<div class="koThirdFoot">
-    <div class="koThirdFootLabel">🥉 ${ar?'المركز الثالث':'Third place'} · #${dispNoFromNo(103)}${status?` · ${esc(status)}`:''}${r&&r.pen?` · PEN`:''}</div>
-    <div class="koThirdFootCard">
-      <div class="koMiniTeam ${hCls}">${koMiniSlot(m.h)}<span class="koMiniScore">${done?r.hg:''}</span></div>
-      <div class="koMiniTeam ${aCls}">${koMiniSlot(m.a)}<span class="koMiniScore">${done?r.ag:''}</span></div>
-    </div>
-  </div>`;
-}
 function koPhoneTreeHtml(){
   const ar=LANG==='ar';
   const cur=(KO_PHONE_SIDE&&['left','right','final'].includes(KO_PHONE_SIDE))?KO_PHONE_SIDE:koPhoneSideDefault();
@@ -2142,7 +2119,7 @@ function koPhoneTreeHtml(){
   const seg=`<div class="koSeg">${segs.map(s=>`<button type="button" class="koSegBtn ${s[0]===cur?'active':''}" onclick="setKoPhoneSide('${s[0]}')">${s[1]}</button>`).join('')}</div>`;
   const hint=`<p class="tiny muted" style="margin:0 2px 8px">${ar?'اسحب أفقياً أو اضغط للتبديل بين الجانبين والنهائي — واسحب داخل اللوحة للتنقل.':'Swipe or tap to switch Left / Final / Right — drag inside the board to pan.'}</p>`;
   const legend=`<div class="koBar" style="margin:0 0 8px"><span class="pill" style="background:rgba(82,201,122,.14);color:var(--good);border-color:transparent">${ar?'● المتأهل':'● Advances'}</span></div>`;
-  return `<div class="koPhoneTree">${hint}${seg}${legend}<div class="koHalfScroll" dir="ltr">${koHalfBoardHtml(cur)}</div>${koThirdFooterHtml()}</div>`;
+  return `<div class="koPhoneTree">${hint}${seg}${legend}<div class="koHalfScroll" dir="ltr">${koHalfBoardHtml(cur)}</div></div>`;
 }
 function koSideOrder(){return ['left','final','right'];}
 let _koSwipeCooldown=0;
