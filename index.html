@@ -1581,10 +1581,34 @@ async function loadOdds(showAll){
     toggleHtml=`<button class="ghost" style="margin-bottom:10px;width:100%" onclick="loadOdds(true)">${LANG==='ar'?`▼ عرض المنتهية (${hiddenCount})`:`▼ Show completed (${hiddenCount})`}</button>`;
   }
   let html=toggleHtml+'<div class="grid">';
-  oddsList.forEach(o=>{let pct=n=>o.total?Math.round(n/o.total*100):0;let bars=oddsBar(teamHtml(o.h),pct(o.H))+oddsBar(tr('draw'),pct(o.D))+oddsBar(teamHtml(o.a),pct(o.A))+(isKO(o)?oddsBar(tr('penalties'),pct(o.pen)):'');let topStr=esc((o.top||[]).map(x=>x.score+' ('+x.count+')').join(' · ')||'—');let predDrop='';if(r.visMode!=='hidden'&&o.predictions&&o.predictions.length){let rows=o.predictions.map(pp=>{let scoreStr=pp.hg+'–'+pp.ag+(pp.pen?' (P)':'');let teamStr=(o.ko&&Number(pp.hg)===Number(pp.ag)&&pp.w)?' · '+teamHtml(pp.w==='H'?o.h:o.a):'';let nm=pp.name?`<span class="predName">${esc(pp.name)}</span>`:'';return `<div class="predRow">${nm}<span class="predScore">${scoreStr}${teamStr}</span></div>`;}).join('');predDrop=`<details class="predDrop"><summary>${LANG==='ar'?'عرض التوقعات':'Show predictions'} (${o.predictions.length})</summary><div class="predList">${rows}</div></details>`;}const isDone=!!o.done||!!(STATE.results&&STATE.results[o.no]);html+=`<div class="card soft"${isDone?' style="opacity:0.55"':''}><div class="matchBadges"><span class="pill">#${dispNo(o)}</span>${stageBadge(o)}</div><div class="teams">${teamHtml(o.h)}<span class="vs">VS</span>${teamHtml(o.a,'away')}</div><div class="tiny">${localTime(o.iso)}</div><div class="tiny" style="margin:3px 0">👥 ${o.total}/${r.totalPlayers} ${LANG==='ar'?'لاعب توقّع':'players predicted'}</div>${bars}<p class="tiny">Top: ${topStr}</p>${predDrop}</div>`});
+  oddsList.forEach(o=>{
+    let pct=n=>o.total?Math.round((Number(n)||0)/o.total*100):0;
+    const koOdds=isKO(o);
+    const hLabel=koOdds?oddsAdvanceLabel(o.h):teamHtml(o.h);
+    const aLabel=koOdds?oddsAdvanceLabel(o.a):teamHtml(o.a);
+    let bars=oddsBar(hLabel,pct(o.H))
+      +(koOdds?'':oddsBar(tr('draw'),pct(o.D)))
+      +oddsBar(aLabel,pct(o.A))
+      +(koOdds?oddsBar(LANG==='ar'?'تصل لركلات الترجيح':'Reaches penalties',pct(o.pen)):'');
+    let topStr=esc((o.top||[]).map(x=>x.score+' ('+x.count+')').join(' · ')||'—');
+    let topLabel=koOdds?(LANG==='ar'?'أكثر نتائج ١٢٠ دقيقة:':'Top 120-min scores:'):'Top:';
+    let predDrop='';
+    if(r.visMode!=='hidden'&&o.predictions&&o.predictions.length){
+      let rows=o.predictions.map(pp=>{
+        let scoreStr=pp.hg+'–'+pp.ag+(pp.pen?' (P)':'');
+        let teamStr=(o.ko&&Number(pp.hg)===Number(pp.ag)&&pp.w)?' · '+teamHtml(pp.w==='H'?o.h:o.a):'';
+        let nm=pp.name?`<span class="predName">${esc(pp.name)}</span>`:'';
+        return `<div class="predRow">${nm}<span class="predScore">${scoreStr}${teamStr}</span></div>`;
+      }).join('');
+      predDrop=`<details class="predDrop"><summary>${LANG==='ar'?'عرض التوقعات':'Show predictions'} (${o.predictions.length})</summary><div class="predList">${rows}</div></details>`;
+    }
+    const isDone=!!o.done||!!(STATE.results&&STATE.results[o.no]);
+    html+=`<div class="card soft"${isDone?' style="opacity:0.55"':''}><div class="matchBadges"><span class="pill">#${dispNo(o)}</span>${stageBadge(o)}</div><div class="teams">${teamHtml(o.h)}<span class="vs">VS</span>${teamHtml(o.a,'away')}</div><div class="tiny">${localTime(o.iso)}</div><div class="tiny" style="margin:3px 0">👥 ${o.total}/${r.totalPlayers} ${LANG==='ar'?'لاعب توقّع':'players predicted'}</div>${bars}<p class="tiny">${topLabel} ${topStr}</p>${predDrop}</div>`;
+  });
   if(!oddsList.length){html+=`<div class="card soft"><p class="muted">${LANG==='ar'?'لا توجد مباريات قادمة للعرض.':'No upcoming matches to show.'}</p></div>`;}
   $('oddsBox').innerHTML=html+'</div>';
 }
+function oddsAdvanceLabel(team){return `${teamHtml(team)} <span class="tiny" style="margin-inline-start:6px">${LANG==='ar'?'يتأهل':'advances'}</span>`}
 function oddsBar(label,p){return `<div style="margin:10px 0"><div class="between"><span class="tiny">${label}</span><b>${p}%</b></div><div class="progress"><div class="fill" style="width:${p}%"></div></div></div>`}
 function updateThroneCount(){const el=document.getElementById('throneInput');if(!el)return;const c=document.getElementById('throneCount');if(c)c.textContent=el.value.length;}
 async function postThroneMsg(){const el=document.getElementById('throneInput');if(!el||!SESSION)return;const r=await call('saveLeaderMessage',SESSION.id,SESSION.pin,el.value.trim());if(!r.ok){alert(r.msg);return;}loadBoard();}
