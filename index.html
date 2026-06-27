@@ -1233,16 +1233,29 @@ function logout(){SESSION=null;localStorage.removeItem('wc26session');PREDS={};B
 function matchNo(m){return Number((m&&m.no)||(m&&m.fifaNo)||0)}function isGroupMatch(m){let no=matchNo(m); if(no>=1&&no<=72)return true; return /^group/i.test(String((m&&m.stage)||''))||!!getGroup(m)}function isKO(m){return !isGroupMatch(m)}function getGroup(m){let raw=(m&&m.group)||'';let g=String(raw||'').trim().toUpperCase();if(/^[A-L]$/.test(g))return g;let st=String((m&&m.stage)||'');let mm=st.match(/group\s*([A-L])/i);if(mm)return mm[1].toUpperCase();return ''}function groupName(m){let g=getGroup(m);return g?(tr('group')+' '+g):''}function roundKeyByNo(no){no=Number(no||0);if(no>=73&&no<=88)return 'r32';if(no>=89&&no<=96)return 'r16';if(no>=97&&no<=100)return 'qf';if(no>=101&&no<=102)return 'sf';if(no===103)return 'third';if(no===104)return 'final';return ''}function roundLabelByKey(k){if(k==='r32')return tr('roundOf32');if(k==='r16')return tr('roundOf16');if(k==='qf')return tr('quarterFinal');if(k==='sf')return tr('semiFinal');if(k==='third')return tr('thirdPlace');if(k==='final')return tr('final');return ''}function stageLabel(stageOrMatch){let m=typeof stageOrMatch==='object'?stageOrMatch:null;let st=m?String(m.stage||''):String(stageOrMatch||'');let low=st.toLowerCase().replace(/[_-]/g,' ');let g=m?groupName(m):'';if(g)return g;let gm=st.match(/group\s*([A-L])/i);if(gm)return tr('group')+' '+gm[1].toUpperCase();let byNo=m?roundLabelByKey(roundKeyByNo(matchNo(m))):'';if(byNo)return byNo;if(/round\s*of\s*32|round\s*32|last\s*32|r32/.test(low))return tr('roundOf32');if(/round\s*of\s*16|round\s*16|last\s*16|r16/.test(low))return tr('roundOf16');if(/quarter|qf/.test(low))return tr('quarterFinal');if(/semi|sf/.test(low))return tr('semiFinal');if(/third|3rd/.test(low))return tr('thirdPlace');if(/final/.test(low))return tr('final');return st||'—'}function groupBadgeHtml(g,big){return `<span class="${big?'groupLetterBig':'groupBadge'} group-${String(g).toLowerCase()}">${g}</span>`}function stageBadge(m){let g=getGroup(m);if(g)return `${groupBadgeHtml(g,false)}<span class="pill stageTag">${esc(tr('group'))} ${g}</span>`;return `<span class="pill roundTag">${esc(stageLabel(m))}</span>`}function stageFilterKey(m){let g=getGroup(m);if(g)return 'group-'+g;let byNo=roundKeyByNo(matchNo(m));if(byNo)return byNo;let low=String(m.stage||'').toLowerCase();if(/round\s*of\s*32|round\s*32|last\s*32|r32/.test(low))return 'r32';if(/round\s*of\s*16|round\s*16|last\s*16|r16/.test(low))return 'r16';if(/quarter|qf/.test(low))return 'qf';if(/semi|sf/.test(low))return 'sf';if(/third|3rd/.test(low))return 'third';if(/final/.test(low))return 'final';return ''}function matchTimeHtml(m){
   const live=STATE.liveScores&&STATE.liveScores[m.no];
   if(!live)return '<div class="tiny">'+localTime(m.iso)+'</div>';
-  const t=liveTimeStr(live);
+  const t=liveTimeStr(live,m.iso);
   return '<div class="liveBadge"><span class="liveDot"></span>'+live.hg+' \u2013 '+live.ag+(t?' <span style="font-size:11px;opacity:.8">'+t+'</span>':'')+'</div>';
 }
-function liveTimeStr(live){
+function liveTimeStr(live,iso){
   if(!live)return '';
   if(live.status==='PAUSED'||live.status==='HALFTIME') return 'HT';
-  if(live.status==='EXTRA_TIME') return live.minute?live.minute+"'":'ET';
   if(live.status==='PENALTY_SHOOTOUT') return 'PSO';
-  if(live.minute){const m=live.minute+(live.injuryTime?'+'+live.injuryTime:'');return m+"'";}
-  return '';
+  // Exact minute from the API when the tier provides it
+  if(live.minute){
+    if(live.status==='EXTRA_TIME') return live.minute+"'";
+    return live.minute+(live.injuryTime?'+'+live.injuryTime:'')+"'";
+  }
+  if(live.status==='EXTRA_TIME') return 'ET';
+  // Fallback: free API tier sends no live minute — estimate it from kickoff
+  var t=iso?new Date(iso).getTime():NaN;
+  if(isNaN(t)) return '';
+  var mins=Math.floor((Date.now()-t)/60000)+1;
+  if(mins<1) mins=1;
+  if(mins<=45) return mins+"'";
+  if(mins<=60) return 'HT';
+  var sh=mins-15;
+  if(sh<=90) return sh+"'";
+  return "90+'";
 }function localTime(iso){if(!iso)return 'TBD';let d=new Date(iso);if(isNaN(d))return 'TBD';return d.toLocaleString(LANG==='ar'?'ar-SA':'en-GB',{weekday:'short',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Riyadh'})}function locked(m){let r=STATE.results&&STATE.results[m.no];if(r)return true;if(m.h==='TBD'||m.a==='TBD'||!m.iso)return true;let t=new Date(m.iso).getTime();return isNaN(t)||Date.now()>=t-5*60*1000}function matchStatus(m){if(STATE.results&&STATE.results[m.no])return tr('completed');if(STATE.liveScores&&STATE.liveScores[m.no])return LANG==='ar'?'🔴 مباشر':'🔴 LIVE';return locked(m)?tr('locked'):tr('open')}function statusClass(m){if(STATE.results&&STATE.results[m.no])return 'done';if(STATE.liveScores&&STATE.liveScores[m.no])return 'live';return locked(m)?'locked':'open'}function myPred(no){return PREDS[no]||PREDS[String(no)]||{}}
 const FLAG_ALIAS={
   'Argentina':'ar','Australia':'au','Austria':'at','Belgium':'be','Brazil':'br','Cameroon':'cm','Canada':'ca','Chile':'cl','Colombia':'co','Costa Rica':'cr','Croatia':'hr','Curaçao':'cw','Curacao':'cw','Czechia':'cz','Czech Republic':'cz','Denmark':'dk','Ecuador':'ec','Egypt':'eg','England':'gb-eng','France':'fr','Germany':'de','Ghana':'gh','Haiti':'ht','Honduras':'hn','IR Iran':'ir','Iran':'ir','Iraq':'iq','Italy':'it','Jamaica':'jm','Japan':'jp','Jordan':'jo','Korea Republic':'kr','South Korea':'kr','Korea DPR':'kp','North Korea':'kp','Mexico':'mx','Morocco':'ma','Netherlands':'nl','New Zealand':'nz','Nigeria':'ng','Norway':'no','Panama':'pa','Paraguay':'py','Peru':'pe','Poland':'pl','Portugal':'pt','Qatar':'qa','Saudi Arabia':'sa','Scotland':'gb-sct','Senegal':'sn','Serbia':'rs','South Africa':'za','Spain':'es','Sweden':'se','Switzerland':'ch','Tunisia':'tn','Turkey':'tr','Türkiye':'tr','Ukraine':'ua','United Arab Emirates':'ae','UAE':'ae','United States':'us','USA':'us','Uruguay':'uy','Uzbekistan':'uz','Wales':'gb-wls',
@@ -1565,7 +1578,7 @@ function koSlotLabel(slot){var s=String(slot||'').trim();var wl=s.match(/^([WL])
 function koSlotInner(slot){var team=koResolve(slot);if(team)return teamHtml(team);return `<span class="koSlot ph">${esc(koSlotLabel(slot))}</span>`;}
 function koMatchCard(no){var m=KO_BY_NO[no];if(!m)return '';var r=STATE.results&&STATE.results[no];var done=!!r,L=locked(m),win=done?koWinnerSide(no):null;
   var hCls=win==='H'?'win':(done&&win&&win!=='H'?'lose':'');var aCls=win==='A'?'win':(done&&win&&win!=='A'?'lose':'');
-  var top=`<div class="koMatchTop"><span class="koNo">#${no}</span>${r&&r.pen?`<span class="koPen">P</span>`:''}<span class="koTime">${done?(LANG==='ar'?'انتهت':'FT'):(STATE.liveScores&&STATE.liveScores[no])?`<span style="color:#ff3b3b;font-weight:700">${STATE.liveScores[no].hg}–${STATE.liveScores[no].ag}${liveTimeStr(STATE.liveScores[no])?' '+liveTimeStr(STATE.liveScores[no]):''}</span>`:localTime(m.iso)}</span></div>`;
+  var top=`<div class="koMatchTop"><span class="koNo">#${no}</span>${r&&r.pen?`<span class="koPen">P</span>`:''}<span class="koTime">${done?(LANG==='ar'?'انتهت':'FT'):(STATE.liveScores&&STATE.liveScores[no])?`<span style="color:#ff3b3b;font-weight:700">${STATE.liveScores[no].hg}–${STATE.liveScores[no].ag}${liveTimeStr(STATE.liveScores[no],m.iso)?' '+liveTimeStr(STATE.liveScores[no],m.iso):''}</span>`:localTime(m.iso)}</span></div>`;
   var hRow=`<div class="koTeamRow ${hCls}">${koSlotInner(m.h)}<span class="koScore">${done?r.hg:''}</span></div>`;
   var aRow=`<div class="koTeamRow ${aCls}">${koSlotInner(m.a)}<span class="koScore">${done?r.ag:''}</span></div>`;
   return `<div class="koMatch ${done?'done':(L?'locked':'open')}">${top}${hRow}${aRow}</div>`;}
