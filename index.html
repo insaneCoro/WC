@@ -935,9 +935,9 @@
     .koBoardScroll .bracketZoomWrap{overflow:hidden}
     .koBoardTree{display:inline-block!important;align-items:initial!important;justify-content:initial!important}
     .koBoard{position:relative;width:1290px;height:760px;border-radius:22px;overflow:hidden;background:
-      radial-gradient(circle at 50% 43%,rgba(212,165,32,.14),transparent 18%),
-      radial-gradient(circle at 50% 43%,rgba(212,165,32,.07),transparent 30%),
-      linear-gradient(135deg,rgba(255,255,255,.04),rgba(0,0,0,.16)),var(--panel);
+      radial-gradient(circle at 50% 43%,var(--gold-glow),transparent 18%),
+      radial-gradient(circle at 50% 43%,rgba(255,255,255,.045),transparent 31%),
+      linear-gradient(135deg,var(--panel2),var(--panel));
       border:1px solid var(--line);box-shadow:var(--shadow);isolation:isolate}
     .koBoard::before{content:'🏆';position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);font-size:104px;line-height:1;opacity:.055;filter:drop-shadow(0 8px 20px rgba(0,0,0,.50));pointer-events:none;z-index:0}
     .koFinalHalo{position:absolute;transform:translate(-50%,-50%);width:250px;height:220px;border-radius:38px;background:radial-gradient(circle,rgba(212,165,32,.17),rgba(212,165,32,.07) 34%,transparent 72%);filter:blur(.2px);opacity:.65;z-index:0;pointer-events:none}
@@ -950,37 +950,37 @@
     .koWire.third{stroke:var(--muted);stroke-dasharray:5 5;opacity:.34}
     .koWire.advance{stroke:var(--good);stroke-width:2.8;opacity:.96;filter:drop-shadow(0 0 5px rgba(82,201,122,.35))}
     .koWire.third.advance{stroke:var(--warn);opacity:.62;filter:drop-shadow(0 0 4px rgba(232,160,32,.22))}
-    .koRoundTitle{position:absolute;top:13px;height:24px;display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--font-display);font-weight:650;font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--gold2);z-index:4;opacity:.92;background:transparent;border:0;border-radius:999px;padding:0 6px;min-height:0;box-shadow:none;cursor:pointer;pointer-events:auto}
+    .koRoundTitle{position:absolute;top:13px;height:24px;display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--font-display);font-weight:560;font-size:11px;letter-spacing:.055em;text-transform:uppercase;color:var(--muted);z-index:4;opacity:.95;background:transparent;border:0;border-radius:999px;padding:0 6px;min-height:0;box-shadow:none;cursor:pointer;pointer-events:auto}
     .koRoundTitle:hover{background:rgba(212,165,32,.10);color:var(--text);transform:none;border:0}
-    .koRoundTitle.active{background:rgba(212,165,32,.16);color:var(--text);outline:1px solid var(--gold-line)}
-    .koRoundTitle.center{font-size:14px;color:var(--text)}
-    .koBoardCard{position:absolute;z-index:2;width:128px;height:68px;min-height:0;border-radius:12px;background:linear-gradient(180deg,rgba(0,0,0,.20),rgba(255,255,255,.015)),var(--panel);border:1px solid var(--line);box-shadow:0 4px 14px rgba(0,0,0,.20);padding:4px 5px;transition:border-color .12s,box-shadow .12s;pointer-events:auto;cursor:pointer}
+    .koRoundTitle.active{background:rgba(212,165,32,.12);color:var(--gold2);outline:1px solid var(--gold-line)}
+    .koRoundTitle.center{font-size:12.5px;color:var(--gold2)}
+    .koBoardCard{position:absolute;z-index:2;width:116px;height:64px;min-height:0;border-radius:11px;background:linear-gradient(180deg,rgba(0,0,0,.16),rgba(255,255,255,.018)),var(--panel);border:1px solid var(--line);box-shadow:0 4px 12px rgba(0,0,0,.18);padding:4px 5px;transition:border-color .12s,box-shadow .12s;pointer-events:auto;cursor:pointer}
     .koBoardCard:hover{transform:none;border-color:var(--gold-line);box-shadow:0 5px 16px rgba(0,0,0,.24),0 0 0 1px rgba(212,165,32,.10)}
     .koBoardCard.done{border-color:rgba(82,201,122,.30)}
     .koBoardCard.open{border-color:rgba(82,201,122,.20)}
     .koBoardCard.locked{border-color:rgba(232,160,32,.22)}
-    .koBoardCard.final{width:164px;height:88px;min-height:0;border-color:var(--gold);border-width:1.4px;background:linear-gradient(180deg,rgba(212,165,32,.10),rgba(0,0,0,.12)),var(--panel);box-shadow:0 0 0 1px var(--gold-line),0 8px 26px var(--gold-glow),0 7px 22px rgba(0,0,0,.28);padding:7px}
-    .koBoardCard.third{width:150px;height:72px;opacity:.82;border-style:dashed;background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(0,0,0,.08)),var(--panel)}
+    .koBoardCard.final{width:150px;height:84px;min-height:0;border-color:var(--gold);border-width:1.3px;background:linear-gradient(180deg,rgba(212,165,32,.10),rgba(0,0,0,.10)),var(--panel);box-shadow:0 0 0 1px var(--gold-line),0 8px 24px var(--gold-glow),0 7px 20px rgba(0,0,0,.25);padding:7px}
+    .koBoardCard.third{width:136px;height:68px;opacity:.82;border-style:dashed;background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(0,0,0,.06)),var(--panel)}
     .koMiniTop{display:flex;align-items:center;justify-content:space-between;gap:4px;margin-bottom:2px}
-    .koMiniNo{font:600 10px/1 var(--font-body);background:rgba(212,165,32,.10);border:1px solid rgba(212,165,32,.22);border-radius:999px;padding:2px 6px;color:var(--gold2);letter-spacing:.015em}
-    .koMiniState{font-size:8.8px;color:var(--muted);white-space:nowrap;max-width:74px;overflow:hidden;text-overflow:ellipsis}
+    .koMiniNo{font:500 9px/1 var(--font-body);background:rgba(255,255,255,.04);border:1px solid var(--line2);border-radius:999px;padding:2px 5px;color:var(--muted);letter-spacing:0}
+    .koMiniState{font-size:8.2px;color:var(--muted);white-space:nowrap;max-width:66px;overflow:hidden;text-overflow:ellipsis}
     .koBoardCard.final .koMiniNo{background:linear-gradient(135deg,var(--active1),var(--active2));color:var(--active-text);border-color:transparent;font-size:10.5px;padding:3px 7px;font-weight:650}
-    .koBoardCard.final .koMiniState{color:var(--gold2);font-weight:500;max-width:82px}
+    .koBoardCard.final .koMiniState{color:var(--gold2);font-weight:500;max-width:76px}
     .koMiniTeam{display:flex;align-items:center;justify-content:space-between;gap:3px;padding:2px 3px;border-radius:7px;min-height:18px}
     .koMiniTeam+.koMiniTeam{margin-top:1px}
     .koMiniTeam .team{min-width:0;gap:4px;flex:1}
     .koMiniTeam .flagImg{width:18px;height:13px;border-radius:3px}
-    .koMiniTeam .teamCode{font-size:10.5px;font-weight:600;letter-spacing:.025em;color:var(--text)}
+    .koMiniTeam .teamCode{font-size:10px;font-weight:520;letter-spacing:.015em;color:var(--text)}
     .koBoardCard.final .koMiniTeam{min-height:22px;padding:3px 4px}
-    .koBoardCard.final .koMiniTeam .teamCode{font-size:12px;font-weight:650}
+    .koBoardCard.final .koMiniTeam .teamCode{font-size:11px;font-weight:560}
     .koBoardCard.final .koMiniTeam .flagImg{width:21px;height:15px}
     .koMiniTeam .flagFallback{font-size:13px}
-    .koMiniScore{font-family:var(--font-display);font-size:12px;font-weight:650;min-width:13px;text-align:end;color:var(--text)}
+    .koMiniScore{font-family:var(--font-display);font-size:11px;font-weight:560;min-width:12px;text-align:end;color:var(--text)}
     .koBoardCard.final .koMiniScore{font-size:15px;min-width:18px;color:var(--gold2)}
     .koMiniTeam.win{background:rgba(82,201,122,.12)}
     .koMiniTeam.win .teamCode,.koMiniTeam.win .koMiniScore{color:var(--good)}
     .koMiniTeam.lose{opacity:.50}
-    .koSlotMini{font:600 9.6px/1.2 var(--font-body);letter-spacing:.01em;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;max-width:88px;background:rgba(255,255,255,.035);border:1px solid var(--line2);border-radius:999px;padding:2px 6px}
+    .koSlotMini{font:500 9px/1.2 var(--font-body);letter-spacing:0;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;max-width:76px;background:rgba(255,255,255,.035);border:1px solid var(--line2);border-radius:999px;padding:2px 5px}
     .koBoardCard.final .koSlotMini{max-width:116px;color:var(--gold2);border-color:var(--gold-line);background:rgba(212,165,32,.10)}
     .koBoardNote{display:none}
 
@@ -1863,8 +1863,19 @@ function koTreeHtml(){
 }
 
 let BRACKET_STAGE=localStorage.getItem('wc26BracketStage')||'r32';
-if(!['r32','r16','qf','sf','final'].includes(BRACKET_STAGE))BRACKET_STAGE='r32';
-function setBracketStage(stage){BRACKET_STAGE=(stage===BRACKET_STAGE)?'r32':stage;localStorage.setItem('wc26BracketStage',BRACKET_STAGE);renderBracket();}
+const BRACKET_STAGE_STEPS=['r32','r16','qf','sf','final'];
+if(!BRACKET_STAGE_STEPS.includes(BRACKET_STAGE))BRACKET_STAGE='r32';
+function setBracketStage(stage){
+  if(!BRACKET_STAGE_STEPS.includes(stage)) stage='r32';
+  if(stage===BRACKET_STAGE){
+    const i=BRACKET_STAGE_STEPS.indexOf(stage);
+    BRACKET_STAGE=i>0?BRACKET_STAGE_STEPS[i-1]:'r32';
+  }else{
+    BRACKET_STAGE=stage;
+  }
+  localStorage.setItem('wc26BracketStage',BRACKET_STAGE);
+  renderBracket();
+}
 function koShortTime(iso){
   if(!iso)return '';
   const d=new Date(iso); if(isNaN(d))return '';
@@ -1896,8 +1907,8 @@ function koBoardColumns(){
   return all.filter(c=>KO_STAGE_ORDER[c.stage]>=min);
 }
 function koBoardPositions(){
-  const cardW=128, cardH=68, finalW=164, finalH=88, thirdW=150, thirdH=72;
-  const margin=18,gap=34,boardH=760;
+  const cardW=116, cardH=64, finalW=150, finalH=84, thirdW=136, thirdH=68;
+  const margin=16,gap=30,boardH=760;
   const cols=koBoardColumns();
   const colX={}, colW={};
   let x=margin;
@@ -2012,6 +2023,10 @@ function fitBracketReadable(){
   tree.style.transition='none';tree.style.transform='scale(1)';void tree.offsetWidth;
   const fit=Math.min(1,scroll.clientWidth/tree.scrollWidth);
   setBracketZoom(Math.max(0.28,fit));
+  requestAnimationFrame(()=>{
+    const max=scroll.scrollWidth-scroll.clientWidth;
+    if(max>0)scroll.scrollLeft=max/2;
+  });
 }
 function renderBracket(){
   if(!$('bracketBox')||!STATE)return;
