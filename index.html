@@ -932,13 +932,18 @@
     /* ── Bracket board view: compact, theme-safe, stage-filtered ── */
     .bracketModeBtns{display:none}
     .bracketQuickNav{display:none}
-    .koBoardScroll .bracketZoomWrap{overflow:hidden}
+    .koBoardScroll{overflow:auto;padding:8px 0 16px;-webkit-overflow-scrolling:touch}
+    .koBoardScroll .bracketZoomWrap{overflow:visible;background:transparent!important}
     .koBoardTree{display:inline-block!important;align-items:initial!important;justify-content:initial!important}
-    .koBoard{position:relative;width:1290px;height:760px;border-radius:22px;overflow:hidden;background:
-      radial-gradient(circle at 50% 43%,var(--gold-glow),transparent 18%),
-      radial-gradient(circle at 50% 43%,rgba(255,255,255,.045),transparent 31%),
-      linear-gradient(135deg,var(--panel2),var(--panel));
+    .koBoard{position:relative;width:1238px;height:700px;border-radius:18px;overflow:hidden;
+      background-color:var(--panel);
+      background-image:
+        radial-gradient(circle at 50% 43%,var(--gold-glow),transparent 16%),
+        radial-gradient(circle at 50% 43%,rgba(255,255,255,.035),transparent 28%),
+        linear-gradient(135deg,rgba(255,255,255,.035),rgba(0,0,0,.06));
       border:1px solid var(--line);box-shadow:var(--shadow);isolation:isolate}
+    html[data-theme="ice"] .koBoard,
+    html[data-theme="jp"] .koBoard{background-color:var(--panel);background-image:radial-gradient(circle at 50% 43%,var(--gold-glow),transparent 16%),linear-gradient(135deg,rgba(255,255,255,.35),rgba(0,0,0,.035))}
     .koBoard::before{content:'🏆';position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);font-size:104px;line-height:1;opacity:.055;filter:drop-shadow(0 8px 20px rgba(0,0,0,.50));pointer-events:none;z-index:0}
     .koFinalHalo{position:absolute;transform:translate(-50%,-50%);width:250px;height:220px;border-radius:38px;background:radial-gradient(circle,rgba(212,165,32,.17),rgba(212,165,32,.07) 34%,transparent 72%);filter:blur(.2px);opacity:.65;z-index:0;pointer-events:none}
     .koFinalLabel{position:absolute;transform:translateX(-50%);z-index:3;padding:4px 14px;border-radius:999px;background:linear-gradient(135deg,rgba(212,165,32,.22),rgba(240,200,66,.08));border:1px solid var(--gold-line);font-family:var(--font-display);font-weight:700;font-size:16px;letter-spacing:.09em;text-transform:uppercase;color:var(--gold2);box-shadow:0 0 18px var(--gold-glow);pointer-events:none}
@@ -954,49 +959,37 @@
     .koRoundTitle:hover{background:rgba(212,165,32,.10);color:var(--text);transform:none;border:0}
     .koRoundTitle.active{background:rgba(212,165,32,.12);color:var(--gold2);outline:1px solid var(--gold-line)}
     .koRoundTitle.center{font-size:12.5px;color:var(--gold2)}
-    .koBoardCard{position:absolute;z-index:2;width:116px;height:64px;min-height:0;border-radius:11px;background:linear-gradient(180deg,rgba(0,0,0,.16),rgba(255,255,255,.018)),var(--panel);border:1px solid var(--line);box-shadow:0 4px 12px rgba(0,0,0,.18);padding:4px 5px;transition:border-color .12s,box-shadow .12s;pointer-events:auto;cursor:pointer}
-    .koBoardCard:hover{transform:none;border-color:var(--gold-line);box-shadow:0 5px 16px rgba(0,0,0,.24),0 0 0 1px rgba(212,165,32,.10)}
+    .koBoardCard{position:absolute;z-index:2;width:108px;height:58px;min-height:0;border-radius:10px;background:linear-gradient(180deg,rgba(0,0,0,.12),rgba(255,255,255,.018)),var(--panel);border:1px solid var(--line);box-shadow:0 3px 10px rgba(0,0,0,.16);padding:3px 4px;transition:border-color .12s,box-shadow .12s;pointer-events:none;cursor:default}
+    .koBoardCard:hover{transform:none}
     .koBoardCard.done{border-color:rgba(82,201,122,.30)}
     .koBoardCard.open{border-color:rgba(82,201,122,.20)}
     .koBoardCard.locked{border-color:rgba(232,160,32,.22)}
-    .koBoardCard.final{width:150px;height:84px;min-height:0;border-color:var(--gold);border-width:1.3px;background:linear-gradient(180deg,rgba(212,165,32,.10),rgba(0,0,0,.10)),var(--panel);box-shadow:0 0 0 1px var(--gold-line),0 8px 24px var(--gold-glow),0 7px 20px rgba(0,0,0,.25);padding:7px}
-    .koBoardCard.third{width:136px;height:68px;opacity:.82;border-style:dashed;background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(0,0,0,.06)),var(--panel)}
+    .koBoardCard.final{width:138px;height:78px;min-height:0;border-color:var(--gold);border-width:1.3px;background:linear-gradient(180deg,rgba(212,165,32,.10),rgba(0,0,0,.08)),var(--panel);box-shadow:0 0 0 1px var(--gold-line),0 7px 22px var(--gold-glow),0 6px 18px rgba(0,0,0,.22);padding:6px}
+    .koBoardCard.third{width:124px;height:62px;opacity:.82;border-style:dashed;background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(0,0,0,.04)),var(--panel)}
     .koMiniTop{display:flex;align-items:center;justify-content:space-between;gap:4px;margin-bottom:2px}
-    .koMiniNo{font:500 9px/1 var(--font-body);background:rgba(255,255,255,.04);border:1px solid var(--line2);border-radius:999px;padding:2px 5px;color:var(--muted);letter-spacing:0}
-    .koMiniState{font-size:8.2px;color:var(--muted);white-space:nowrap;max-width:66px;overflow:hidden;text-overflow:ellipsis}
+    .koMiniNo{font:450 8.5px/1 var(--font-body);background:rgba(255,255,255,.035);border:1px solid var(--line2);border-radius:999px;padding:2px 5px;color:var(--muted);letter-spacing:0}
+    .koMiniState{font-size:7.8px;color:var(--muted);white-space:nowrap;max-width:62px;overflow:hidden;text-overflow:ellipsis}
     .koBoardCard.final .koMiniNo{background:linear-gradient(135deg,var(--active1),var(--active2));color:var(--active-text);border-color:transparent;font-size:10.5px;padding:3px 7px;font-weight:650}
     .koBoardCard.final .koMiniState{color:var(--gold2);font-weight:500;max-width:76px}
-    .koMiniTeam{display:flex;align-items:center;justify-content:space-between;gap:3px;padding:2px 3px;border-radius:7px;min-height:18px}
+    .koMiniTeam{display:flex;align-items:center;justify-content:space-between;gap:3px;padding:1px 3px;border-radius:7px;min-height:16px}
     .koMiniTeam+.koMiniTeam{margin-top:1px}
     .koMiniTeam .team{min-width:0;gap:4px;flex:1}
-    .koMiniTeam .flagImg{width:18px;height:13px;border-radius:3px}
-    .koMiniTeam .teamCode{font-size:10px;font-weight:520;letter-spacing:.015em;color:var(--text)}
+    .koMiniTeam .flagImg{width:16px;height:11px;border-radius:3px}
+    .koMiniTeam .teamCode{font-size:9.5px;font-weight:480;letter-spacing:.01em;color:var(--text)}
     .koBoardCard.final .koMiniTeam{min-height:22px;padding:3px 4px}
     .koBoardCard.final .koMiniTeam .teamCode{font-size:11px;font-weight:560}
     .koBoardCard.final .koMiniTeam .flagImg{width:21px;height:15px}
     .koMiniTeam .flagFallback{font-size:13px}
-    .koMiniScore{font-family:var(--font-display);font-size:11px;font-weight:560;min-width:12px;text-align:end;color:var(--text)}
+    .koMiniScore{font-family:var(--font-display);font-size:10.5px;font-weight:500;min-width:11px;text-align:end;color:var(--text)}
     .koBoardCard.final .koMiniScore{font-size:15px;min-width:18px;color:var(--gold2)}
     .koMiniTeam.win{background:rgba(82,201,122,.12)}
     .koMiniTeam.win .teamCode,.koMiniTeam.win .koMiniScore{color:var(--good)}
     .koMiniTeam.lose{opacity:.50}
-    .koSlotMini{font:500 9px/1.2 var(--font-body);letter-spacing:0;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;max-width:76px;background:rgba(255,255,255,.035);border:1px solid var(--line2);border-radius:999px;padding:2px 5px}
+    .koSlotMini{font:450 8.5px/1.2 var(--font-body);letter-spacing:0;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;max-width:70px;background:rgba(255,255,255,.035);border:1px solid var(--line2);border-radius:999px;padding:2px 5px}
     .koBoardCard.final .koSlotMini{max-width:116px;color:var(--gold2);border-color:var(--gold-line);background:rgba(212,165,32,.10)}
     .koBoardNote{display:none}
 
-    .koBoardCard:focus-visible{outline:none;box-shadow:var(--focus),0 5px 16px rgba(0,0,0,.24)}
-    .koModal{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:18px}
-    .koModalCard{width:min(440px,94vw);border-radius:18px;background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);padding:16px;color:var(--text)}
-    .koModalHead{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
-    .koModalTitle{font-family:var(--font-display);font-weight:700;font-size:20px;line-height:1.05}
-    .koModalTeams{display:grid;gap:8px;margin:12px 0}
-    .koModalTeam{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 10px;border:1px solid var(--line2);border-radius:12px;background:var(--bg2)}
-    .koModalTeam.win{border-color:rgba(82,201,122,.35);background:rgba(82,201,122,.08)}
-    .koModalTeam.lose{opacity:.62}
-    .koModalScore{font-family:var(--font-display);font-weight:700;font-size:18px;color:var(--gold2)}
-    .koModalInfo{border-top:1px solid var(--line2);padding-top:10px;margin-top:10px;display:grid;gap:6px;font-size:13px;color:var(--muted)}
-    .koModalInfo b{color:var(--text);font-weight:600}
-    @media(max-width:700px){.bracketZoomCtrl{align-items:flex-start;flex-direction:column}.bracketZoomBtns{width:100%;overflow-x:auto;flex-wrap:nowrap}.koBoardCard{box-shadow:0 3px 10px rgba(0,0,0,.18)}}
+    @media(max-width:700px){.bracketZoomCtrl{align-items:flex-start;flex-direction:column;gap:6px}.bracketZoomBtns{width:100%;overflow-x:auto;flex-wrap:nowrap}.koBoard{border-radius:14px}.koBoardCard{box-shadow:0 2px 8px rgba(0,0,0,.16)}.koRoundTitle{top:10px;font-size:9.5px}.koFinalLabel{font-size:13px}.koBoard::before{font-size:82px;opacity:.04}}
 
   </style>
 </head>
@@ -1067,7 +1060,7 @@ const BETTING_REVEAL_MATCH_NO=87;
 function bettingRevealOpen(){return !!(STATE&&STATE.results&&STATE.results[BETTING_REVEAL_MATCH_NO]);}
 function bettingRevealMsg(){return LANG==='ar'?'ستظهر الرهانات بعد إدخال نتيجة المباراة 87':'Betting will appear after Match 87 result is entered';}
 let PRED_BETTING_LOADING=false, PRED_BETTING_LOADED=false;
-const T={en:{title:"WC '26 Prediction League",sub:'Riyadh time GMT+3 · Auto-save · Bilingual',refresh:'Refresh',firstSetup:'First setup',setupText:'Create the league by choosing a 4-digit admin PIN. Keep it private.',adminPin4:'Admin PIN, 4 digits',createLeague:'Create league',predictions:'Predictions',odds:'Odds',leaderboard:'Leaderboard',groups:'Groups',groupsHelp:'Group tables are calculated from the results entered by admin/API. Ranking uses points, goal difference, goals for, then team name.',bracket:'Knockout',bracketHelp:'The bracket fills in automatically as results are entered — winners advance to the next round. In the tree view, scroll sideways to follow each path to the final.',rules:'Rules',admin:'Admin',playerArea:'Player area',playerHelp:'Select your name, enter your PIN, and predict. Changes auto-save.',displayNameOnce:'Display name, first login only',pin4:'4-digit PIN',login:'Login',logout:'Logout',saveNow:'Save now',quickStats:'Quick stats',saved:'Saved',saving:'Saving…',unsaved:'Unsaved changes',loginFirst:'Login first',locked:'Locked',open:'Open',today:'Today',upcoming:'Upcoming',completed:'Completed',all:'All',mine:'Missing picks',searchTeams:'Search team or stage',group:'Group',roundOf32:'Round of 32',roundOf16:'Round of 16',quarterFinal:'Quarter-final',semiFinal:'Semi-final',thirdPlace:'Third place',final:'Final',nameLocked:'Enter your PIN to continue.',nameAvailable:'Optional: choose your display name now. You can do this once.',odds:'Odds',oddsTitle:'Prediction odds',oddsHelp:'These odds are calculated from participant picks. They become more useful after players submit predictions.',draw:'Draw',penalties:'Penalties',winner:'Winner',predictPens:'Reaches penalties',rank:'Rank',player:'Player',points:'Points',team:'Team',exact:'Exact',outcome:'Winner/Draw',wrong:'Wrong',predictedPlayed:'Predicted played',rulesTitle:'Scoring rules',adminPin:'Admin PIN',players:'Players',matches:'Matches',results:'Results',viewPredictions:'View predictions',apiSync:'API Sync',reset:'Reset',savePlayerNames:'Save player names',resetPin:'Reset PIN',pinSet:'PIN set',noPin:'No PIN yet',matchSetup:'Match setup',stage:'Stage',home:'Home',away:'Away',kickoff:'Kick-off',saveMatchSetup:'Save match setup',resultsHelp:'Admin can edit API results manually here. For knockout draws, choose whether penalties happened and who advanced.',saveResults:'Save results',prediction:'Prediction',result:'Result',scorePoints:'Points',noPrediction:'No prediction',apiHelp:'Save your football-data.org token privately, then sync results. Manual edits remain available.',apiToken:'API token',saveApiToken:'Save API token',syncNow:'Sync now',enableAutoSync:'Enable hourly auto-sync',disableAutoSync:'Disable auto-sync',typeReset:'Type RESET',resetLeagueLink:'Reset league link',wrongAdmin:'Wrong admin PIN',empty:'Nothing to show yet',adminTabPlayers:'👤 Players',adminTabMatrix:'📊 Scores',adminTabMatches:'📅 Matches',adminTabResults:'⚽ Results',adminTabPreds:'🔍 Predictions',adminTabBets:'🎲 Bets',adminTabAdjust:'⚖️ Adjust',adminTabSync:'🔄 API Sync',adminTabReset:'🗑️ Reset',hideTabs:'Manage tabs',hideTabsHelp:'Show or hide tabs for all players. Admin always sees all tabs.',adminTabVis:'👁️ Pred Visibility',adminTabChampion:'🌍 Champion',adminTabHide:'👁️ Tabs',adjustPoints:'Adjust points',adjustHelp:'Add or subtract points from a player. Use for corrections, bonuses, or penalties.',adjustment:'Adjustment',reason:'Reason',note:'Note',bonus:'Bonus',penalty:'Penalty',correction:'Correction',adjustHistory:'Adjustment history',leaderboardTitle:'Leaderboard',youLabel:'You',behindLeader:'behind leader',betting:'Betting',bettingHelp:'Bet your prediction points on R16+ matches. Predictions and bets both count — place a bet on top of your prediction for extra reward or risk. Winners share the pool.',balance:'Balance',placeBet:'Place bet',cancelBet:'Cancel bet',allIn:'🔥 All In',betAmount:'Bet amount',pool:'Pool',yourBet:'Your bet',betWon:'Won',betLost:'Lost',betPending:'Pending',noBets:'No bets placed yet',betForfeits:'⚠️ Bet is extra — prediction points still count',championTitle:'Champion Prediction',championHelp:'Pick the World Cup winner before June 19 midnight (Riyadh) for +20 if correct. You get one switch until July 4, 19:55 — a switched pick is worth +10.',championPick:'Your pick',championLock:'Locked June 19 midnight',championCorrect:'🏆 Correct!',championWrong:'✗ Wrong',championNoPick:'No pick yet',championWinner:'Actual champion',setChampionWinner:'Set champion winner',saveChampionPick:'Save champion pick',scoreMatrix:'Score matrix',deleteResult:'Delete result',lockResult:'🔒 Lock from auto-sync',lockResultHelp:'Tip: tick 🔒 on a match to stop the football-data sync from overwriting it — use this when the API has a wrong result. Correct the score, tick 🔒, then Save.',renamePlayer:'Rename',forcePin:'Set PIN',clearPreds:'Clear picks',confirmClear:'Type CLEAR to wipe this player\'s predictions',totalPoints:'Total',rulesHtml:`
+const T={en:{title:"WC '26 Prediction League",sub:'Riyadh time GMT+3 · Auto-save · Bilingual',refresh:'Refresh',firstSetup:'First setup',setupText:'Create the league by choosing a 4-digit admin PIN. Keep it private.',adminPin4:'Admin PIN, 4 digits',createLeague:'Create league',predictions:'Predictions',odds:'Odds',leaderboard:'Leaderboard',groups:'Groups',groupsHelp:'Group tables are calculated from the results entered by admin/API. Ranking uses points, goal difference, goals for, then team name.',bracket:'Knockout',bracketHelp:'The bracket fills in automatically as results are entered. Tap a round title to focus, drag sideways, or pinch to zoom.',rules:'Rules',admin:'Admin',playerArea:'Player area',playerHelp:'Select your name, enter your PIN, and predict. Changes auto-save.',displayNameOnce:'Display name, first login only',pin4:'4-digit PIN',login:'Login',logout:'Logout',saveNow:'Save now',quickStats:'Quick stats',saved:'Saved',saving:'Saving…',unsaved:'Unsaved changes',loginFirst:'Login first',locked:'Locked',open:'Open',today:'Today',upcoming:'Upcoming',completed:'Completed',all:'All',mine:'Missing picks',searchTeams:'Search team or stage',group:'Group',roundOf32:'Round of 32',roundOf16:'Round of 16',quarterFinal:'Quarter-final',semiFinal:'Semi-final',thirdPlace:'Third place',final:'Final',nameLocked:'Enter your PIN to continue.',nameAvailable:'Optional: choose your display name now. You can do this once.',odds:'Odds',oddsTitle:'Prediction odds',oddsHelp:'These odds are calculated from participant picks. They become more useful after players submit predictions.',draw:'Draw',penalties:'Penalties',winner:'Winner',predictPens:'Reaches penalties',rank:'Rank',player:'Player',points:'Points',team:'Team',exact:'Exact',outcome:'Winner/Draw',wrong:'Wrong',predictedPlayed:'Predicted played',rulesTitle:'Scoring rules',adminPin:'Admin PIN',players:'Players',matches:'Matches',results:'Results',viewPredictions:'View predictions',apiSync:'API Sync',reset:'Reset',savePlayerNames:'Save player names',resetPin:'Reset PIN',pinSet:'PIN set',noPin:'No PIN yet',matchSetup:'Match setup',stage:'Stage',home:'Home',away:'Away',kickoff:'Kick-off',saveMatchSetup:'Save match setup',resultsHelp:'Admin can edit API results manually here. For knockout draws, choose whether penalties happened and who advanced.',saveResults:'Save results',prediction:'Prediction',result:'Result',scorePoints:'Points',noPrediction:'No prediction',apiHelp:'Save your football-data.org token privately, then sync results. Manual edits remain available.',apiToken:'API token',saveApiToken:'Save API token',syncNow:'Sync now',enableAutoSync:'Enable hourly auto-sync',disableAutoSync:'Disable auto-sync',typeReset:'Type RESET',resetLeagueLink:'Reset league link',wrongAdmin:'Wrong admin PIN',empty:'Nothing to show yet',adminTabPlayers:'👤 Players',adminTabMatrix:'📊 Scores',adminTabMatches:'📅 Matches',adminTabResults:'⚽ Results',adminTabPreds:'🔍 Predictions',adminTabBets:'🎲 Bets',adminTabAdjust:'⚖️ Adjust',adminTabSync:'🔄 API Sync',adminTabReset:'🗑️ Reset',hideTabs:'Manage tabs',hideTabsHelp:'Show or hide tabs for all players. Admin always sees all tabs.',adminTabVis:'👁️ Pred Visibility',adminTabChampion:'🌍 Champion',adminTabHide:'👁️ Tabs',adjustPoints:'Adjust points',adjustHelp:'Add or subtract points from a player. Use for corrections, bonuses, or penalties.',adjustment:'Adjustment',reason:'Reason',note:'Note',bonus:'Bonus',penalty:'Penalty',correction:'Correction',adjustHistory:'Adjustment history',leaderboardTitle:'Leaderboard',youLabel:'You',behindLeader:'behind leader',betting:'Betting',bettingHelp:'Bet your prediction points on R16+ matches. Predictions and bets both count — place a bet on top of your prediction for extra reward or risk. Winners share the pool.',balance:'Balance',placeBet:'Place bet',cancelBet:'Cancel bet',allIn:'🔥 All In',betAmount:'Bet amount',pool:'Pool',yourBet:'Your bet',betWon:'Won',betLost:'Lost',betPending:'Pending',noBets:'No bets placed yet',betForfeits:'⚠️ Bet is extra — prediction points still count',championTitle:'Champion Prediction',championHelp:'Pick the World Cup winner before June 19 midnight (Riyadh) for +20 if correct. You get one switch until July 4, 19:55 — a switched pick is worth +10.',championPick:'Your pick',championLock:'Locked June 19 midnight',championCorrect:'🏆 Correct!',championWrong:'✗ Wrong',championNoPick:'No pick yet',championWinner:'Actual champion',setChampionWinner:'Set champion winner',saveChampionPick:'Save champion pick',scoreMatrix:'Score matrix',deleteResult:'Delete result',lockResult:'🔒 Lock from auto-sync',lockResultHelp:'Tip: tick 🔒 on a match to stop the football-data sync from overwriting it — use this when the API has a wrong result. Correct the score, tick 🔒, then Save.',renamePlayer:'Rename',forcePin:'Set PIN',clearPreds:'Clear picks',confirmClear:'Type CLEAR to wipe this player\'s predictions',totalPoints:'Total',rulesHtml:`
 <div style="display:flex;flex-direction:column;gap:16px">
 
   <div class="ruleTile" style="border-color:rgba(212,165,32,.35);background:rgba(212,165,32,.06)">
@@ -1140,7 +1133,7 @@ const T={en:{title:"WC '26 Prediction League",sub:'Riyadh time GMT+3 · Auto-sav
     </p>
   </div>
 
-</div>`},ar:{title:'توقعات كأس العالم ٢٠٢٦',sub:'توقيت الرياض GMT+3 · حفظ تلقائي · عربي وإنجليزي',refresh:'تحديث',firstSetup:'الإعداد الأول',setupText:'أنشئ الدوري باختيار رقم سري للمدير من ٤ أرقام. احتفظ به بسرية.',adminPin4:'رقم المدير ٤ أرقام',createLeague:'إنشاء الدوري',predictions:'التوقعات',odds:'النسب',leaderboard:'الترتيب',groups:'المجموعات',groupsHelp:'جداول المجموعات تُحسب من النتائج المدخلة من المدير أو API. الترتيب حسب النقاط ثم فارق الأهداف ثم الأهداف المسجلة ثم الاسم.',bracket:'الإقصاء',bracketHelp:'تُملأ الشجرة تلقائياً عند إدخال النتائج — الفائز يتأهل للدور التالي. في عرض الشجرة مرّر جانبياً لتتبع كل مسار حتى النهائي.',rules:'القوانين',admin:'المدير',playerArea:'منطقة اللاعب',playerHelp:'اختر اسمك وأدخل الرقم السري للتوقع. يتم الحفظ تلقائياً.',displayNameOnce:'اسم العرض لأول دخول فقط',pin4:'رقم سري ٤ أرقام',login:'دخول',logout:'خروج',saveNow:'حفظ الآن',quickStats:'ملخص سريع',saved:'تم الحفظ',saving:'جاري الحفظ…',unsaved:'تغييرات غير محفوظة',loginFirst:'سجل الدخول أولاً',locked:'مغلقة',open:'متاحة',today:'اليوم',upcoming:'قادمة',completed:'منتهية',all:'الكل',mine:'توقعات ناقصة',searchTeams:'ابحث عن فريق أو مرحلة',group:'المجموعة',roundOf32:'دور ٣٢',roundOf16:'دور ١٦',quarterFinal:'ربع النهائي',semiFinal:'نصف النهائي',thirdPlace:'المركز الثالث',final:'النهائي',nameLocked:'أدخل الرقم السري للمتابعة.',nameAvailable:'اختياري: اختر اسم العرض الآن. يمكن اختياره مرة واحدة فقط.',oddsTitle:'نسب التوقعات',oddsHelp:'هذه النسب مبنية على توقعات المشاركين، وتصبح أدق بعد إدخال التوقعات.',draw:'تعادل',penalties:'ركلات ترجيح',winner:'المتأهل',predictPens:'تصل لركلات الترجيح',rank:'المركز',player:'اللاعب',points:'النقاط',team:'الفريق',exact:'نتيجة صحيحة',outcome:'فائز/تعادل',wrong:'خطأ',predictedPlayed:'توقعات محسوبة',rulesTitle:'قوانين النقاط',adminPin:'رقم المدير',players:'اللاعبون',matches:'المباريات',results:'النتائج',viewPredictions:'عرض التوقعات',apiSync:'مزامنة API',reset:'إعادة ضبط',savePlayerNames:'حفظ أسماء اللاعبين',resetPin:'إعادة الرقم السري',pinSet:'الرقم مفعل',noPin:'لم يحدد بعد',matchSetup:'إعداد المباراة',stage:'المرحلة',home:'الفريق الأول',away:'الفريق الثاني',kickoff:'وقت المباراة',saveMatchSetup:'حفظ إعداد المباريات',resultsHelp:'يمكن للمدير تعديل النتائج هنا حتى بعد تحديث API. في مباريات الإقصاء المتعادلة، اختر هل وصلت لركلات الترجيح ومن المتأهل.',saveResults:'حفظ النتائج',prediction:'التوقع',result:'النتيجة',scorePoints:'النقاط',noPrediction:'لا يوجد توقع',apiHelp:'احفظ رمز football-data.org بشكل خاص، ثم قم بالمزامنة. التعديل اليدوي يبقى متاحاً.',apiToken:'رمز API',saveApiToken:'حفظ الرمز',syncNow:'مزامنة الآن',enableAutoSync:'تفعيل المزامنة كل ساعة',disableAutoSync:'إيقاف المزامنة',typeReset:'اكتب RESET',resetLeagueLink:'إعادة ضبط رابط الدوري',wrongAdmin:'رقم المدير غير صحيح',empty:'لا يوجد شيء للعرض حالياً',adminTabPlayers:'👤 اللاعبون',adminTabMatrix:'📊 النقاط',adminTabMatches:'📅 المباريات',adminTabResults:'⚽ النتائج',adminTabPreds:'🔍 التوقعات',adminTabBets:'🎲 الرهانات',adminTabAdjust:'⚖️ تعديل',adminTabSync:'🔄 المزامنة',adminTabReset:'🗑️ إعادة ضبط',hideTabs:'إدارة التبويبات',hideTabsHelp:'أظهر أو أخفِ التبويبات لجميع اللاعبين. المدير يرى جميع التبويبات دائماً.',adminTabVis:'👁️ ظهور التوقعات',adminTabChampion:'🌍 البطل',adminTabHide:'👁️ التبويبات',adjustPoints:'تعديل النقاط',adjustHelp:'أضف أو اطرح نقاطاً من اللاعب. للتصحيح أو المكافآت أو الغرامات.',adjustment:'تعديل',reason:'السبب',note:'ملاحظة',bonus:'مكافأة',penalty:'غرامة',correction:'تصحيح',adjustHistory:'سجل التعديلات',leaderboardTitle:'الترتيب',youLabel:'أنت',behindLeader:'خلف المتصدر',betting:'الرهانات',bettingHelp:'راهن بنقاطك على مباريات دور الـ16 فما فوق. التوقعات والرهانات تحتسبان معاً — ضع رهاناً فوق توقعك لمكافأة أو مخاطرة إضافية. الفائزون يتقاسمون المجموع.',balance:'الرصيد',placeBet:'ضع رهان',cancelBet:'إلغاء الرهان',allIn:'🔥 كل شيء',betAmount:'مبلغ الرهان',pool:'المجموع',yourBet:'رهانك',betWon:'فاز',betLost:'خسر',betPending:'معلق',noBets:'لا رهانات بعد',betForfeits:'⚠️ الرهان إضافي — نقاط التوقع لا تزال تُحتسب',championTitle:'توقع البطل',championHelp:'توقع الفائز بكأس العالم قبل منتصف ليل ١٩ يونيو (الرياض) لتحصل على +٢٠ إن أصبت. ولديك تبديل واحد حتى ٤ يوليو الساعة ١٩:٥٥ — والتوقع المُبدّل يساوي +١٠.',championPick:'توقعك',championLock:'مقفل في ١٩ يونيو',championCorrect:'🏆 صحيح!',championWrong:'✗ خطأ',championNoPick:'لم تختر بعد',championWinner:'البطل الفعلي',setChampionWinner:'تحديد البطل',saveChampionPick:'حفظ توقع البطل',scoreMatrix:'مصفوفة النقاط',deleteResult:'حذف النتيجة',lockResult:'🔒 تثبيت ومنع المزامنة',lockResultHelp:'تلميح: فعّل 🔒 على أي مباراة لمنع مزامنة football-data من تغييرها — استخدمها عندما تكون نتيجة الـAPI خاطئة. صحّح النتيجة، فعّل 🔒، ثم احفظ.',renamePlayer:'إعادة تسمية',forcePin:'تعيين رقم سري',clearPreds:'مسح التوقعات',confirmClear:'اكتب CLEAR لمسح توقعات هذا اللاعب',totalPoints:'المجموع',rulesHtml:`
+</div>`},ar:{title:'توقعات كأس العالم ٢٠٢٦',sub:'توقيت الرياض GMT+3 · حفظ تلقائي · عربي وإنجليزي',refresh:'تحديث',firstSetup:'الإعداد الأول',setupText:'أنشئ الدوري باختيار رقم سري للمدير من ٤ أرقام. احتفظ به بسرية.',adminPin4:'رقم المدير ٤ أرقام',createLeague:'إنشاء الدوري',predictions:'التوقعات',odds:'النسب',leaderboard:'الترتيب',groups:'المجموعات',groupsHelp:'جداول المجموعات تُحسب من النتائج المدخلة من المدير أو API. الترتيب حسب النقاط ثم فارق الأهداف ثم الأهداف المسجلة ثم الاسم.',bracket:'الإقصاء',bracketHelp:'يمتلئ مسار الإقصاء تلقائياً عند إدخال النتائج. اضغط اسم الدور للتركيز، واسحب جانبياً أو قرّب بإصبعين.',rules:'القوانين',admin:'المدير',playerArea:'منطقة اللاعب',playerHelp:'اختر اسمك وأدخل الرقم السري للتوقع. يتم الحفظ تلقائياً.',displayNameOnce:'اسم العرض لأول دخول فقط',pin4:'رقم سري ٤ أرقام',login:'دخول',logout:'خروج',saveNow:'حفظ الآن',quickStats:'ملخص سريع',saved:'تم الحفظ',saving:'جاري الحفظ…',unsaved:'تغييرات غير محفوظة',loginFirst:'سجل الدخول أولاً',locked:'مغلقة',open:'متاحة',today:'اليوم',upcoming:'قادمة',completed:'منتهية',all:'الكل',mine:'توقعات ناقصة',searchTeams:'ابحث عن فريق أو مرحلة',group:'المجموعة',roundOf32:'دور ٣٢',roundOf16:'دور ١٦',quarterFinal:'ربع النهائي',semiFinal:'نصف النهائي',thirdPlace:'المركز الثالث',final:'النهائي',nameLocked:'أدخل الرقم السري للمتابعة.',nameAvailable:'اختياري: اختر اسم العرض الآن. يمكن اختياره مرة واحدة فقط.',oddsTitle:'نسب التوقعات',oddsHelp:'هذه النسب مبنية على توقعات المشاركين، وتصبح أدق بعد إدخال التوقعات.',draw:'تعادل',penalties:'ركلات ترجيح',winner:'المتأهل',predictPens:'تصل لركلات الترجيح',rank:'المركز',player:'اللاعب',points:'النقاط',team:'الفريق',exact:'نتيجة صحيحة',outcome:'فائز/تعادل',wrong:'خطأ',predictedPlayed:'توقعات محسوبة',rulesTitle:'قوانين النقاط',adminPin:'رقم المدير',players:'اللاعبون',matches:'المباريات',results:'النتائج',viewPredictions:'عرض التوقعات',apiSync:'مزامنة API',reset:'إعادة ضبط',savePlayerNames:'حفظ أسماء اللاعبين',resetPin:'إعادة الرقم السري',pinSet:'الرقم مفعل',noPin:'لم يحدد بعد',matchSetup:'إعداد المباراة',stage:'المرحلة',home:'الفريق الأول',away:'الفريق الثاني',kickoff:'وقت المباراة',saveMatchSetup:'حفظ إعداد المباريات',resultsHelp:'يمكن للمدير تعديل النتائج هنا حتى بعد تحديث API. في مباريات الإقصاء المتعادلة، اختر هل وصلت لركلات الترجيح ومن المتأهل.',saveResults:'حفظ النتائج',prediction:'التوقع',result:'النتيجة',scorePoints:'النقاط',noPrediction:'لا يوجد توقع',apiHelp:'احفظ رمز football-data.org بشكل خاص، ثم قم بالمزامنة. التعديل اليدوي يبقى متاحاً.',apiToken:'رمز API',saveApiToken:'حفظ الرمز',syncNow:'مزامنة الآن',enableAutoSync:'تفعيل المزامنة كل ساعة',disableAutoSync:'إيقاف المزامنة',typeReset:'اكتب RESET',resetLeagueLink:'إعادة ضبط رابط الدوري',wrongAdmin:'رقم المدير غير صحيح',empty:'لا يوجد شيء للعرض حالياً',adminTabPlayers:'👤 اللاعبون',adminTabMatrix:'📊 النقاط',adminTabMatches:'📅 المباريات',adminTabResults:'⚽ النتائج',adminTabPreds:'🔍 التوقعات',adminTabBets:'🎲 الرهانات',adminTabAdjust:'⚖️ تعديل',adminTabSync:'🔄 المزامنة',adminTabReset:'🗑️ إعادة ضبط',hideTabs:'إدارة التبويبات',hideTabsHelp:'أظهر أو أخفِ التبويبات لجميع اللاعبين. المدير يرى جميع التبويبات دائماً.',adminTabVis:'👁️ ظهور التوقعات',adminTabChampion:'🌍 البطل',adminTabHide:'👁️ التبويبات',adjustPoints:'تعديل النقاط',adjustHelp:'أضف أو اطرح نقاطاً من اللاعب. للتصحيح أو المكافآت أو الغرامات.',adjustment:'تعديل',reason:'السبب',note:'ملاحظة',bonus:'مكافأة',penalty:'غرامة',correction:'تصحيح',adjustHistory:'سجل التعديلات',leaderboardTitle:'الترتيب',youLabel:'أنت',behindLeader:'خلف المتصدر',betting:'الرهانات',bettingHelp:'راهن بنقاطك على مباريات دور الـ16 فما فوق. التوقعات والرهانات تحتسبان معاً — ضع رهاناً فوق توقعك لمكافأة أو مخاطرة إضافية. الفائزون يتقاسمون المجموع.',balance:'الرصيد',placeBet:'ضع رهان',cancelBet:'إلغاء الرهان',allIn:'🔥 كل شيء',betAmount:'مبلغ الرهان',pool:'المجموع',yourBet:'رهانك',betWon:'فاز',betLost:'خسر',betPending:'معلق',noBets:'لا رهانات بعد',betForfeits:'⚠️ الرهان إضافي — نقاط التوقع لا تزال تُحتسب',championTitle:'توقع البطل',championHelp:'توقع الفائز بكأس العالم قبل منتصف ليل ١٩ يونيو (الرياض) لتحصل على +٢٠ إن أصبت. ولديك تبديل واحد حتى ٤ يوليو الساعة ١٩:٥٥ — والتوقع المُبدّل يساوي +١٠.',championPick:'توقعك',championLock:'مقفل في ١٩ يونيو',championCorrect:'🏆 صحيح!',championWrong:'✗ خطأ',championNoPick:'لم تختر بعد',championWinner:'البطل الفعلي',setChampionWinner:'تحديد البطل',saveChampionPick:'حفظ توقع البطل',scoreMatrix:'مصفوفة النقاط',deleteResult:'حذف النتيجة',lockResult:'🔒 تثبيت ومنع المزامنة',lockResultHelp:'تلميح: فعّل 🔒 على أي مباراة لمنع مزامنة football-data من تغييرها — استخدمها عندما تكون نتيجة الـAPI خاطئة. صحّح النتيجة، فعّل 🔒، ثم احفظ.',renamePlayer:'إعادة تسمية',forcePin:'تعيين رقم سري',clearPreds:'مسح التوقعات',confirmClear:'اكتب CLEAR لمسح توقعات هذا اللاعب',totalPoints:'المجموع',rulesHtml:`
 <div style="display:flex;flex-direction:column;gap:16px">
 
   <div class="ruleTile" style="border-color:rgba(212,165,32,.35);background:rgba(212,165,32,.06)">
@@ -1907,14 +1900,14 @@ function koBoardColumns(){
   return all.filter(c=>KO_STAGE_ORDER[c.stage]>=min);
 }
 function koBoardPositions(){
-  const cardW=116, cardH=64, finalW=150, finalH=84, thirdW=136, thirdH=68;
-  const margin=16,gap=30,boardH=760;
+  const cardW=108, cardH=58, finalW=138, finalH=78, thirdW=124, thirdH=62;
+  const margin=14,gap=26,boardH=700;
   const cols=koBoardColumns();
   const colX={}, colW={};
   let x=margin;
   cols.forEach(c=>{const w=c.key==='final'?finalW:cardW;colX[c.key]=x;colW[c.key]=w;x+=w+gap;});
   const boardW=Math.max(310,x-gap+margin);
-  const y={a:58,b:145,c:232,d:319,e:428,f:515,g:602,h:689,r1:102,r2:276,r3:470,r4:644,q1:189,q2:557,s:373,final:322,third:540};
+  const y={a:52,b:128,c:204,d:280,e:376,f:452,g:528,h:604,r1:90,r2:242,r3:430,r4:582,q1:166,q2:506,s:336,final:292,third:504};
   const raw={
     74:['l32',y.a],77:['l32',y.b],73:['l32',y.c],75:['l32',y.d],83:['l32',y.e],84:['l32',y.f],81:['l32',y.g],82:['l32',y.h],
     89:['l16',y.r1],90:['l16',y.r2],93:['l16',y.r3],94:['l16',y.r4],97:['lqf',y.q1],98:['lqf',y.q2],101:['lsf',y.s],
@@ -1935,7 +1928,7 @@ function koBoardCard(no){
   const aCls=win==='A'?'win':(done&&win&&win!=='A'?'lose':'');
   const special=no===104?' final':(no===103?' third':'');
   const status=done?(LANG==='ar'?'انتهت':'FT'):(STATE.liveScores&&STATE.liveScores[no])?`${STATE.liveScores[no].hg}–${STATE.liveScores[no].ag}`:koShortTime(m.iso);
-  return `<div class="koBoardCard ${done?'done':(L?'locked':'open')}${special}" style="left:${pos.x}px;top:${pos.y}px;width:${pos.w}px;height:${pos.h}px" role="button" tabindex="0" aria-label="Match ${dispNoFromNo(no)}" onclick="openKoMatchInfo(${no})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openKoMatchInfo(${no});}">
+  return `<div class="koBoardCard ${done?'done':(L?'locked':'open')}${special}" style="left:${pos.x}px;top:${pos.y}px;width:${pos.w}px;height:${pos.h}px" aria-label="Match ${dispNoFromNo(no)}">
     <div class="koMiniTop"><span class="koMiniNo">#${dispNoFromNo(no)}</span>${r&&r.pen?`<span class="koPen">PEN</span>`:''}<span class="koMiniState">${esc(status)}</span></div>
     <div class="koMiniTeam ${hCls}">${koMiniSlot(m.h)}<span class="koMiniScore">${done?r.hg:''}</span></div>
     <div class="koMiniTeam ${aCls}">${koMiniSlot(m.a)}<span class="koMiniScore">${done?r.ag:''}</span></div>
@@ -1976,38 +1969,6 @@ function koBoardSvg(){
   return `<svg class="koBoardSvg" viewBox="0 0 ${p.__w} ${p.__h}" preserveAspectRatio="none">${paths}</svg>`;
 }
 
-function koDisplayTeamName(slot){return koResolve(slot)||koSlotLabel(slot);}
-function koModalTeamRow(slot,side,no){
-  const m=KO_BY_NO[no],r=STATE.results&&STATE.results[no],win=r?koWinnerSide(no):null;
-  const cls=win===side?'win':(r&&win&&win!==side?'lose':'');
-  const score=r?(side==='H'?r.hg:r.ag):'';
-  return `<div class="koModalTeam ${cls}"><span>${koMiniSlot(slot)} <span class="tiny" style="margin-inline-start:6px">${esc(koDisplayTeamName(slot))}</span></span><span class="koModalScore">${esc(String(score))}</span></div>`;
-}
-function openKoMatchInfo(no){
-  const m=KO_BY_NO[no]; if(!m)return;
-  const r=STATE.results&&STATE.results[no],win=r?koWinnerSide(no):null;
-  const winner=win?(win==='H'?koDisplayTeamName(m.h):koDisplayTeamName(m.a)):'';
-  const loser=win?(win==='H'?koDisplayTeamName(m.a):koDisplayTeamName(m.h)):'';
-  const next=KO_NEXT[no];
-  let info=[];
-  info.push(`<div><b>${LANG==='ar'?'الوقت':'Time'}:</b> ${esc(localTime(m.iso))}</div>`);
-  if(r){
-    info.push(`<div><b>${LANG==='ar'?'النتيجة':'Result'}:</b> ${esc(String(r.hg))}–${esc(String(r.ag))}${r.pen?' · PEN':''}</div>`);
-    if(winner){
-      if(no===104)info.push(`<div><b>${LANG==='ar'?'البطل':'Champion'}:</b> ${esc(winner)}</div><div><b>${LANG==='ar'?'الوصيف':'Runner-up'}:</b> ${esc(loser)}</div>`);
-      else if(no===103)info.push(`<div><b>${LANG==='ar'?'المركز الثالث':'Third place'}:</b> ${esc(winner)}</div><div><b>${LANG==='ar'?'المركز الرابع':'Fourth place'}:</b> ${esc(loser)}</div>`);
-      else if(no===101||no===102)info.push(`<div><b>${LANG==='ar'?'المتأهل':'Winner advances'}:</b> ${esc(winner)} → M104</div><div><b>${LANG==='ar'?'الخاسر':'Loser'}:</b> ${esc(loser)} → M103</div>`);
-      else info.push(`<div><b>${LANG==='ar'?'المتأهل':'Winner advances'}:</b> ${esc(winner)}${next?' → M'+next:''}</div><div><b>${LANG==='ar'?'الخاسر':'Loser'}:</b> ${esc(loser)} ${LANG==='ar'?'خرج من البطولة':'eliminated'}</div>`);
-    }
-  }else{
-    info.push(`<div>${LANG==='ar'?'لم تُدخل نتيجة المباراة بعد.':'No result has been entered yet.'}</div>`);
-    if(next)info.push(`<div><b>${LANG==='ar'?'الفائز يتأهل إلى':'Winner advances to'}:</b> M${next}</div>`);
-    if(no===101||no===102)info.push(`<div><b>${LANG==='ar'?'الخاسر يذهب إلى':'Loser goes to'}:</b> M103</div>`);
-  }
-  const html=`<div id="koMatchModal" class="koModal" onclick="if(event.target===this)closeKoMatchInfo()"><div class="koModalCard"><div class="koModalHead"><div><div class="pill">#${dispNoFromNo(no)}</div><div class="koModalTitle">${esc(stageLabel(m))}</div></div><button class="ghost" onclick="closeKoMatchInfo()">×</button></div><div class="koModalTeams">${koModalTeamRow(m.h,'H',no)}${koModalTeamRow(m.a,'A',no)}</div><div class="koModalInfo">${info.join('')}</div></div></div>`;
-  const old=document.getElementById('koMatchModal'); if(old)old.remove(); document.body.insertAdjacentHTML('beforeend',html);
-}
-function closeKoMatchInfo(){const el=document.getElementById('koMatchModal');if(el)el.remove();}
 function koBoardHtml(){
   const p=koBoardPositions();
   const cards=[74,77,73,75,83,84,81,82,89,90,93,94,97,98,101,104,103,102,99,100,91,92,95,96,76,78,79,80,86,88,85,87].map(koBoardCard).join('');
@@ -2022,7 +1983,11 @@ function fitBracketReadable(){
   if(!tree||!scroll)return;
   tree.style.transition='none';tree.style.transform='scale(1)';void tree.offsetWidth;
   const fit=Math.min(1,scroll.clientWidth/tree.scrollWidth);
-  setBracketZoom(Math.max(0.28,fit));
+  const phone=scroll.clientWidth<=700;
+  // On phones, full-board fit makes the bracket unreadable. Start at a readable
+  // zoom and let the user drag sideways; the Fit button still shows the full board.
+  const target=phone?Math.max(0.62,Math.min(0.78,BRACKET_ZOOM||0.72)):Math.max(0.34,fit);
+  setBracketZoom(target);
   requestAnimationFrame(()=>{
     const max=scroll.scrollWidth-scroll.clientWidth;
     if(max>0)scroll.scrollLeft=max/2;
@@ -2034,7 +1999,7 @@ function renderBracket(){
   const ar=LANG==='ar';
   const zoomCtrl=`<div class="bracketZoomCtrl">
     <div>
-      <span class="tiny muted">${ar?'اضغط اسم الدور للتركيز؛ اضغط الدور النشط مرة أخرى لعرض اللوحة كاملة. اسحب للتمرير وقرّب بإصبعين.':'Tap a round title to focus; tap the active title again to show full board. Drag to scroll and pinch to zoom.'}</span>
+      <span class="tiny muted">${ar?'اضغط اسم الدور للتركيز، واسحب جانبياً للتنقل. زر Fit يعرض اللوحة كاملة.':'Tap a round title to focus, then drag sideways. Fit shows the full board.'}</span>
     </div>
     <div class="bracketZoomBtns">
       <button class="ghost" onclick="setBracketZoom(BRACKET_ZOOM-0.15)" title="Zoom out">−</button>
