@@ -959,7 +959,7 @@
     .koRoundTitle:hover{background:rgba(212,165,32,.10);color:var(--text);transform:none;border:0}
     .koRoundTitle.active{background:rgba(212,165,32,.12);color:var(--gold2);outline:1px solid var(--gold-line)}
     .koRoundTitle.center{font-size:12.5px;color:var(--gold2)}
-    .koBoardCard{position:absolute;z-index:2;width:108px;height:58px;min-height:0;border-radius:10px;background:linear-gradient(180deg,rgba(0,0,0,.12),rgba(255,255,255,.018)),var(--panel);border:1px solid var(--line);box-shadow:0 3px 10px rgba(0,0,0,.16);padding:3px 4px;transition:border-color .12s,box-shadow .12s;pointer-events:none;cursor:default}
+    .koBoardCard{position:absolute;z-index:2;width:108px;height:58px;min-height:0;border-radius:10px;background:linear-gradient(180deg,rgba(0,0,0,.12),rgba(255,255,255,.018)),var(--panel);border:1px solid var(--line);box-shadow:0 3px 10px rgba(0,0,0,.16);padding:3px 4px;display:flex;flex-direction:column;justify-content:center;transition:border-color .12s,box-shadow .12s;pointer-events:none;cursor:default}
     .koBoardCard:hover{transform:none}
     .koBoardCard.done{border-color:rgba(82,201,122,.30)}
     .koBoardCard.open{border-color:rgba(82,201,122,.20)}
@@ -997,6 +997,26 @@
     .koHalfScroll::-webkit-scrollbar{height:8px;width:8px}
     .koHalfScroll::-webkit-scrollbar-thumb{background:var(--gold-line);border-radius:999px}
     .koHalfBoard{display:inline-block}
+    /* per-round text scaling — bigger boxes get adequately bigger text */
+    .koBoardCard.ko-r16 .koMiniTeam .teamCode{font-size:10.5px}
+    .koBoardCard.ko-r16 .koMiniScore{font-size:11.5px}
+    .koBoardCard.ko-r16 .koMiniTeam .flagImg{width:17px;height:12px}
+    .koBoardCard.ko-qf .koMiniTeam .teamCode{font-size:11.5px}
+    .koBoardCard.ko-qf .koMiniScore{font-size:12.5px}
+    .koBoardCard.ko-qf .koMiniTeam .flagImg{width:18px;height:13px}
+    .koBoardCard.ko-qf .koMiniNo,.koBoardCard.ko-sf .koMiniNo{font-size:9.5px}
+    .koBoardCard.ko-qf .koMiniState,.koBoardCard.ko-sf .koMiniState{font-size:8.5px;max-width:80px}
+    .koBoardCard.ko-sf .koMiniTeam .teamCode{font-size:12.5px}
+    .koBoardCard.ko-sf .koMiniScore{font-size:14px}
+    .koBoardCard.ko-sf .koMiniTeam .flagImg{width:19px;height:14px}
+    .koBoardCard.ko-sf .koMiniTeam,.koBoardCard.ko-qf .koMiniTeam{min-height:18px}
+    /* third-place footer card (shown below the board on every mobile view) */
+    .koThirdFoot{margin:10px 2px 0;border:1px dashed var(--line);border-radius:12px;padding:8px 11px;background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(0,0,0,.04)),var(--panel)}
+    .koThirdFootLabel{font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+    .koThirdFootCard .koMiniTeam{min-height:24px;padding:4px 5px}
+    .koThirdFootCard .koMiniTeam .teamCode{font-size:13px}
+    .koThirdFootCard .koMiniTeam .flagImg{width:22px;height:15px}
+    .koThirdFootCard .koMiniScore{font-size:14px}
 
     @media(max-width:700px){.bracketZoomCtrl{align-items:flex-start;flex-direction:column;gap:6px}.bracketZoomBtns{width:100%;overflow-x:auto;flex-wrap:nowrap}.koBoard{border-radius:14px}.koBoardCard{box-shadow:0 2px 8px rgba(0,0,0,.16)}.koRoundTitle{top:10px;font-size:9.5px}.koFinalLabel{font-size:13px}.koBoard::before{font-size:82px;opacity:.04}}
 
@@ -1909,23 +1929,26 @@ function koBoardColumns(){
   return all.filter(c=>KO_STAGE_ORDER[c.stage]>=min);
 }
 function koBoardPositions(){
-  const cardW=108, cardH=58, finalW=138, finalH=78, thirdW=124, thirdH=62;
-  const margin=14,gap=26,boardH=700;
+  const margin=14,gap=26;
   const cols=koBoardColumns();
+  const rep={l32:74,l16:89,lqf:97,lsf:101,final:104,rsf:102,rqf:99,r16:91,r32:76}; // representative match per column for its width
   const colX={}, colW={};
   let x=margin;
-  cols.forEach(c=>{const w=c.key==='final'?finalW:cardW;colX[c.key]=x;colW[c.key]=w;x+=w+gap;});
+  cols.forEach(c=>{const w=koCardSize(rep[c.key]).w;colX[c.key]=x;colW[c.key]=w;x+=w+gap;});
   const boardW=Math.max(310,x-gap+margin);
-  const y={a:52,b:128,c:204,d:280,e:376,f:452,g:528,h:604,r1:90,r2:242,r3:430,r4:582,q1:166,q2:506,s:336,final:292,third:504};
+  // center coordinates — boxes grow symmetrically around these, so connector wires never move
+  const C={a:81,b:157,c:233,d:309,e:405,f:481,g:557,h:633,r1:119,r2:271,r3:459,r4:611,q1:195,q2:535,s:365,final:331,third:535};
   const raw={
-    74:['l32',y.a],77:['l32',y.b],73:['l32',y.c],75:['l32',y.d],83:['l32',y.e],84:['l32',y.f],81:['l32',y.g],82:['l32',y.h],
-    89:['l16',y.r1],90:['l16',y.r2],93:['l16',y.r3],94:['l16',y.r4],97:['lqf',y.q1],98:['lqf',y.q2],101:['lsf',y.s],
-    104:['final',y.final],103:['final',y.third],
-    102:['rsf',y.s],99:['rqf',y.q1],100:['rqf',y.q2],91:['r16',y.r1],92:['r16',y.r2],95:['r16',y.r3],96:['r16',y.r4],
-    76:['r32',y.a],78:['r32',y.b],79:['r32',y.c],80:['r32',y.d],86:['r32',y.e],88:['r32',y.f],85:['r32',y.g],87:['r32',y.h]
+    74:['l32',C.a],77:['l32',C.b],73:['l32',C.c],75:['l32',C.d],83:['l32',C.e],84:['l32',C.f],81:['l32',C.g],82:['l32',C.h],
+    89:['l16',C.r1],90:['l16',C.r2],93:['l16',C.r3],94:['l16',C.r4],97:['lqf',C.q1],98:['lqf',C.q2],101:['lsf',C.s],
+    104:['final',C.final],103:['final',C.third],
+    102:['rsf',C.s],99:['rqf',C.q1],100:['rqf',C.q2],91:['r16',C.r1],92:['r16',C.r2],95:['r16',C.r3],96:['r16',C.r4],
+    76:['r32',C.a],78:['r32',C.b],79:['r32',C.c],80:['r32',C.d],86:['r32',C.e],88:['r32',C.f],85:['r32',C.g],87:['r32',C.h]
   };
-  const obj={__w:boardW,__h:boardH,__cols:cols.map(c=>({key:c.key,stage:c.stage,label:c.label,cls:c.cls,x:colX[c.key],w:colW[c.key]}))};
-  Object.keys(raw).forEach(k=>{const n=Number(k),col=raw[k][0]; if(colX[col]==null)return; obj[n]={x:colX[col],y:raw[k][1],w:n===104?finalW:(n===103?thirdW:cardW),h:n===104?finalH:(n===103?thirdH:cardH)};});
+  let maxBottom=0;
+  const obj={__w:boardW,__cols:cols.map(c=>({key:c.key,stage:c.stage,label:c.label,cls:c.cls,x:colX[c.key],w:colW[c.key]}))};
+  Object.keys(raw).forEach(k=>{const n=Number(k),col=raw[k][0]; if(colX[col]==null)return; const sz=koCardSize(n),top=Math.round(raw[k][1]-sz.h/2); obj[n]={x:colX[col],y:top,w:sz.w,h:sz.h}; maxBottom=Math.max(maxBottom,top+sz.h);});
+  obj.__h=Math.max(700,maxBottom+margin);
   return obj;
 }
 function koMiniSlot(slot){var team=koResolve(slot);if(team)return teamHtmlCode(team);return `<span class="koSlotMini">${esc(koSlotLabel(slot))}</span>`;}
@@ -1937,7 +1960,7 @@ function koBoardCard(no){
   const aCls=win==='A'?'win':(done&&win&&win!=='A'?'lose':'');
   const special=no===104?' final':(no===103?' third':'');
   const status=done?(LANG==='ar'?'انتهت':'FT'):(STATE.liveScores&&STATE.liveScores[no])?`${STATE.liveScores[no].hg}–${STATE.liveScores[no].ag}`:koShortTime(m.iso);
-  return `<div class="koBoardCard ${done?'done':(L?'locked':'open')}${special}" style="left:${pos.x}px;top:${pos.y}px;width:${pos.w}px;height:${pos.h}px" aria-label="Match ${dispNoFromNo(no)}">
+  return `<div class="koBoardCard ${done?'done':(L?'locked':'open')}${special}${koRoundCls(no)}" style="left:${pos.x}px;top:${pos.y}px;width:${pos.w}px;height:${pos.h}px" aria-label="Match ${dispNoFromNo(no)}">
     <div class="koMiniTop"><span class="koMiniNo">#${dispNoFromNo(no)}</span>${r&&r.pen?`<span class="koPen">PEN</span>`:''}<span class="koMiniState">${esc(status)}</span></div>
     <div class="koMiniTeam ${hCls}">${koMiniSlot(m.h)}<span class="koMiniScore">${done?r.hg:''}</span></div>
     <div class="koMiniTeam ${aCls}">${koMiniSlot(m.a)}<span class="koMiniScore">${done?r.ag:''}</span></div>
@@ -2008,14 +2031,15 @@ function koIsPhone(){return !!(window.matchMedia&&window.matchMedia('(max-width:
 function setKoPhoneSide(k){KO_PHONE_SIDE=k;localStorage.setItem('wc26KoPhoneSide',k);renderBracket();}
 const KO_HALF_C={a:81,b:157,c:233,d:309,e:405,f:481,g:557,h:633,r1:119,r2:271,r3:459,r4:611,q1:195,q2:535,s:365,fin:331,third:535};
 function koCardSize(no){
-  if(no===104)return{w:140,h:88};   // final
-  if(no===103)return{w:126,h:66};   // third place
-  const st=koStageForNo(no);        // subtle gradient toward the final
-  if(st==='sf')return{w:124,h:82};
-  if(st==='qf')return{w:118,h:74};
-  if(st==='r16')return{w:112,h:66};
+  if(no===104)return{w:138,h:80};   // final (premium peak)
+  if(no===103)return{w:124,h:62};   // third place
+  const st=koStageForNo(no);        // gentle gradient toward the final
+  if(st==='sf')return{w:118,h:70};
+  if(st==='qf')return{w:114,h:64};
+  if(st==='r16')return{w:110,h:60};
   return{w:108,h:58};               // r32 stays compact (8-card column)
 }
+function koRoundCls(no){const st=koStageForNo(no);return (st==='r16'||st==='qf'||st==='sf')?(' ko-'+st):'';}
 const KO_FEED=[[74,89],[77,89],[73,90],[75,90],[89,97],[90,97],[83,93],[84,93],[81,94],[82,94],[93,98],[94,98],[97,101],[98,101],[76,91],[78,91],[79,92],[80,92],[86,95],[88,95],[85,96],[87,96],[91,99],[92,99],[95,100],[96,100],[99,102],[100,102],[101,104],[102,104]];
 function koHalfLayout(side){
   const Y=KO_HALF_C,ar=LANG==='ar';
@@ -2034,7 +2058,7 @@ function koHalfLayout(side){
     {key:'r32',label:L32,matches:[[76,Y.a],[78,Y.b],[79,Y.c],[80,Y.d],[86,Y.e],[88,Y.f],[85,Y.g],[87,Y.h]]}];
   return[
     {key:'lsf',label:SF,matches:[[101,Y.s]]},
-    {key:'final',label:FIN,cls:'center',matches:[[104,Y.fin],[103,Y.third]]},
+    {key:'final',label:FIN,cls:'center',matches:[[104,Y.fin]]},
     {key:'rsf',label:SF,matches:[[102,Y.s]]}];
 }
 function koHalfPositions(side){
@@ -2075,7 +2099,7 @@ function koSideCard(no,pos){
   const special=no===104?' final':(no===103?' third':'');
   const live=STATE.liveScores&&STATE.liveScores[no];
   const status=done?(LANG==='ar'?'انتهت':'FT'):(live?`${live.hg}–${live.ag}`:koShortTime(m.iso));
-  return `<div class="koBoardCard ${done?'done':(L?'locked':'open')}${special}" style="left:${p.x}px;top:${p.y}px;width:${p.w}px;height:${p.h}px" aria-label="Match ${dispNoFromNo(no)}">
+  return `<div class="koBoardCard ${done?'done':(L?'locked':'open')}${special}${koRoundCls(no)}" style="left:${p.x}px;top:${p.y}px;width:${p.w}px;height:${p.h}px" aria-label="Match ${dispNoFromNo(no)}">
     <div class="koMiniTop"><span class="koMiniNo">#${dispNoFromNo(no)}</span>${r&&r.pen?`<span class="koPen">PEN</span>`:''}<span class="koMiniState">${esc(status)}</span></div>
     <div class="koMiniTeam ${hCls}">${koMiniSlot(m.h)}<span class="koMiniScore">${done?r.hg:''}</span></div>
     <div class="koMiniTeam ${aCls}">${koMiniSlot(m.a)}<span class="koMiniScore">${done?r.ag:''}</span></div>
@@ -2095,16 +2119,32 @@ function koPhoneSideDefault(){
   const open=arr=>arr.some(n=>KO_BY_NO[n]&&!((STATE.results||{})[n]));
   if(open(left))return 'left';if(open(right))return 'right';return 'final';
 }
+function koThirdFooterHtml(){
+  const m=KO_BY_NO[103]; if(!m)return '';
+  const ar=LANG==='ar';
+  const r=STATE.results&&STATE.results[103],done=!!r,win=done?koWinnerSide(103):null;
+  const live=STATE.liveScores&&STATE.liveScores[103];
+  const hCls=win==='H'?'win':(done&&win&&win!=='H'?'lose':'');
+  const aCls=win==='A'?'win':(done&&win&&win!=='A'?'lose':'');
+  const status=done?(ar?'انتهت':'FT'):(live?`${live.hg}–${live.ag}`:koShortTime(m.iso));
+  return `<div class="koThirdFoot">
+    <div class="koThirdFootLabel">🥉 ${ar?'المركز الثالث':'Third place'} · #${dispNoFromNo(103)}${status?` · ${esc(status)}`:''}${r&&r.pen?` · PEN`:''}</div>
+    <div class="koThirdFootCard">
+      <div class="koMiniTeam ${hCls}">${koMiniSlot(m.h)}<span class="koMiniScore">${done?r.hg:''}</span></div>
+      <div class="koMiniTeam ${aCls}">${koMiniSlot(m.a)}<span class="koMiniScore">${done?r.ag:''}</span></div>
+    </div>
+  </div>`;
+}
 function koPhoneTreeHtml(){
   const ar=LANG==='ar';
   const cur=(KO_PHONE_SIDE&&['left','right','final'].includes(KO_PHONE_SIDE))?KO_PHONE_SIDE:koPhoneSideDefault();
-  const segs=[['left',ar?'يسار':'Left'],['right',ar?'يمين':'Right'],['final',ar?'النهائي':'Final']];
+  const segs=[['left',ar?'يسار':'Left'],['final',ar?'النهائي':'Final'],['right',ar?'يمين':'Right']];
   const seg=`<div class="koSeg">${segs.map(s=>`<button type="button" class="koSegBtn ${s[0]===cur?'active':''}" onclick="setKoPhoneSide('${s[0]}')">${s[1]}</button>`).join('')}</div>`;
-  const hint=`<p class="tiny muted" style="margin:0 2px 8px">${ar?'اسحب أفقياً أو اضغط للتبديل بين الجانبين والنهائي — واسحب داخل اللوحة للتنقل.':'Swipe or tap to switch Left / Right / Final — drag inside the board to pan.'}</p>`;
+  const hint=`<p class="tiny muted" style="margin:0 2px 8px">${ar?'اسحب أفقياً أو اضغط للتبديل بين الجانبين والنهائي — واسحب داخل اللوحة للتنقل.':'Swipe or tap to switch Left / Final / Right — drag inside the board to pan.'}</p>`;
   const legend=`<div class="koBar" style="margin:0 0 8px"><span class="pill" style="background:rgba(82,201,122,.14);color:var(--good);border-color:transparent">${ar?'● المتأهل':'● Advances'}</span></div>`;
-  return `<div class="koPhoneTree">${hint}${seg}${legend}<div class="koHalfScroll" dir="ltr">${koHalfBoardHtml(cur)}</div></div>`;
+  return `<div class="koPhoneTree">${hint}${seg}${legend}<div class="koHalfScroll" dir="ltr">${koHalfBoardHtml(cur)}</div>${koThirdFooterHtml()}</div>`;
 }
-function koSideOrder(){return ['left','right','final'];}
+function koSideOrder(){return ['left','final','right'];}
 let _koSwipeCooldown=0;
 function koInitPhone(){
   const sc=document.querySelector('.koHalfScroll'); if(!sc)return;
