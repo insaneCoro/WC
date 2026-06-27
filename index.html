@@ -928,6 +928,63 @@
     .thirdBox{display:flex;flex-direction:column;align-items:center;gap:4px;margin-top:4px}
     .koRoundCap{font:700 11px/1 var(--font-display);letter-spacing:.1em;text-transform:uppercase;color:var(--gold2)}
     .koRoundCap.muted2{color:var(--muted)}
+
+    /* ── Bracket Pro board view: compact, visual, easier to navigate ── */
+    .bracketModeBtns{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+    .bracketModeBtns button{min-height:30px;padding:6px 10px;font-size:12px}
+    .bracketModeBtns button.active{background:linear-gradient(135deg,var(--active1),var(--active2));color:var(--active-text);border-color:transparent}
+    .bracketQuickNav{display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin:0 0 10px}
+    .bracketQuickNav button{min-height:28px;padding:5px 9px;font-size:11px;color:var(--muted)}
+    .koBoardScroll .bracketZoomWrap{overflow:hidden}
+    .koBoardTree{display:inline-block!important;align-items:initial!important;justify-content:initial!important}
+    .koBoard{position:relative;width:1545px;height:720px;border-radius:24px;overflow:hidden;background:
+      radial-gradient(circle at 50% 43%,rgba(212,165,32,.18),transparent 17%),
+      radial-gradient(circle at 50% 43%,rgba(212,165,32,.08),transparent 28%),
+      radial-gradient(ellipse at 50% 8%,rgba(74,184,200,.10),transparent 35%),
+      linear-gradient(135deg,rgba(255,255,255,.04),rgba(0,0,0,.20)),var(--bg2);
+      border:1px solid var(--line);box-shadow:var(--shadow)}
+    .koBoard::before{content:'🏆';position:absolute;left:50%;top:43%;transform:translate(-50%,-50%);font-size:132px;line-height:1;opacity:.075;filter:drop-shadow(0 8px 22px rgba(0,0,0,.55));pointer-events:none;z-index:0}
+    .koFinalHalo{position:absolute;left:50%;top:302px;transform:translate(-50%,-50%);width:285px;height:250px;border-radius:42px;background:radial-gradient(circle,rgba(212,165,32,.20),rgba(212,165,32,.08) 34%,transparent 72%);filter:blur(.2px);opacity:.72;z-index:0;pointer-events:none}
+    .koFinalLabel{position:absolute;left:50%;top:218px;transform:translateX(-50%);z-index:3;padding:5px 16px;border-radius:999px;background:linear-gradient(135deg,rgba(212,165,32,.24),rgba(240,200,66,.08));border:1px solid var(--gold-line);font-family:var(--font-display);font-weight:900;font-size:18px;letter-spacing:.10em;text-transform:uppercase;color:var(--gold2);box-shadow:0 0 22px var(--gold-glow)}
+    .koThirdLabel{position:absolute;left:50%;top:428px;transform:translateX(-50%);z-index:3;font-family:var(--font-display);font-weight:800;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);opacity:.85}
+    .koBoardSvg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+    .koWire{fill:none;stroke:rgba(212,165,32,.26);stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 2px rgba(0,0,0,.25))}
+    .koWire.dim{stroke:rgba(255,255,255,.11)}
+    .koWire.final{stroke:var(--gold);stroke-width:3;filter:drop-shadow(0 0 6px var(--gold-glow))}
+    .koWire.third{stroke:var(--muted);stroke-dasharray:5 5;opacity:.38}
+    .koRoundTitle{position:absolute;top:12px;height:22px;display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--font-display);font-weight:900;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold2);z-index:3;opacity:.92}
+    .koRoundTitle.center{font-size:16px;color:var(--text)}
+    .koBoardCard{position:absolute;z-index:2;width:146px;min-height:68px;border-radius:13px;background:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.08)),var(--panel);border:1px solid var(--line);box-shadow:0 5px 18px rgba(0,0,0,.25);padding:6px;transition:transform .12s,border-color .12s,box-shadow .12s}
+    .koBoardCard:hover{transform:translateY(-1px);border-color:var(--gold-line);box-shadow:0 7px 20px rgba(0,0,0,.32)}
+    .koBoardCard.done{border-color:rgba(82,201,122,.34)}
+    .koBoardCard.open{border-color:rgba(82,201,122,.22)}
+    .koBoardCard.locked{border-color:rgba(232,160,32,.24)}
+    .koBoardCard.final{width:188px;min-height:92px;border-color:var(--gold);border-width:1.5px;background:linear-gradient(180deg,rgba(212,165,32,.13),rgba(0,0,0,.18)),var(--panel);box-shadow:0 0 0 1px var(--gold-line),0 10px 32px var(--gold-glow),0 8px 28px rgba(0,0,0,.35);padding:8px}
+    .koBoardCard.third{width:170px;opacity:.84;border-style:dashed;background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(0,0,0,.12)),var(--panel)}
+    .koMiniTop{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:4px}
+    .koMiniNo{font:900 12px/1 var(--font-display);background:rgba(212,165,32,.14);border:1px solid var(--gold-line);border-radius:999px;padding:3px 7px;color:var(--gold2);letter-spacing:.04em}
+    .koMiniState{font-size:10px;color:var(--muted);white-space:nowrap;max-width:84px;overflow:hidden;text-overflow:ellipsis}
+    .koBoardCard.final .koMiniNo{background:linear-gradient(135deg,var(--active1),var(--active2));color:var(--active-text);border-color:transparent;font-size:13px;padding:4px 9px}
+    .koBoardCard.final .koMiniState{color:var(--gold2);font-weight:700;max-width:96px}
+    .koMiniTeam{display:flex;align-items:center;justify-content:space-between;gap:4px;padding:3px 4px;border-radius:8px;min-height:22px}
+    .koMiniTeam+.koMiniTeam{margin-top:2px}
+    .koMiniTeam .team{min-width:0;gap:5px;flex:1}
+    .koMiniTeam .flagImg{width:21px;height:15px;border-radius:4px}
+    .koMiniTeam .teamCode{font-size:12px;font-weight:900;letter-spacing:.04em;color:var(--text)}
+    .koBoardCard.final .koMiniTeam{min-height:27px;padding:4px 5px}
+    .koBoardCard.final .koMiniTeam .teamCode{font-size:14px}
+    .koBoardCard.final .koMiniTeam .flagImg{width:23px;height:16px}
+    .koMiniTeam .flagFallback{font-size:15px}
+    .koMiniScore{font-family:var(--font-display);font-size:15px;font-weight:900;min-width:16px;text-align:end;color:var(--text)}
+    .koBoardCard.final .koMiniScore{font-size:18px;min-width:20px;color:var(--gold2)}
+    .koMiniTeam.win{background:rgba(82,201,122,.14)}
+    .koMiniTeam.win .teamCode,.koMiniTeam.win .koMiniScore{color:var(--good)}
+    .koMiniTeam.lose{opacity:.48}
+    .koSlotMini{font:800 12px/1.2 var(--font-display);letter-spacing:.04em;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;max-width:104px;background:rgba(255,255,255,.045);border:1px solid var(--line2);border-radius:999px;padding:3px 7px}
+    .koBoardCard.final .koSlotMini{max-width:132px;color:var(--gold2);border-color:var(--gold-line);background:rgba(212,165,32,.10)}
+    .koBoardNote{position:absolute;left:50%;top:382px;transform:translateX(-50%);z-index:2;color:var(--dim);font-size:11px;text-align:center;white-space:nowrap}
+    @media(max-width:700px){.bracketZoomCtrl{align-items:flex-start;flex-direction:column}.bracketZoomBtns,.bracketModeBtns{width:100%;overflow-x:auto;flex-wrap:nowrap}.bracketQuickNav{overflow-x:auto;flex-wrap:nowrap}.koBoard{height:720px}.koBoardCard{box-shadow:0 3px 12px rgba(0,0,0,.24)}}
+
   </style>
 </head>
 <body>
@@ -1790,12 +1847,99 @@ function koTreeHtml(){
      <div class="halfTree right">${koNode(102)}</div>
   </div></div></div>`;
 }
+
+let BRACKET_MODE=localStorage.getItem('wc26BracketMode')||'board';
+function setBracketMode(mode){BRACKET_MODE=mode;localStorage.setItem('wc26BracketMode',mode);renderBracket();}
+function koShortTime(iso){
+  if(!iso)return '';
+  const d=new Date(iso); if(isNaN(d))return '';
+  return new Intl.DateTimeFormat(LANG==='ar'?'ar-SA':'en-GB',{timeZone:'Asia/Riyadh',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',hour12:false}).format(d);
+}
+function koBoardPositions(){
+  const cw=146,ch=68,cwThird=170,cwFinal=188;
+  const y={a:46,b:123,c:200,d:277,e:378,f:455,g:532,h:609,r1:83,r2:238,r3:416,r4:571,q1:160,q2:493,s:327,final:255,third:455};
+  const x={l32:20,l16:185,lqf:350,lsf:515,center:685,final:676,third:685,rsf:880,rqf:1045,r16:1210,r32:1375};
+  const p={
+    74:[x.l32,y.a],77:[x.l32,y.b],73:[x.l32,y.c],75:[x.l32,y.d],83:[x.l32,y.e],84:[x.l32,y.f],81:[x.l32,y.g],82:[x.l32,y.h],
+    89:[x.l16,y.r1],90:[x.l16,y.r2],93:[x.l16,y.r3],94:[x.l16,y.r4],97:[x.lqf,y.q1],98:[x.lqf,y.q2],101:[x.lsf,y.s],
+    104:[x.final,y.final],103:[x.third,y.third],
+    102:[x.rsf,y.s],99:[x.rqf,y.q1],100:[x.rqf,y.q2],91:[x.r16,y.r1],92:[x.r16,y.r2],95:[x.r16,y.r3],96:[x.r16,y.r4],
+    76:[x.r32,y.a],78:[x.r32,y.b],79:[x.r32,y.c],80:[x.r32,y.d],86:[x.r32,y.e],88:[x.r32,y.f],85:[x.r32,y.g],87:[x.r32,y.h]
+  };
+  const obj={};Object.keys(p).forEach(k=>{const n=Number(k);obj[n]={x:p[k][0],y:p[k][1],w:n===104?cwFinal:(n===103?cwThird:cw),h:n===104?92:(n===103?78:ch)};});
+  return obj;
+}
+function koMiniSlot(slot){var team=koResolve(slot);if(team)return teamHtmlCode(team);return `<span class="koSlotMini">${esc(koSlotLabel(slot))}</span>`;}
+function koBoardCard(no){
+  const pos=koBoardPositions()[no],m=KO_BY_NO[no]; if(!pos||!m)return '';
+  const r=STATE.results&&STATE.results[no],done=!!r,L=locked(m),win=done?koWinnerSide(no):null;
+  const hCls=win==='H'?'win':(done&&win&&win!=='H'?'lose':'');
+  const aCls=win==='A'?'win':(done&&win&&win!=='A'?'lose':'');
+  const special=no===104?' final':(no===103?' third':'');
+  const status=done?(LANG==='ar'?'انتهت':'FT'):(STATE.liveScores&&STATE.liveScores[no])?`${STATE.liveScores[no].hg}–${STATE.liveScores[no].ag}`:koShortTime(m.iso);
+  return `<div class="koBoardCard ${done?'done':(L?'locked':'open')}${special}" style="left:${pos.x}px;top:${pos.y}px;width:${pos.w}px">
+    <div class="koMiniTop"><span class="koMiniNo">#${dispNoFromNo(no)}</span>${r&&r.pen?`<span class="koPen">PEN</span>`:''}<span class="koMiniState">${esc(status)}</span></div>
+    <div class="koMiniTeam ${hCls}">${koMiniSlot(m.h)}<span class="koMiniScore">${done?r.hg:''}</span></div>
+    <div class="koMiniTeam ${aCls}">${koMiniSlot(m.a)}<span class="koMiniScore">${done?r.ag:''}</span></div>
+  </div>`;
+}
+function koBoardTitle(txt,x,w,cls){return `<div class="koRoundTitle ${cls||''}" style="left:${x}px;width:${w}px">${txt}</div>`;}
+function koWirePath(pos,from,to,side,extraCls){
+  const a=pos[from],b=pos[to]; if(!a||!b)return '';
+  let x1,x2,y1=a.y+a.h/2,y2=b.y+b.h/2,mid;
+  if(side==='L'){x1=a.x+a.w;x2=b.x;mid=(x1+x2)/2;}
+  else{x1=a.x;x2=b.x+b.w;mid=(x1+x2)/2;}
+  return `<path class="koWire ${extraCls||''}" d="M${x1} ${y1} H${mid} V${y2} H${x2}"/>`;
+}
+function koFinalWire(pos,from,to,side,cls){
+  const a=pos[from],b=pos[to]; if(!a||!b)return '';
+  const y1=a.y+a.h/2,y2=b.y+b.h/2;
+  if(side==='L'){const x1=a.x+a.w,x2=b.x,mid=(x1+x2)/2;return `<path class="koWire ${cls||'final'}" d="M${x1} ${y1} H${mid} V${y2} H${x2}"/>`;}
+  const x1=a.x,x2=b.x+b.w,mid=(x1+x2)/2;return `<path class="koWire ${cls||'final'}" d="M${x1} ${y1} H${mid} V${y2} H${x2}"/>`;
+}
+function koBoardSvg(){
+  const p=koBoardPositions();
+  const pairs=[[74,89,'L'],[77,89,'L'],[73,90,'L'],[75,90,'L'],[89,97,'L'],[90,97,'L'],[83,93,'L'],[84,93,'L'],[81,94,'L'],[82,94,'L'],[93,98,'L'],[94,98,'L'],[97,101,'L'],[98,101,'L'],[76,91,'R'],[78,91,'R'],[79,92,'R'],[80,92,'R'],[91,99,'R'],[92,99,'R'],[86,95,'R'],[88,95,'R'],[85,96,'R'],[87,96,'R'],[95,100,'R'],[96,100,'R'],[99,102,'R'],[100,102,'R']];
+  let paths=pairs.map(x=>koWirePath(p,x[0],x[1],x[2])).join('');
+  paths+=koFinalWire(p,101,104,'L','final')+koFinalWire(p,102,104,'R','final');
+  paths+=koFinalWire(p,101,103,'L','third')+koFinalWire(p,102,103,'R','third');
+  return `<svg class="koBoardSvg" viewBox="0 0 1545 720" preserveAspectRatio="none">${paths}</svg>`;
+}
+function koBoardHtml(){
+  const cards=[74,77,73,75,83,84,81,82,89,90,93,94,97,98,101,104,103,102,99,100,91,92,95,96,76,78,79,80,86,88,85,87].map(koBoardCard).join('');
+  const titles=[
+    koBoardTitle(tr('roundOf32'),20,146),koBoardTitle(tr('roundOf16'),185,146),koBoardTitle(LANG==='ar'?'ربع النهائي':'QF',350,146),koBoardTitle(LANG==='ar'?'نصف النهائي':'SF',515,146),
+    koBoardTitle('🏆 '+tr('final'),676,188,'center'),koBoardTitle(LANG==='ar'?'نصف النهائي':'SF',880,146),koBoardTitle(LANG==='ar'?'ربع النهائي':'QF',1045,146),koBoardTitle(tr('roundOf16'),1210,146),koBoardTitle(tr('roundOf32'),1375,146)
+  ].join('');
+  const centerDecor=`<div class="koFinalHalo"></div><div class="koFinalLabel">${LANG==='ar'?'النهائي':'FINAL'}</div><div class="koThirdLabel">${LANG==='ar'?'المركز الثالث':'Third place'}</div>`;
+  return `<div class="bracketScroll koBoardScroll" dir="ltr"><div class="bracketZoomWrap"><div class="bracketTree koBoardTree"><div class="koBoard">${koBoardSvg()}${centerDecor}${titles}<div class="koBoardNote">${LANG==='ar'?'الفائزون يتجهون نحو النهائي · الخاسرون من نصف النهائي إلى مباراة المركز الثالث':'Winners move to the Final · semifinal losers move to Third place'}</div>${cards}</div></div></div></div>`;
+}
+function fitBracketReadable(){
+  const tree=document.querySelector('.bracketTree'),scroll=document.querySelector('.bracketScroll');
+  if(!tree||!scroll)return;
+  tree.style.transition='none';tree.style.transform='scale(1)';void tree.offsetWidth;
+  const fit=Math.min(1,scroll.clientWidth/tree.scrollWidth);
+  const min=BRACKET_MODE==='board'?0.62:0.35;
+  setBracketZoom(Math.max(min,fit));
+}
+function scrollBracketToRound(r){
+  const scroll=document.querySelector('.bracketScroll');if(!scroll)return;
+  const max=scroll.scrollWidth-scroll.clientWidth;if(max<=0)return;
+  const p={r32:0,r16:.16,qf:.30,sf:.42,final:.50,right:.84};
+  scroll.scrollTo({left:max*(p[r]??0),behavior:'smooth'});
+}
 function renderBracket(){
   if(!$('bracketBox')||!STATE)return;
   KO_BY_NO={};(STATE.matches||[]).forEach(function(m){KO_BY_NO[m.no]=m;});
   const ar=LANG==='ar';
   const zoomCtrl=`<div class="bracketZoomCtrl">
-    <span class="tiny muted">${ar?'اسحب للتمرير · قرّب بإصبعين':'Drag to scroll · Pinch to zoom'}</span>
+    <div>
+      <span class="tiny muted">${ar?'عرض لوحة جديد · اسحب للتمرير · قرّب بإصبعين':'New board view · drag to scroll · pinch to zoom'}</span>
+      <div class="bracketModeBtns" style="margin-top:6px">
+        <button class="ghost ${BRACKET_MODE==='board'?'active':''}" onclick="setBracketMode('board')">${ar?'لوحة':'Board'}</button>
+        <button class="ghost ${BRACKET_MODE==='tree'?'active':''}" onclick="setBracketMode('tree')">${ar?'شجرة':'Tree'}</button>
+      </div>
+    </div>
     <div class="bracketZoomBtns">
       <button class="ghost" onclick="setBracketZoom(BRACKET_ZOOM-0.15)" title="Zoom out">−</button>
       <span id="bracketZoomLbl" class="bracketZoomLbl">—</span>
@@ -1803,9 +1947,16 @@ function renderBracket(){
       <button class="ghost" style="width:auto;padding:0 8px;font-size:12px" onclick="fitBracket()">${ar?'ملاءمة':'Fit'}</button>
     </div>
   </div>`;
+  const quick=`<div class="bracketQuickNav">
+    <button class="ghost" onclick="scrollBracketToRound('r32')">${tr('roundOf32')}</button>
+    <button class="ghost" onclick="scrollBracketToRound('r16')">${tr('roundOf16')}</button>
+    <button class="ghost" onclick="scrollBracketToRound('qf')">${ar?'ربع النهائي':'QF'}</button>
+    <button class="ghost" onclick="scrollBracketToRound('sf')">${ar?'نصف النهائي':'SF'}</button>
+    <button class="ghost" onclick="scrollBracketToRound('final')">${tr('final')}</button>
+  </div>`;
   const bar=`<div class="koBar"><div class="koLegend"><span class="pill" style="background:rgba(82,201,122,.14);color:var(--good);border-color:transparent">${LANG==='ar'?'● المتأهل':'● Advances'}</span></div></div>`;
-  $('bracketBox').innerHTML=zoomCtrl+bar+koTreeHtml();
-  requestAnimationFrame(()=>{fitBracket();scrollToActiveRound();initBracketPinch();});
+  $('bracketBox').innerHTML=zoomCtrl+quick+bar+(BRACKET_MODE==='tree'?koTreeHtml():koBoardHtml());
+  requestAnimationFrame(()=>{fitBracketReadable();scrollToActiveRound();initBracketPinch();});
 }
 
 function restoreAdmin(){if(ADMIN_PIN){$('adminLoginBox').classList.add('hidden');$('adminBox').classList.remove('hidden');applyHiddenTabs();renderAdmin()}else{$('adminLoginBox').classList.remove('hidden');$('adminBox').classList.add('hidden')}}async function adminLogin(){let pin=$('adminPin').value.trim();let r=await call('adminLogin',pin);if(!r.ok)return toast(tr('wrongAdmin'),true);ADMIN_PIN=pin;localStorage.setItem('wc26admin',pin);applyHiddenTabs();restoreAdmin()}function renderAdmin(section){if(!section)section=ADMIN_SECTION;ADMIN_SECTION=section;localStorage.setItem('wc26adminSection',section);let items=[['players','adminTabPlayers'],['matrix','adminTabMatrix'],['matches','adminTabMatches'],['results','adminTabResults'],['predictions','adminTabPreds'],['visibility','adminTabVis'],['bets','adminTabBets'],['adjust','adminTabAdjust'],['champion','adminTabChampion'],['tabs','adminTabHide'],['sync','adminTabSync'],['reset','adminTabReset']];$('adminSide').innerHTML=items.map(([k,l])=>`<button class="ghost ${section===k?'active':''}" onclick="renderAdmin('${k}')">${tr(l)}</button>`).join('');({players:adminPlayers,matrix:adminMatrix,matches:adminMatches,results:adminResults,predictions:adminPredictions,visibility:adminVisibilityUI,bets:adminBets,adjust:adminAdjustUI,champion:adminChampionPicks,tabs:adminHideTabsUI,sync:adminSync,reset:adminReset}[section])()}
