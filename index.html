@@ -1517,7 +1517,7 @@ function renderGroups(){
   let liveRosters={};
   (STATE.matches||[]).forEach(m=>{let g=getGroup(m);if(!g)return;liveRosters[g]=liveRosters[g]||new Set();if(m.h&&m.h!=='TBD')liveRosters[g].add(m.h);if(m.a&&m.a!=='TBD')liveRosters[g].add(m.a);});
   let groups={};
-  'ABCDEFGHIJKL'.split('').forEach(g=>{groups[g]={};let list=(liveRosters[g]&&liveRosters[g].size===4)?Array.from(liveRosters[g]):(GROUP_ROSTERS[g]||[]);list.forEach(t=>{groups[g][t]={team:t,P:0,W:0,D:0,L:0,GF:0,GA:0,GD:0,Pts:0};});});
+  'ABCDEFGHIJKL'.split('').forEach(g=>{groups[g]={};let list=(liveRosters[g]&&liveRosters[g].size===4)?Array.from(liveRosters[g]):(GROUP_ROSTERS[g]||[]);list.forEach(t=>{groups[g][t]={team:t,group:g,P:0,W:0,D:0,L:0,GF:0,GA:0,GD:0,Pts:0};});});
 
   (STATE.matches||[]).forEach(m=>{
     let g=getGroup(m);
@@ -1543,18 +1543,53 @@ function renderGroups(){
     away.GD=away.GF-away.GA;
   });
 
-  let letters='ABCDEFGHIJKL'.split('');
-  let html='<div class="standingsGrid">';
+  const letters='ABCDEFGHIJKL'.split('');
+  const sortTeams=(a,b)=>
+    b.Pts-a.Pts || b.GD-a.GD || b.GF-a.GF || String(a.team||'').localeCompare(String(b.team||'')) || String(a.group||'').localeCompare(String(b.group||''));
+
+  // Build each group ranking once, then use the 3rd-place row from every group
+  // to create the live "best third-place teams" table. Top 8 qualify to R32.
+  const groupRanks={};
+  letters.forEach(g=>{groupRanks[g]=Object.values(groups[g]||{}).sort(sortTeams);});
+  const thirdRows=letters.map(g=>{
+    const t=groupRanks[g]&&groupRanks[g][2];
+    return t?Object.assign({},t,{group:g}):null;
+  }).filter(Boolean).sort(sortTeams);
+
+  const thirdTitle=LANG==='ar'?'ترتيب أصحاب المركز الثالث':'Third-place ranking';
+  const thirdHelp=LANG==='ar'
+    ?'أفضل ٨ منتخبات من أصحاب المركز الثالث تتأهل إلى دور ٣٢ · جدول مباشر حسب النتائج المدخلة'
+    :'Best 8 third-place teams qualify to the Round of 32 · Live table from entered results';
+  const tieHelp=LANG==='ar'
+    ?'الترتيب هنا حسب: النقاط، فارق الأهداف، الأهداف المسجلة، ثم الاسم. لا توجد بيانات اللعب النظيف/تصنيف FIFA في التطبيق حالياً.'
+    :'Ranking here uses: points, goal difference, goals scored, then team name. Fair-play/FIFA ranking data is not stored in the app yet.';
+
+  let html=`<div class="card soft" style="margin-bottom:12px">
+    <div class="between" style="margin-bottom:10px">
+      <div><h3>${thirdTitle}</h3><div class="groupMeta">${thirdHelp}</div><div class="tiny">${tieHelp}</div></div>
+      <span class="pill">${LANG==='ar'?'المتأهلون':'Qualifying'}: 8/12</span>
+    </div>
+    <div class="tableWrap"><table class="standingsTable"><thead><tr>
+      <th>#</th><th>${LANG==='ar'?'المجموعة':'Group'}</th><th>${tr('team')}</th><th title="Played">P</th><th title="Wins">W</th><th title="Draws">D</th><th title="Losses">L</th><th title="Goals for">GF</th><th title="Goals against">GA</th><th title="Goal difference">GD</th><th title="Points">Pts</th><th>${LANG==='ar'?'الحالة':'Status'}</th>
+    </tr></thead><tbody>`;
+  thirdRows.forEach((t,i)=>{
+    const q=i<8;
+    const status=q
+      ?`<span class="pill statusTag open">${LANG==='ar'?'متأهل حالياً':'Currently in'}</span>`
+      :`<span class="pill warnTag">${LANG==='ar'?'خارج حالياً':'Currently out'}</span>`;
+    html+=`<tr class="${q?'qualified-2':''}"><td class="rankCell">${q?'✅':i+1}</td><td>${groupBadgeHtml(t.group,true)}</td><td>${teamHtmlCode(t.team)}</td><td>${t.P}</td><td>${t.W}</td><td>${t.D}</td><td>${t.L}</td><td>${t.GF}</td><td>${t.GA}</td><td>${t.GD>0?'+'+t.GD:t.GD}</td><td><b>${t.Pts}</b></td><td>${status}</td></tr>`;
+  });
+  html+='</tbody></table></div></div>';
+
+  html+='<div class="standingsGrid">';
   letters.forEach(g=>{
-    let teams=Object.values(groups[g]||{}).sort((a,b)=>
-      b.Pts-a.Pts || b.GD-a.GD || b.GF-a.GF || a.team.localeCompare(b.team)
-    );
+    let teams=groupRanks[g]||[];
     let completed=teams.reduce((s,t)=>s+t.P,0)/2 || 0;
     html+=`<div class="card soft"><div class="groupTitle">${groupBadgeHtml(g,true)}<div><h3>${esc(tr('group'))} ${g}</h3><div class="groupMeta">${completed} ${LANG==='ar'?'مباريات مكتملة':'completed matches'} · ${LANG==='ar'?'الفوز ٣ نقاط، التعادل نقطة':'Win 3 pts, draw 1 pt'}</div></div></div>`;
     html+=`<div class="tableWrap"><table class="standingsTable"><thead><tr><th>#</th><th>${tr('team')}</th><th title="Played">P</th><th title="Wins">W</th><th title="Draws">D</th><th title="Losses">L</th><th title="Goals for">GF</th><th title="Goals against">GA</th><th title="Goal difference">GD</th><th title="Points">Pts</th></tr></thead><tbody>`;
     teams.forEach((t,i)=>{
-      const qCls=i===0?'qualified-1':i===1?'qualified-2':'';
-      html+=`<tr class="${qCls}"><td class="rankCell">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</td><td>${teamHtmlCode(t.team)}</td><td>${t.P}</td><td>${t.W}</td><td>${t.D}</td><td>${t.L}</td><td>${t.GF}</td><td>${t.GA}</td><td>${t.GD>0?'+'+t.GD:t.GD}</td><td><b>${t.Pts}</b></td></tr>`;
+      const qCls=i===0?'qualified-1':i===1?'qualified-2':'', medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1;
+      html+=`<tr class="${qCls}"><td class="rankCell">${medal}</td><td>${teamHtmlCode(t.team)}</td><td>${t.P}</td><td>${t.W}</td><td>${t.D}</td><td>${t.L}</td><td>${t.GF}</td><td>${t.GA}</td><td>${t.GD>0?'+'+t.GD:t.GD}</td><td><b>${t.Pts}</b></td></tr>`;
     });
     html+='</tbody></table></div></div>';
   });
