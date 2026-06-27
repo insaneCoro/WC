@@ -1564,20 +1564,14 @@ const KO_FEEDERS={
   101:[97,98],102:[99,100],104:[101,102]
 };
 function koWinnerSide(no){var r=STATE.results&&STATE.results[no];if(!r)return null;var hg=Number(r.hg),ag=Number(r.ag);if(r.w==='H'||r.w==='A')return r.w;if(!isNaN(hg)&&!isNaN(ag)){if(hg>ag)return 'H';if(ag>hg)return 'A';}return null;}
-// Require 2+ group letters for multi-group combos; single-letter group slots like '1H' are also placeholders
 function koIsPlaceholder(s){s=String(s||'').trim();if(!s||s==='TBD')return true;if(/^[WL]\d+$/i.test(s))return true;if(/^[1-3][A-L]{2,}$/i.test(s))return true;if(/^[1-3][A-L]$/i.test(s))return true;return false;}
 function koResolve(slot,depth){depth=depth||0;if(depth>10)return null;slot=String(slot||'').trim();var wl=slot.match(/^([WL])(\d+)$/i);if(wl){var no=Number(wl[2]),mm=KO_BY_NO[no];if(!mm)return null;var side=koWinnerSide(no);if(!side)return null;if(wl[1].toUpperCase()==='L')side=(side==='H'?'A':'H');return koResolve(side==='H'?mm.h:mm.a,depth+1);}if(koIsPlaceholder(slot))return null;return slot;}
-// Human-readable label for placeholder slots shown before teams are confirmed
 function koSlotLabel(slot){
   var s=String(slot||'').trim();
   var wl=s.match(/^([WL])(\d+)$/i);
   if(wl){var t=wl[1].toUpperCase()==='W'?(LANG==='ar'?'الفائز':'W'):(LANG==='ar'?'الخاسر':'L');return t+'#'+wl[2];}
-  // Group rank slot: '1H' → '1st H', '2H' → '2nd H', '3ABC' → '3rd ABC'
   var gr=s.match(/^([1-3])([A-L]{1,})$/i);
-  if(gr){
-    var rank=gr[1]==='1'?(LANG==='ar'?'أول':'1st'):gr[1]==='2'?(LANG==='ar'?'ثاني':'2nd'):(LANG==='ar'?'ثالث':'3rd');
-    return rank+' '+gr[2].toUpperCase();
-  }
+  if(gr){var rank=gr[1]==='1'?(LANG==='ar'?'أول':'1st'):gr[1]==='2'?(LANG==='ar'?'ثاني':'2nd'):(LANG==='ar'?'ثالث':'3rd');return rank+' '+gr[2].toUpperCase();}
   if(!s||s==='TBD')return 'TBD';
   return s;
 }
@@ -1829,7 +1823,14 @@ function mxSelectRow(tr, name){
   tr.scrollIntoView({block:'nearest'});
 }
 
-async function adminSync(){let r=await call('getApiSyncStatus',ADMIN_PIN);$('adminContent').innerHTML=`<p class="muted">${tr('apiHelp')}</p><input id="apiToken" class="wide" placeholder="${tr('apiToken')}"><div class="row section"><button class="ghost" onclick="saveToken()">${tr('saveApiToken')}</button><button class="primary" onclick="syncNow()">${tr('syncNow')}</button><button class="ghost" onclick="enableSync()">${tr('enableAutoSync')}</button><button class="ghost" onclick="disableSync()">${tr('disableAutoSync')}</button><button class="ghost" onclick="rebuildBoard()">${LANG==='ar'?'إعادة حساب الترتيب':'Rebuild standings'}</button><button class="ghost" onclick="debugSync()">${LANG==='ar'?'🔍 تشخيص المزامنة':'🔍 Debug sync'}</button></div><p id="syncMsg" class="muted">Token: ${r.hasToken?'✅':'❌'} · Auto: ${r.autoSync?'ON':'OFF'}${r.lastSyncAt?` · ${LANG==='ar'?'آخر مزامنة':'Last sync'}: ${localTime(new Date(r.lastSyncAt).toISOString())} — ${esc(r.lastSyncMsg||'')}`:''}</p><div id="debugOut"></div>`}async function saveToken(){let r=await call('setFootballDataToken',ADMIN_PIN,$('apiToken').value.trim());if(!r.ok)return toast(r.msg,true);toast('OK');adminSync()}async function syncNow(){let r=await call('syncFootballData',ADMIN_PIN);if(!r.ok)return toast(r.msg,true);let um=(r.unmapped||[]);let base=`Mapped ${r.mapped}; results ${r.updatedResults}; unmapped ${um.length}${(r.locked&&r.locked.length)?'; protected #'+r.locked.join(', #'):''}`;let extra=um.length?('<br><b>'+(LANG==='ar'?'لم تُطابَق:':'Not matched:')+'</b> '+um.map(function(x){var hasTeams=x.home||x.away;var teams=hasTeams?esc((x.home||'?')+' '+(LANG==='ar'?'ضد':'vs')+' '+(x.away||'?')):('<i>'+(LANG==='ar'?'فريقان غير محددين بعد':'teams not assigned yet')+'</i>');var st=x.stage?(' ['+esc(String(x.stage))+']'):'';var when=x.date?(' · '+esc(localTime(x.date))):'';return teams+st+when;}).join('; ')):'';$('syncMsg').innerHTML=esc(base)+extra;toast('OK');init()}async function enableSync(){let r=await call('enableAutoSync',ADMIN_PIN);if(!r.ok)return toast(r.msg,true);toast('OK');adminSync()}async function disableSync(){let r=await call('disableAutoSync',ADMIN_PIN);if(!r.ok)return toast(r.msg,true);toast('OK');adminSync()}async function rebuildBoard(){let r=await call('adminRebuildBoard',ADMIN_PIN);if(!r.ok)return toast(r.msg,true);toast(LANG==='ar'?'تم تحديث الترتيب':'Standings rebuilt');init()}
+async function adminSync(){let r=await call('getApiSyncStatus',ADMIN_PIN);$('adminContent').innerHTML=`<p class="muted">${tr('apiHelp')}</p><input id="apiToken" class="wide" placeholder="${tr('apiToken')}"><div class="row section"><button class="ghost" onclick="saveToken()">${tr('saveApiToken')}</button><button class="primary" onclick="syncNow()">${tr('syncNow')}</button><button class="ghost" onclick="enableSync()">${tr('enableAutoSync')}</button><button class="ghost" onclick="disableSync()">${tr('disableAutoSync')}</button><button class="ghost" onclick="rebuildBoard()">${LANG==='ar'?'إعادة حساب الترتيب':'Rebuild standings'}</button><button class="ghost danger" onclick="clearKOTeams()" title="${LANG==='ar'?'امسح بيانات الفرق الخاطئة من جولة الـ32 ثم أعد المزامنة':'Wipe wrong team data from KO slots then re-sync'}">${LANG==='ar'?'🗑️ مسح فرق الإقصائي':'🗑️ Clear KO teams'}</button><button class="ghost" onclick="debugSync()">${LANG==='ar'?'🔍 تشخيص المزامنة':'🔍 Debug sync'}</button></div><p id="syncMsg" class="muted">Token: ${r.hasToken?'✅':'❌'} · Auto: ${r.autoSync?'ON':'OFF'}${r.lastSyncAt?` · ${LANG==='ar'?'آخر مزامنة':'Last sync'}: ${localTime(new Date(r.lastSyncAt).toISOString())} — ${esc(r.lastSyncMsg||'')}`:''}</p><div id="debugOut"></div>`}async function saveToken(){let r=await call('setFootballDataToken',ADMIN_PIN,$('apiToken').value.trim());if(!r.ok)return toast(r.msg,true);toast('OK');adminSync()}async function syncNow(){let r=await call('syncFootballData',ADMIN_PIN);if(!r.ok)return toast(r.msg,true);let um=(r.unmapped||[]);let base=`Mapped ${r.mapped}; results ${r.updatedResults}; unmapped ${um.length}${(r.locked&&r.locked.length)?'; protected #'+r.locked.join(', #'):''}`;let extra=um.length?('<br><b>'+(LANG==='ar'?'لم تُطابَق:':'Not matched:')+'</b> '+um.map(function(x){var hasTeams=x.home||x.away;var teams=hasTeams?esc((x.home||'?')+' '+(LANG==='ar'?'ضد':'vs')+' '+(x.away||'?')):('<i>'+(LANG==='ar'?'فريقان غير محددين بعد':'teams not assigned yet')+'</i>');var st=x.stage?(' ['+esc(String(x.stage))+']'):'';var when=x.date?(' · '+esc(localTime(x.date))):'';return teams+st+when;}).join('; ')):'';$('syncMsg').innerHTML=esc(base)+extra;toast('OK');init()}async function enableSync(){let r=await call('enableAutoSync',ADMIN_PIN);if(!r.ok)return toast(r.msg,true);toast('OK');adminSync()}async function disableSync(){let r=await call('disableAutoSync',ADMIN_PIN);if(!r.ok)return toast(r.msg,true);toast('OK');adminSync()}async function rebuildBoard(){let r=await call('adminRebuildBoard',ADMIN_PIN);if(!r.ok)return toast(r.msg,true);toast(LANG==='ar'?'تم تحديث الترتيب':'Standings rebuilt');init()}
+async function clearKOTeams(){
+  if(!confirm(LANG==='ar'?'سيمسح هذا أسماء الفرق الخاطئة من جميع مباريات الإقصاء (73-104) ثم تُعاد تعبئتها عند المزامنة التالية. هل أنت متأكد؟':'This will wipe all team names from KO matches (73–104) so the next sync can repopulate them correctly. Continue?'))return;
+  const r=await call('adminClearKOTeams',ADMIN_PIN);
+  if(!r.ok)return toast(r.msg,true);
+  toast(r.msg||'KO teams cleared — sync now');
+  await syncNow();
+}
 async function debugSync(){
   $('debugOut').innerHTML='<p class="muted">Running…</p>';
   let r=await call('adminDebugSync',ADMIN_PIN);
