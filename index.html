@@ -1237,25 +1237,9 @@ function matchNo(m){return Number((m&&m.no)||(m&&m.fifaNo)||0)}function isGroupM
   return '<div class="liveBadge"><span class="liveDot"></span>'+live.hg+' \u2013 '+live.ag+(t?' <span style="font-size:11px;opacity:.8">'+t+'</span>':'')+'</div>';
 }
 function liveTimeStr(live,iso){
-  if(!live)return '';
-  if(live.status==='PAUSED'||live.status==='HALFTIME') return 'HT';
-  if(live.status==='PENALTY_SHOOTOUT') return 'PSO';
-  // Exact minute from the API when the tier provides it
-  if(live.minute){
-    if(live.status==='EXTRA_TIME') return live.minute+"'";
-    return live.minute+(live.injuryTime?'+'+live.injuryTime:'')+"'";
-  }
-  if(live.status==='EXTRA_TIME') return 'ET';
-  // Fallback: free API tier sends no live minute — estimate it from kickoff
-  var t=iso?new Date(iso).getTime():NaN;
-  if(isNaN(t)) return '';
-  var mins=Math.floor((Date.now()-t)/60000)+1;
-  if(mins<1) mins=1;
-  if(mins<=45) return mins+"'";
-  if(mins<=60) return 'HT';
-  var sh=mins-15;
-  if(sh<=90) return sh+"'";
-  return "90+'";
+  // Live match minute intentionally not shown — the available API minute can't be
+  // relied on to be accurate, so live matches display the score + LIVE dot only.
+  return '';
 }function localTime(iso){if(!iso)return 'TBD';let d=new Date(iso);if(isNaN(d))return 'TBD';return d.toLocaleString(LANG==='ar'?'ar-SA':'en-GB',{weekday:'short',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Riyadh'})}function locked(m){let r=STATE.results&&STATE.results[m.no];if(r)return true;if(m.h==='TBD'||m.a==='TBD'||!m.iso)return true;let t=new Date(m.iso).getTime();return isNaN(t)||Date.now()>=t-5*60*1000}function matchStatus(m){if(STATE.results&&STATE.results[m.no])return tr('completed');if(STATE.liveScores&&STATE.liveScores[m.no])return LANG==='ar'?'🔴 مباشر':'🔴 LIVE';return locked(m)?tr('locked'):tr('open')}function statusClass(m){if(STATE.results&&STATE.results[m.no])return 'done';if(STATE.liveScores&&STATE.liveScores[m.no])return 'live';return locked(m)?'locked':'open'}function myPred(no){return PREDS[no]||PREDS[String(no)]||{}}
 const FLAG_ALIAS={
   'Argentina':'ar','Australia':'au','Austria':'at','Belgium':'be','Brazil':'br','Cameroon':'cm','Canada':'ca','Chile':'cl','Colombia':'co','Costa Rica':'cr','Croatia':'hr','Curaçao':'cw','Curacao':'cw','Czechia':'cz','Czech Republic':'cz','Denmark':'dk','Ecuador':'ec','Egypt':'eg','England':'gb-eng','France':'fr','Germany':'de','Ghana':'gh','Haiti':'ht','Honduras':'hn','IR Iran':'ir','Iran':'ir','Iraq':'iq','Italy':'it','Jamaica':'jm','Japan':'jp','Jordan':'jo','Korea Republic':'kr','South Korea':'kr','Korea DPR':'kp','North Korea':'kp','Mexico':'mx','Morocco':'ma','Netherlands':'nl','New Zealand':'nz','Nigeria':'ng','Norway':'no','Panama':'pa','Paraguay':'py','Peru':'pe','Poland':'pl','Portugal':'pt','Qatar':'qa','Saudi Arabia':'sa','Scotland':'gb-sct','Senegal':'sn','Serbia':'rs','South Africa':'za','Spain':'es','Sweden':'se','Switzerland':'ch','Tunisia':'tn','Turkey':'tr','Türkiye':'tr','Ukraine':'ua','United Arab Emirates':'ae','UAE':'ae','United States':'us','USA':'us','Uruguay':'uy','Uzbekistan':'uz','Wales':'gb-wls',
