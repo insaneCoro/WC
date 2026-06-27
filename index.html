@@ -1841,18 +1841,27 @@ async function debugSync(){
   let r=await call('adminDebugSync',ADMIN_PIN);
   if(!r.ok)return $('debugOut').innerHTML='<p style="color:var(--red)">'+esc(r.msg)+'</p>';
   let html='<div class="card soft" style="margin-top:10px;font-size:12px">';
-  html+='<b>API fixtures: '+r.totalApi+' · Mapped: '+r.mapped+' · Unmapped: '+r.unmappedCount+'</b>';
+  html+='<b>API fixtures: '+(r.totalApi||'?')+' · Ours: '+(r.totalOurs||'?')+' · Mapped: '+r.mapped+' · Unmapped: '+r.unmappedCount+'</b>';
+  if(r.koMapping&&r.koMapping.length){
+    html+='<br><br><b style="color:var(--gold2)">KO match mapping (M73–M104):</b>';
+    html+='<div style="overflow-x:auto"><table style="font-size:11px;border-collapse:collapse;margin-top:4px"><thead><tr><th style="padding:2px 6px;text-align:left">M#</th><th style="padding:2px 6px;text-align:left">Our slot</th><th style="padding:2px 6px;text-align:left">API home</th><th style="padding:2px 6px;text-align:left">API away</th><th style="padding:2px 6px;text-align:left">API time</th></tr></thead><tbody>';
+    r.koMapping.forEach(function(k){
+      const teamOk = k.apiHome||k.apiAway;
+      html+='<tr style="border-top:1px solid var(--line2)"><td style="padding:2px 6px"><b>#'+k.ourNo+'</b></td><td style="padding:2px 6px;color:var(--muted)">'+esc(k.ourH)+' / '+esc(k.ourA)+'</td><td style="padding:2px 6px;color:'+(teamOk?'var(--good)':'var(--muted)')+'">'+esc(k.apiHome||'—')+'</td><td style="padding:2px 6px;color:'+(teamOk?'var(--good)':'var(--muted)')+'">'+esc(k.apiAway||'—')+'</td><td style="padding:2px 6px;color:var(--muted)">'+esc((k.apiDate||'').slice(5,16).replace('T',' '))+'</td></tr>';
+    });
+    html+='</tbody></table></div>';
+  }
   if(r.details&&r.details.length){
-    html+='<br><br><b style="color:var(--gold)">⚠️ Unmapped fixtures from football-data.org:</b>';
+    html+='<br><b style="color:var(--bad)">⚠️ Unmapped fixtures:</b>';
     r.details.forEach(function(d){
-      var teams=(d.apiHome||d.apiAway)?(esc(d.apiHome||'?')+' vs '+esc(d.apiAway||'?')):'<i>teams not assigned yet</i>';
+      var teams=(d.apiHome||d.apiAway)?(esc(d.apiHome||'?')+' vs '+esc(d.apiAway||'?')):'<i>teams TBD</i>';
       html+='<br>• <b>'+esc(d.apiStage||'')+'</b> · '+teams+' · '+esc(d.apiDate||'');
       if(d.topCandidates&&d.topCandidates.length){
-        html+='<br>&nbsp;&nbsp;Best candidates: '+d.topCandidates.map(function(c){return '#'+c.no+' ('+esc(c.h)+' vs '+esc(c.a)+') score='+c.score;}).join(', ');
+        html+='<br>&nbsp;&nbsp;Best: '+d.topCandidates.map(function(c){return '#'+c.no+' score='+c.score;}).join(', ');
       }
     });
   } else {
-    html+='<br><span style="color:var(--green)">✅ All fixtures mapped — no unmapped fixtures.</span>';
+    html+='<br><span style="color:var(--good)">✅ All fixtures mapped.</span>';
   }
   html+='</div>';
   $('debugOut').innerHTML=html;
