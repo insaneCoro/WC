@@ -2089,17 +2089,38 @@ function koPhoneSideDefault(){
 function koPhoneTreeHtml(){
   const ar=LANG==='ar';
   const cur=(KO_PHONE_SIDE&&['left','right','final'].includes(KO_PHONE_SIDE))?KO_PHONE_SIDE:koPhoneSideDefault();
-  const segs=[['left',ar?'يسار':'Left'],['final',ar?'النهائي':'Final'],['right',ar?'يمين':'Right']];
+  const segs=[['left',ar?'يسار':'Left'],['right',ar?'يمين':'Right'],['final',ar?'النهائي':'Final']];
   const seg=`<div class="koSeg">${segs.map(s=>`<button type="button" class="koSegBtn ${s[0]===cur?'active':''}" onclick="setKoPhoneSide('${s[0]}')">${s[1]}</button>`).join('')}</div>`;
-  const hint=`<p class="tiny muted" style="margin:0 2px 8px">${ar?'يعرض نصف المسار بحجم مقروء — اسحب للتنقل، وبدّل بين الجانبين والنهائي.':'One half of the draw at readable size — drag to pan, switch sides or the final.'}</p>`;
+  const hint=`<p class="tiny muted" style="margin:0 2px 8px">${ar?'اسحب أفقياً أو اضغط للتبديل بين الجانبين والنهائي — واسحب داخل اللوحة للتنقل.':'Swipe or tap to switch Left / Right / Final — drag inside the board to pan.'}</p>`;
   const legend=`<div class="koBar" style="margin:0 0 8px"><span class="pill" style="background:rgba(82,201,122,.14);color:var(--good);border-color:transparent">${ar?'● المتأهل':'● Advances'}</span></div>`;
   return `<div class="koPhoneTree">${hint}${seg}${legend}<div class="koHalfScroll" dir="ltr">${koHalfBoardHtml(cur)}</div></div>`;
+}
+function koSideOrder(){return ['left','right','final'];}
+function initKoSwipe(){
+  const sc=document.querySelector('.koHalfScroll'); if(!sc)return;
+  let x0=0,y0=0,sl0=0,slMax0=0,active=false;
+  sc.addEventListener('touchstart',e=>{
+    if(e.touches.length!==1){active=false;return;}
+    const t=e.touches[0];x0=t.clientX;y0=t.clientY;sl0=sc.scrollLeft;slMax0=sc.scrollWidth-sc.clientWidth;active=true;
+  },{passive:true});
+  sc.addEventListener('touchend',e=>{
+    if(!active)return;active=false;
+    const t=e.changedTouches&&e.changedTouches[0];if(!t)return;
+    const dx=t.clientX-x0,dy=t.clientY-y0;
+    if(Math.abs(dx)<60||Math.abs(dx)<Math.abs(dy)*1.4)return; // not a clear horizontal swipe
+    const atLeft=sl0<=4,atRight=sl0>=slMax0-4; // only page from a board edge so mid-pan stays a pan
+    const order=koSideOrder();
+    const cur=(KO_PHONE_SIDE&&order.includes(KO_PHONE_SIDE))?KO_PHONE_SIDE:koPhoneSideDefault();
+    const i=order.indexOf(cur);
+    if(dx<0&&atRight&&i<order.length-1)setKoPhoneSide(order[i+1]);
+    else if(dx>0&&atLeft&&i>0)setKoPhoneSide(order[i-1]);
+  },{passive:true});
 }
 function renderBracket(){
   if(!$('bracketBox')||!STATE)return;
   KO_BY_NO={};(STATE.matches||[]).forEach(function(m){KO_BY_NO[m.no]=m;});
   KO_LAST_PHONE=koIsPhone();
-  if(KO_LAST_PHONE){$('bracketBox').innerHTML=koPhoneTreeHtml();return;}
+  if(KO_LAST_PHONE){$('bracketBox').innerHTML=koPhoneTreeHtml();requestAnimationFrame(initKoSwipe);return;}
   const ar=LANG==='ar';
   const zoomCtrl=`<div class="bracketZoomCtrl">
     <div>
