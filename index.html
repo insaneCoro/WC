@@ -1430,9 +1430,9 @@ function ptsTileHtml(totalPts){
     const rows=breakdownRows.map(r=>{
       const ptsStr=(r.pts>0?'+':'')+r.pts;
       const signs=[];
-      if(r.exact>0)signs.push(`<span class="ptsDrwExact">${ar?'صح':'E'}${r.exact}</span>`);
-      if(r.win>0)  signs.push(`<span class="ptsDrwWin">${ar?'فوز':'W'}${r.win}</span>`);
-      if(r.wrong>0)signs.push(`<span class="ptsDrwWrong">${ar?'خطأ':'L'}${r.wrong}</span>`);
+      if(r.exact>0)signs.push(`<span class="ptsDrwExact">${ar?'ص':'E'} ${r.exact}</span>`);
+      if(r.win>0)  signs.push(`<span class="ptsDrwWin">${ar?'ف':'W'} ${r.win}</span>`);
+      if(r.wrong>0)signs.push(`<span class="ptsDrwWrong">${ar?'خ':'L'} ${r.wrong}</span>`);
       return `<div class="ptsDrwRow"><span class="ptsDrwLabel">${esc(r.label)}</span><span class="ptsDrwNums">${signs.join('')}<span class="ptsDrwPts">${ptsStr}</span></span></div>`;
     }).join('');
     drwHtml=`<div class="ptsDrw${PTS_DRW_OPEN?' open':''}" id="ptsDrw">${rows}</div>`;
