@@ -445,17 +445,17 @@
     }
     .ptsDrw.open { display: block; }
     .ptsDrwRow {
-      display: flex; justify-content: space-between; align-items: center;
-      font-size: 11px; padding: 4px 0;
+      display: flex; flex-direction: column;
+      padding: 5px 0; gap: 3px;
       border-bottom: 1px solid rgba(255,255,255,.04);
     }
     .ptsDrwRow:last-child { border-bottom: none; }
-    .ptsDrwLabel { color: var(--muted); font-size: 12px; }
+    .ptsDrwLabel { color: var(--muted); font-size: 11px; }
     .ptsDrwNums { display: flex; gap: 6px; align-items: center; flex-wrap: nowrap; }
-    .ptsDrwPts { font-family: var(--font-display); font-weight: 700; font-size: 13px; color: var(--gold2); min-width: 32px; text-align: end; }
-    .ptsDrwExact { color: var(--good);  font-family: var(--font-display); font-weight: 700; font-size: 12px; letter-spacing: .02em; }
-    .ptsDrwWin   { color: var(--done);  font-family: var(--font-display); font-weight: 700; font-size: 12px; letter-spacing: .02em; }
-    .ptsDrwWrong { color: var(--bad);   font-family: var(--font-display); font-weight: 700; font-size: 12px; letter-spacing: .02em; }
+    .ptsDrwPts { font-family: var(--font-display); font-weight: 700; font-size: 13px; color: var(--gold2); margin-inline-start: auto; }
+    .ptsDrwExact { color: var(--good);  font-family: var(--font-display); font-weight: 700; font-size: 12px; }
+    .ptsDrwWin   { color: var(--done);  font-family: var(--font-display); font-weight: 700; font-size: 12px; }
+    .ptsDrwWrong { color: var(--bad);   font-family: var(--font-display); font-weight: 700; font-size: 12px; }
 
     /* ── Tables ── */
     table { width: 100%; border-collapse: collapse; min-width: 580px; }
