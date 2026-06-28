@@ -2091,11 +2091,9 @@ function koBoardPositions(){
   let maxBottom=0, minTop=Infinity;
   const obj={__w:boardW,__cols:cols.map(c=>({key:c.key,stage:c.stage,label:c.label,cls:c.cls,x:colX[c.key],w:colW[c.key]}))};
   Object.keys(raw).forEach(k=>{const n=Number(k),col=raw[k][0]; if(colX[col]==null)return; const sz=koCardSize(n),top=Math.round(raw[k][1]-sz.h/2); obj[n]={x:colX[col],y:top,w:sz.w,h:sz.h}; maxBottom=Math.max(maxBottom,top+sz.h); minTop=Math.min(minTop,top);});
-  // Shift all cards up so the topmost card starts at margin, not at its hardcoded Y center.
-  // This removes the dead space above cards when the board is filtered to fewer stages.
-  const yOffset=minTop>margin?minTop-margin:0;
-  if(yOffset>0){Object.keys(obj).forEach(k=>{if(k.startsWith('__'))return;obj[k].y-=yOffset;});}
-  obj.__h=maxBottom-yOffset+margin;
+  obj.__h=Math.max(700,maxBottom+margin);
+  // Store minTop so koBoardHtml can scroll past the dead space above filtered cards
+  obj.__minTop=minTop===Infinity?0:minTop;
   return obj;
 }
 function koMiniSlot(slot){var team=koResolve(slot);if(team)return teamHtmlCode(team);return `<span class="koSlotMini">${esc(koSlotLabel(slot))}</span>`;}
@@ -2155,6 +2153,9 @@ function koBoardHtml(){
   const finalPos=p[104]||{x:p.__w/2-82,y:322,w:164,h:88},thirdPos=p[103]||{x:p.__w/2-75,y:540,w:150,h:72};
   const centerX=finalPos.x+finalPos.w/2;
   const centerDecor=`<div class="koFinalHalo" style="left:${centerX}px;top:${finalPos.y+finalPos.h/2}px"></div><div class="koFinalLabel" style="left:${centerX}px;top:${Math.max(44,finalPos.y-36)}px">${LANG==='ar'?'النهائي':'FINAL'}</div><div class="koThirdLabel" style="left:${thirdPos.x+thirdPos.w/2}px;top:${Math.max(44,thirdPos.y-28)}px">${LANG==='ar'?'المركز الثالث':'Third place'}</div>`;
+  // Scroll past dead space above the topmost visible card when board is filtered
+  const scrollTop=Math.max(0,(p.__minTop||0)-40);
+  koBoardHtml._scrollTop=Math.max(0,(p.__minTop||0)-40);
   return `<div class="bracketScroll koBoardScroll" dir="ltr"><div class="bracketZoomWrap"><div class="bracketTree koBoardTree"><div class="koBoard" style="width:${p.__w}px;height:${p.__h}px">${koBoardSvg()}${centerDecor}${titles}${cards}</div></div></div></div>`;
 }
 function fitBracketReadable(){
@@ -2321,7 +2322,8 @@ function renderBracket(){
   </div>`;
   const bar=`<div class="koBar"><div class="koLegend"><span class="pill" style="background:rgba(82,201,122,.14);color:var(--good);border-color:transparent">${LANG==='ar'?'● المتأهل':'● Advances'}</span></div></div>`;
   $('bracketBox').innerHTML=zoomCtrl+bar+koBoardHtml();
-  requestAnimationFrame(()=>{fitBracketReadable();initBracketPinch();});
+  const boardScrollTop=koBoardHtml._scrollTop||0;
+  requestAnimationFrame(()=>{fitBracketReadable();initBracketPinch();const s=document.querySelector('.koBoardScroll');if(s&&boardScrollTop>0)s.scrollTop=boardScrollTop;});
 }
 window.addEventListener('resize',()=>{if(ACTIVE!=='bracket')return;const p=koIsPhone();if(p!==KO_LAST_PHONE)renderBracket();});
 
