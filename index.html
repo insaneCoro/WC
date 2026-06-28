@@ -2159,13 +2159,21 @@ function fitBracketReadable(){
   tree.style.transition='none';tree.style.transform='scale(1)';void tree.offsetWidth;
   const fit=Math.min(1,scroll.clientWidth/tree.scrollWidth);
   const phone=scroll.clientWidth<=700;
-  // On phones, full-board fit makes the bracket unreadable. Start at a readable
-  // zoom and let the user drag sideways; the Fit button still shows the full board.
   const target=phone?Math.max(0.62,Math.min(0.78,BRACKET_ZOOM||0.72)):Math.max(0.34,fit);
   setBracketZoom(target);
   requestAnimationFrame(()=>{
     const max=scroll.scrollWidth-scroll.clientWidth;
-    if(max>0)scroll.scrollLeft=max/2;
+    if(max<=0)return;
+    // For focused stages (sf/final) the board is narrow and the Final card sits
+    // near the left — blindly scrolling to max/2 overshoots into empty space.
+    // Find the Final card and scroll to center it in the viewport instead.
+    const finalCard=scroll.querySelector('.koBoardCard.final');
+    if(finalCard&&(BRACKET_STAGE==='final'||BRACKET_STAGE==='sf')){
+      const cardCenter=finalCard.offsetLeft+(finalCard.offsetWidth/2)*BRACKET_ZOOM;
+      scroll.scrollLeft=Math.max(0,Math.min(max,cardCenter-scroll.clientWidth/2));
+    } else {
+      scroll.scrollLeft=max/2;
+    }
   });
 }
 let KO_PHONE_SIDE=localStorage.getItem('wc26KoPhoneSide')||'';
