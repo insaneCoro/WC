@@ -2088,10 +2088,14 @@ function koBoardPositions(){
     102:['rsf',C.s],99:['rqf',C.q1],100:['rqf',C.q2],91:['r16',C.r1],92:['r16',C.r2],95:['r16',C.r3],96:['r16',C.r4],
     76:['r32',C.a],78:['r32',C.b],79:['r32',C.c],80:['r32',C.d],86:['r32',C.e],88:['r32',C.f],85:['r32',C.g],87:['r32',C.h]
   };
-  let maxBottom=0;
+  let maxBottom=0, minTop=Infinity;
   const obj={__w:boardW,__cols:cols.map(c=>({key:c.key,stage:c.stage,label:c.label,cls:c.cls,x:colX[c.key],w:colW[c.key]}))};
-  Object.keys(raw).forEach(k=>{const n=Number(k),col=raw[k][0]; if(colX[col]==null)return; const sz=koCardSize(n),top=Math.round(raw[k][1]-sz.h/2); obj[n]={x:colX[col],y:top,w:sz.w,h:sz.h}; maxBottom=Math.max(maxBottom,top+sz.h);});
-  obj.__h=Math.max(700,maxBottom+margin);
+  Object.keys(raw).forEach(k=>{const n=Number(k),col=raw[k][0]; if(colX[col]==null)return; const sz=koCardSize(n),top=Math.round(raw[k][1]-sz.h/2); obj[n]={x:colX[col],y:top,w:sz.w,h:sz.h}; maxBottom=Math.max(maxBottom,top+sz.h); minTop=Math.min(minTop,top);});
+  // Shift all cards up so the topmost card starts at margin, not at its hardcoded Y center.
+  // This removes the dead space above cards when the board is filtered to fewer stages.
+  const yOffset=minTop>margin?minTop-margin:0;
+  if(yOffset>0){Object.keys(obj).forEach(k=>{if(k.startsWith('__'))return;obj[k].y-=yOffset;});}
+  obj.__h=maxBottom-yOffset+margin;
   return obj;
 }
 function koMiniSlot(slot){var team=koResolve(slot);if(team)return teamHtmlCode(team);return `<span class="koSlotMini">${esc(koSlotLabel(slot))}</span>`;}
