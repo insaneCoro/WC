@@ -2078,7 +2078,7 @@ function koBoardPositions(){
   const colX={}, colW={};
   let x=margin;
   cols.forEach(c=>{const w=koCardSize(rep[c.key]).w;colX[c.key]=x;colW[c.key]=w;x+=w+gap;});
-  const boardW=Math.max(310,x-gap+margin);
+  const boardW=x-gap+margin;
   // center coordinates — boxes grow symmetrically around these, so connector wires never move
   const C={a:81,b:157,c:233,d:309,e:405,f:481,g:557,h:633,r1:119,r2:271,r3:459,r4:611,q1:195,q2:535,s:365,final:331,third:535};
   const raw={
@@ -2091,7 +2091,7 @@ function koBoardPositions(){
   let maxBottom=0, minTop=Infinity;
   const obj={__w:boardW,__cols:cols.map(c=>({key:c.key,stage:c.stage,label:c.label,cls:c.cls,x:colX[c.key],w:colW[c.key]}))};
   Object.keys(raw).forEach(k=>{const n=Number(k),col=raw[k][0]; if(colX[col]==null)return; const sz=koCardSize(n),top=Math.round(raw[k][1]-sz.h/2); obj[n]={x:colX[col],y:top,w:sz.w,h:sz.h}; maxBottom=Math.max(maxBottom,top+sz.h); minTop=Math.min(minTop,top);});
-  obj.__h=Math.max(700,maxBottom+margin);
+  const fullBoard=cols.length>=7;obj.__h=fullBoard?Math.max(700,maxBottom+margin):maxBottom+margin+60;
   // Store minTop so koBoardHtml can scroll past the dead space above filtered cards
   obj.__minTop=minTop===Infinity?0:minTop;
   return obj;
@@ -2153,8 +2153,6 @@ function koBoardHtml(){
   const finalPos=p[104]||{x:p.__w/2-82,y:322,w:164,h:88},thirdPos=p[103]||{x:p.__w/2-75,y:540,w:150,h:72};
   const centerX=finalPos.x+finalPos.w/2;
   const centerDecor=`<div class="koFinalHalo" style="left:${centerX}px;top:${finalPos.y+finalPos.h/2}px"></div><div class="koFinalLabel" style="left:${centerX}px;top:${Math.max(44,finalPos.y-36)}px">${LANG==='ar'?'النهائي':'FINAL'}</div><div class="koThirdLabel" style="left:${thirdPos.x+thirdPos.w/2}px;top:${Math.max(44,thirdPos.y-28)}px">${LANG==='ar'?'المركز الثالث':'Third place'}</div>`;
-  // Scroll past dead space above the topmost visible card when board is filtered
-  const scrollTop=Math.max(0,(p.__minTop||0)-40);
   koBoardHtml._scrollTop=Math.max(0,(p.__minTop||0)-40);
   return `<div class="bracketScroll koBoardScroll" dir="ltr"><div class="bracketZoomWrap"><div class="bracketTree koBoardTree"><div class="koBoard" style="width:${p.__w}px;height:${p.__h}px">${koBoardSvg()}${centerDecor}${titles}${cards}</div></div></div></div>`;
 }
