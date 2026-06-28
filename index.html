@@ -446,16 +446,16 @@
     .ptsDrw.open { display: block; }
     .ptsDrwRow {
       display: flex; justify-content: space-between; align-items: center;
-      font-size: 11px; padding: 3px 0;
+      font-size: 11px; padding: 4px 0;
       border-bottom: 1px solid rgba(255,255,255,.04);
     }
     .ptsDrwRow:last-child { border-bottom: none; }
-    .ptsDrwLabel { color: var(--muted); }
-    .ptsDrwNums { display: flex; gap: 8px; align-items: center; }
-    .ptsDrwPts { font-family: var(--font-display); font-weight: 700; font-size: 13px; color: var(--gold2); min-width: 28px; text-align: end; }
-    .ptsDrwExact { color: var(--good); font-size: 10px; }
-    .ptsDrwWin   { color: var(--done); font-size: 10px; }
-    .ptsDrwWrong { color: var(--bad);  font-size: 10px; }
+    .ptsDrwLabel { color: var(--muted); font-size: 12px; }
+    .ptsDrwNums { display: flex; gap: 6px; align-items: center; flex-wrap: nowrap; }
+    .ptsDrwPts { font-family: var(--font-display); font-weight: 700; font-size: 13px; color: var(--gold2); min-width: 32px; text-align: end; }
+    .ptsDrwExact { color: var(--good);  font-family: var(--font-display); font-weight: 700; font-size: 12px; letter-spacing: .02em; }
+    .ptsDrwWin   { color: var(--done);  font-family: var(--font-display); font-weight: 700; font-size: 12px; letter-spacing: .02em; }
+    .ptsDrwWrong { color: var(--bad);   font-family: var(--font-display); font-weight: 700; font-size: 12px; letter-spacing: .02em; }
 
     /* ── Tables ── */
     table { width: 100%; border-collapse: collapse; min-width: 580px; }
@@ -1430,13 +1430,10 @@ function ptsTileHtml(totalPts){
     const rows=breakdownRows.map(r=>{
       const ptsStr=(r.pts>0?'+':'')+r.pts;
       const signs=[];
-      if(r.exact>0)signs.push(`<span class="ptsDrwExact">🎯${r.exact}</span>`);
-      if(r.win>0)  signs.push(`<span class="ptsDrwWin">✅${r.win}</span>`);
-      if(r.wrong>0)signs.push(`<span class="ptsDrwWrong">❌${r.wrong}</span>`);
-      return `<div class="ptsDrwRow">
-        <span class="ptsDrwLabel">${esc(r.label)}</span>
-        <span class="ptsDrwNums">${signs.join('')}<span class="ptsDrwPts">${ptsStr}</span></span>
-      </div>`;
+      if(r.exact>0)signs.push(`<span class="ptsDrwExact">${ar?'صح':'E'}${r.exact}</span>`);
+      if(r.win>0)  signs.push(`<span class="ptsDrwWin">${ar?'فوز':'W'}${r.win}</span>`);
+      if(r.wrong>0)signs.push(`<span class="ptsDrwWrong">${ar?'خطأ':'L'}${r.wrong}</span>`);
+      return `<div class="ptsDrwRow"><span class="ptsDrwLabel">${esc(r.label)}</span><span class="ptsDrwNums">${signs.join('')}<span class="ptsDrwPts">${ptsStr}</span></span></div>`;
     }).join('');
     drwHtml=`<div class="ptsDrw${PTS_DRW_OPEN?' open':''}" id="ptsDrw">${rows}</div>`;
   }
