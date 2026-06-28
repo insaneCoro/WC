@@ -427,6 +427,36 @@
     .progress { height: 6px; background: rgba(255,255,255,.06); border-radius: 99px; overflow: hidden; margin-top: 6px; }
     .fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold2)); border-radius: 99px; transition: width .4s ease; }
 
+    /* ── Points breakdown drawer ── */
+    .ptsToggle {
+      display: inline-flex; align-items: center; gap: 3px;
+      font-size: 11px; color: var(--muted);
+      cursor: pointer; margin-top: 5px;
+      background: none; border: none; padding: 0;
+      font-family: var(--font-body); letter-spacing: 0;
+      min-height: unset; transition: color .12s;
+    }
+    .ptsToggle:hover { color: var(--gold2); transform: none; border-color: transparent; }
+    .ptsToggle .arr { display: inline-block; transition: transform .18s; font-style: normal; }
+    .ptsToggle.open .arr { transform: rotate(180deg); }
+    .ptsDrw {
+      display: none; margin-top: 8px;
+      border-top: 1px solid var(--line2); padding-top: 8px;
+    }
+    .ptsDrw.open { display: block; }
+    .ptsDrwRow {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 11px; padding: 3px 0;
+      border-bottom: 1px solid rgba(255,255,255,.04);
+    }
+    .ptsDrwRow:last-child { border-bottom: none; }
+    .ptsDrwLabel { color: var(--muted); }
+    .ptsDrwNums { display: flex; gap: 8px; align-items: center; }
+    .ptsDrwPts { font-family: var(--font-display); font-weight: 700; font-size: 13px; color: var(--gold2); min-width: 28px; text-align: end; }
+    .ptsDrwExact { color: var(--good); font-size: 10px; }
+    .ptsDrwWin   { color: var(--done); font-size: 10px; }
+    .ptsDrwWrong { color: var(--bad);  font-size: 10px; }
+
     /* ── Tables ── */
     table { width: 100%; border-collapse: collapse; min-width: 580px; }
     th, td { padding: 10px 10px; border-bottom: 1px solid var(--line2); text-align: start; vertical-align: middle; }
@@ -1328,6 +1358,99 @@ function statTile(label,value,sub,main){return `<div class="stat ${main?'main':'
 function quickLabel(en,ar){return LANG==='ar'?ar:en}
 function hasPick(p){return p && p.hg!=='' && p.hg!=null && p.ag!=='' && p.ag!=null}
 function getMyPredObject(){return PREDS}
+
+// ── Points breakdown: computed client-side from STATE + PREDS ──
+// Mirrors server _scoreValues() and _scoreOne() exactly using the same match number ranges.
+function computeStageBreakdown(){
+  const matches=STATE.matches||[], results=STATE.results||{}, mine=PREDS||{};
+  const stages=[
+    {key:'grp',  en:'Groups',    ar:'المجموعات', nos:[1,72]},
+    {key:'r32',  en:'R32',       ar:'دور ٣٢',    nos:[73,88]},
+    {key:'r16',  en:'R16',       ar:'دور ١٦',    nos:[89,96]},
+    {key:'qf',   en:'QF',        ar:'ربع النهائي',nos:[97,100]},
+    {key:'sf',   en:'SF',        ar:'نصف النهائي',nos:[101,102]},
+    {key:'3rd',  en:'3rd',       ar:'المركز ٣',  nos:[103,103]},
+    {key:'final',en:'Final',     ar:'النهائي',   nos:[104,104]},
+  ];
+  const vals={grp:{e:2,o:1,w:0},r32:{e:6,o:3,w:-3},r16:{e:8,o:4,w:-4},qf:{e:12,o:6,w:-6},sf:{e:20,o:10,w:-10},'3rd':{e:20,o:10,w:-10},final:{e:32,o:16,w:-16}};
+
+  return stages.map(s=>{
+    let pts=0, exact=0, win=0, wrong=0, played=0;
+    matches.forEach(m=>{
+      const no=m.no;
+      if(no<s.nos[0]||no>s.nos[1])return;
+      const r=results[no]; if(!r)return;
+      const p=mine[no]||mine[String(no)]; if(!p)return;
+      if(p.hg===''||p.hg==null||p.ag===''||p.ag==null)return;
+      played++;
+      const ko=no>=73;
+      const hg=Number(p.hg),ag=Number(p.ag),rhg=Number(r.hg),rag=Number(r.ag);
+      const scoreExact=hg===rhg&&ag===rag;
+      const predW=hg>ag?'H':ag>hg?'A':(p.w||'D');
+      const resW=rhg>rag?'H':rag>rhg?'A':(r.w||'D');
+      const v=vals[s.key];
+      if(!ko){
+        if(scoreExact){pts+=v.e;exact++;}
+        else if(predW===resW){pts+=v.o;win++;}
+        else{wrong++;}
+      } else {
+        if(resW==='D')return; // incomplete KO result
+        const correctQ=predW===resW;
+        if(!correctQ){pts+=v.w;wrong++;}
+        else{
+          let isExact=false;
+          if(r.pen){isExact=scoreExact&&!!(p.pen||(hg===ag&&!!p.w))&&p.w===r.w;}
+          else{isExact=scoreExact;}
+          if(isExact){pts+=v.e;exact++;}else{pts+=v.o;win++;}
+        }
+      }
+    });
+    return {key:s.key,label:LANG==='ar'?s.ar:s.en,pts,exact,win,wrong,played};
+  }).filter(s=>s.played>0);
+}
+
+let PTS_DRW_OPEN=false;
+function togglePtsBreakdown(){
+  PTS_DRW_OPEN=!PTS_DRW_OPEN;
+  const drw=document.getElementById('ptsDrw');
+  const tog=document.getElementById('ptsToggle');
+  if(drw)drw.classList.toggle('open',PTS_DRW_OPEN);
+  if(tog)tog.classList.toggle('open',PTS_DRW_OPEN);
+}
+
+function ptsTileHtml(totalPts){
+  const ar=LANG==='ar';
+  const label=quickLabel('Points','النقاط');
+  const breakdownRows=computeStageBreakdown();
+  const hasKO=breakdownRows.some(r=>r.key!=='grp');
+  // Only show the toggle if there's more than just group stage data
+  const showToggle=breakdownRows.length>0&&hasKO;
+  let drwHtml='';
+  if(showToggle){
+    const rows=breakdownRows.map(r=>{
+      const ptsStr=(r.pts>0?'+':'')+r.pts;
+      const signs=[];
+      if(r.exact>0)signs.push(`<span class="ptsDrwExact">🎯${r.exact}</span>`);
+      if(r.win>0)  signs.push(`<span class="ptsDrwWin">✅${r.win}</span>`);
+      if(r.wrong>0)signs.push(`<span class="ptsDrwWrong">❌${r.wrong}</span>`);
+      return `<div class="ptsDrwRow">
+        <span class="ptsDrwLabel">${esc(r.label)}</span>
+        <span class="ptsDrwNums">${signs.join('')}<span class="ptsDrwPts">${ptsStr}</span></span>
+      </div>`;
+    }).join('');
+    drwHtml=`<div class="ptsDrw${PTS_DRW_OPEN?' open':''}" id="ptsDrw">${rows}</div>`;
+  }
+  const toggleBtn=showToggle
+    ?`<button class="ptsToggle${PTS_DRW_OPEN?' open':''}" id="ptsToggle" onclick="togglePtsBreakdown()"><i class="arr">▾</i> ${ar?'تفاصيل':'breakdown'}</button>`
+    :'';
+  return `<div class="stat" id="ptsTile">
+    <span class="tiny">${label}</span>
+    <b>${totalPts}</b>
+    ${toggleBtn}
+    ${drwHtml}
+  </div>`;
+}
+
 function renderStats(){
   const el=$('stats'); if(!el||!STATE)return;
   const matches=STATE.matches||[], results=STATE.results||{}, players=STATE.players||[];
@@ -1349,10 +1472,11 @@ function renderStats(){
   const pct=total?Math.round(submitted/total*100):0;
   const _ch=STATE.champion||{}; const _cp=SESSION?(_ch.myPick||''):''; const _co=SESSION?(_ch.myOriginal||''):''; const _cChanged=(_ch.phase&&_ch.phase!=='early')&&_cp&&((!_co)||_cp!==_co); const _cv=_cChanged?(_ch.bonusSwitched||10):(_ch.bonusEarly||20);
   const _csub=_cp?('+'+_cv+(_ch.winner?(_cp===_ch.winner?' ✓':' ✗'):'')):quickLabel('no pick','لم تختر');
+  const currentPts=BETS_STATE.balance!=null?BETS_STATE.balance:(STATE.myBalance!=null?STATE.myBalance:'—');
   el.innerHTML=
     statTile(quickLabel('Predicted','تم توقعها'), `${submitted}/${total}`, `${pct}%`, true)+
     statTile(quickLabel('Need picks','الناقص'), remainingOpen, quickLabel('open games','مباريات متاحة'))+
-    statTile(quickLabel('Points','النقاط'), BETS_STATE.balance!=null?BETS_STATE.balance:(STATE.myBalance!=null?STATE.myBalance:'—'), quickLabel('total balance','الرصيد الكلي'))+
+    ptsTileHtml(currentPts)+
     statTile(quickLabel('Champion','البطل'), _cp?teamHtml(_cp):'—', _csub);
   if($('quickHint'))$('quickHint').textContent=remainingOpen?quickLabel(`${remainingOpen} left`,`${remainingOpen} متبقية`):quickLabel('All set','مكتمل');
   call('getLeaderboard').then(r=>{
@@ -1362,7 +1486,12 @@ function renderStats(){
     const me=r.table[idx];
     const cards=el.querySelectorAll('.stat');
     if(cards[0])cards[0].innerHTML=`<span class="tiny">${quickLabel('Rank','المركز')}</span><b>#${idx+1}</b><span class="tiny">${esc(me.name||SESSION.name)} · ${me.total} ${quickLabel('pts','نقطة')}</span>`;
-    if(cards[2])cards[2].innerHTML=`<span class="tiny">${quickLabel('Points','النقاط')}</span><b>${me.total}</b><span class="tiny">${quickLabel('Exact','صحيحة')}: ${me.exact} · ${quickLabel('Winner','فائز')}: ${me.outcome}</span>`;
+    // Points tile is rebuilt by ptsTileHtml — re-sync its total from leaderboard
+    const ptsTile=document.getElementById('ptsTile');
+    if(ptsTile){
+      const bEl=ptsTile.querySelector('b');
+      if(bEl)bEl.textContent=me.total;
+    }
   }).catch(()=>{});
 }
 function renderAll(){if(!STATE)return;renderStats();requestAnimationFrame(()=>{renderMatches();refreshKoWarns();if(ACTIVE==='pred')loadPredCardBetting();});if(ACTIVE==='odds')loadOdds();if(ACTIVE==='board')loadBoard();if(ACTIVE==='groups')renderGroups();if(ACTIVE==='bracket')renderBracket();if(ACTIVE==='betting')loadBetting();if(ACTIVE==='champion')loadChampion();if(ACTIVE==='admin'&&ADMIN_PIN)renderAdmin()}function showTab(t){ACTIVE=t;updatePageTitle();['pred','odds','board','groups','bracket','betting','champion','rules','admin'].forEach(x=>{$(x).classList.toggle('hidden',x!==t);$('tab'+x[0].toUpperCase()+x.slice(1)).classList.toggle('active',x===t)});if(t==='pred'){renderMatches();loadPredCardBetting(true);}if(t==='odds')loadOdds();if(t==='board')loadBoard();if(t==='groups')renderGroups();if(t==='bracket')renderBracket();if(t==='betting')loadBetting();if(t==='champion')loadChampion();if(t==='admin')restoreAdmin()}function renderFilters(){if(!$('filters'))return;let basic=[['all',tr('all')],['today',tr('today')],['upcoming',tr('upcoming')],['completed',tr('completed')],['mine',tr('mine')]];let groups='ABCDEFGHIJKL'.split('').map(g=>['group-'+g,g]);let kos=[['r32',tr('roundOf32')],['r16',tr('roundOf16')],['qf',LANG==='ar'?'ربع':'QF'],['sf',LANG==='ar'?'نصف':'SF'],['third',tr('thirdPlace')],['final',tr('final')]];let list=basic.concat(groups).concat(kos);$('filters').innerHTML=list.map(([k,label])=>`<button class="filter tab ${k.startsWith('group-')?'groupFilter':''} ${FILTER===k?'active':''}" onclick="setFilter('${k}')">${label}</button>`).join('')}function setFilter(f){FILTER=f;renderFilters();renderMatches()}
