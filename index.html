@@ -962,7 +962,7 @@
     /* ── Bracket board view: compact, theme-safe, stage-filtered ── */
     .bracketModeBtns{display:none}
     .bracketQuickNav{display:none}
-    .koBoardScroll{overflow:auto;padding:8px 0 16px;-webkit-overflow-scrolling:touch}
+    .koBoardScroll{overflow:auto;padding:8px 0 16px;-webkit-overflow-scrolling:touch;display:flex;justify-content:center;}
     .koBoardScroll .bracketZoomWrap{overflow:visible;background:transparent!important}
     .koBoardTree{display:inline-block!important;align-items:initial!important;justify-content:initial!important}
     .koBoard{position:relative;width:1238px;height:700px;border-radius:18px;overflow:hidden;
@@ -2163,17 +2163,7 @@ function fitBracketReadable(){
   setBracketZoom(target);
   requestAnimationFrame(()=>{
     const max=scroll.scrollWidth-scroll.clientWidth;
-    if(max<=0)return;
-    // For focused stages (sf/final) the board is narrow and the Final card sits
-    // near the left — blindly scrolling to max/2 overshoots into empty space.
-    // Find the Final card and scroll to center it in the viewport instead.
-    const finalCard=scroll.querySelector('.koBoardCard.final');
-    if(finalCard&&(BRACKET_STAGE==='final'||BRACKET_STAGE==='sf')){
-      const cardCenter=finalCard.offsetLeft+(finalCard.offsetWidth/2)*BRACKET_ZOOM;
-      scroll.scrollLeft=Math.max(0,Math.min(max,cardCenter-scroll.clientWidth/2));
-    } else {
-      scroll.scrollLeft=max/2;
-    }
+    if(max>0)scroll.scrollLeft=max/2;
   });
 }
 let KO_PHONE_SIDE=localStorage.getItem('wc26KoPhoneSide')||'';
