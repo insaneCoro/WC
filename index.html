@@ -1953,7 +1953,7 @@ function koMatchCard(no){var m=KO_BY_NO[no];if(!m)return '';var r=STATE.results&
 function koNode(no){var f=KO_FEEDERS[no];if(!f)return `<div class="leaf">${koMatchCard(no)}</div>`;return `<div class="branch"><div class="children">${koNode(f[0])}${koNode(f[1])}</div><div class="parent">${koMatchCard(no)}</div></div>`;}
 let BRACKET_ZOOM=1;
 function setBracketZoom(z){
-  BRACKET_ZOOM=Math.max(0.1,Math.min(1.5,z));
+  BRACKET_ZOOM=Math.max(0.1,Math.min(4,z));
   const tree=document.querySelector('.bracketTree');
   const wrap=document.querySelector('.bracketZoomWrap');
   if(!tree||!wrap)return;
@@ -1962,13 +1962,21 @@ function setBracketZoom(z){
   tree.style.transform='scale(1)';
   void tree.offsetWidth; // force reflow
   const nw=tree.scrollWidth, nh=tree.scrollHeight;
-  // Set wrapper to scaled dimensions — bracketScroll scrolls the wrapper,
-  // so its size controls exactly how far the user can scroll (no empty space)
-  wrap.style.width=Math.ceil(nw*BRACKET_ZOOM)+'px';
-  wrap.style.height=Math.ceil(nh*BRACKET_ZOOM)+'px';
-  wrap.style.overflow='hidden'; // applied after dimensions are set so content isn't clipped at zero height
+  const sw=Math.ceil(nw*BRACKET_ZOOM), sh=Math.ceil(nh*BRACKET_ZOOM);
+  // Set wrapper to scaled dimensions so scroll container knows the real scrollable area
+  wrap.style.width=sw+'px';
+  wrap.style.height=sh+'px';
+  wrap.style.overflow='hidden';
   tree.style.transition='transform .15s';
   tree.style.transform=`scale(${BRACKET_ZOOM})`;
+  // When zoomed beyond the scroll container width, switch from flex-centering to
+  // normal block so overflow:auto can scroll the full scaled content
+  const scroll=document.querySelector('.koBoardScroll');
+  if(scroll){
+    const overflows=sw>scroll.clientWidth||sh>scroll.clientHeight;
+    scroll.style.justifyContent=overflows?'flex-start':'center';
+    scroll.style.alignItems=overflows?'flex-start':'center';
+  }
   const lbl=$('bracketZoomLbl');
   if(lbl)lbl.textContent=Math.round(BRACKET_ZOOM*100)+'%';
 }
