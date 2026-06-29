@@ -962,8 +962,9 @@
     /* ── Bracket board view: compact, theme-safe, stage-filtered ── */
     .bracketModeBtns{display:none}
     .bracketQuickNav{display:none}
-    .koBoardScroll{overflow:auto;padding:8px 0 16px;-webkit-overflow-scrolling:touch;display:flex;justify-content:center;cursor:grab;}
+    .koBoardScroll{overflow:auto;padding:8px 0 16px;-webkit-overflow-scrolling:touch;cursor:grab;}
     .koBoardScroll:active{cursor:grabbing;}
+    .koBoardScroll .bracketZoomWrap{margin:0 auto;}
     .koBoardScroll .bracketZoomWrap{overflow:visible;background:transparent!important}
     .koBoardTree{display:inline-block!important;align-items:initial!important;justify-content:initial!important}
     .koBoard{position:relative;width:1238px;height:700px;border-radius:18px;overflow:hidden;
@@ -1969,14 +1970,6 @@ function setBracketZoom(z){
   wrap.style.overflow='hidden';
   tree.style.transition='transform .15s';
   tree.style.transform=`scale(${BRACKET_ZOOM})`;
-  // When zoomed beyond the scroll container width, switch from flex-centering to
-  // normal block so overflow:auto can scroll the full scaled content
-  const scroll=document.querySelector('.koBoardScroll');
-  if(scroll){
-    const overflows=sw>scroll.clientWidth||sh>scroll.clientHeight;
-    scroll.style.justifyContent=overflows?'flex-start':'center';
-    scroll.style.alignItems=overflows?'flex-start':'center';
-  }
   const lbl=$('bracketZoomLbl');
   if(lbl)lbl.textContent=Math.round(BRACKET_ZOOM*100)+'%';
 }
