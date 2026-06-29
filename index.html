@@ -309,10 +309,10 @@
       align-items: center; gap: 6px;
       margin: 10px 0;
     }
-    .team { display: flex; align-items: center; gap: 8px; min-width: 0; justify-content: flex-end; flex-direction: row-reverse; }
-    .team.away { justify-content: flex-end; flex-direction: row; }
-    body[dir=rtl] .team       { flex-direction: row; justify-content: flex-end; }
-    body[dir=rtl] .team.away  { flex-direction: row-reverse; justify-content: flex-end; }
+    .team { display: flex; align-items: center; gap: 8px; min-width: 0; justify-content: flex-end; flex-direction: row; }
+    .team.away { justify-content: flex-start; flex-direction: row-reverse; }
+    body[dir=rtl] .team       { flex-direction: row-reverse; justify-content: flex-end; }
+    body[dir=rtl] .team.away  { flex-direction: row; justify-content: flex-start; }
     .flagImg {
       width: 26px; height: 18px; flex-shrink: 0;
       border-radius: 3px; object-fit: cover;
@@ -962,7 +962,8 @@
     /* ── Bracket board view: compact, theme-safe, stage-filtered ── */
     .bracketModeBtns{display:none}
     .bracketQuickNav{display:none}
-    .koBoardScroll{overflow:auto;padding:8px 0 16px;-webkit-overflow-scrolling:touch;display:flex;justify-content:center;}
+    .koBoardScroll{overflow:auto;padding:8px 0 16px;-webkit-overflow-scrolling:touch;display:flex;justify-content:center;cursor:grab;}
+    .koBoardScroll:active{cursor:grabbing;}
     .koBoardScroll .bracketZoomWrap{overflow:visible;background:transparent!important}
     .koBoardTree{display:inline-block!important;align-items:initial!important;justify-content:initial!important}
     .koBoard{position:relative;width:1238px;height:700px;border-radius:18px;overflow:hidden;
@@ -2001,6 +2002,8 @@ function initBracketPinch(){
   if(!scroll||scroll._pinchInit)return;
   scroll._pinchInit=true;
   let startDist=0,startZoom=1;
+
+  // ── Touch pinch-zoom (mobile / tablet) ──
   scroll.addEventListener('touchstart',e=>{
     if(e.touches.length===2){
       startDist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
@@ -2015,6 +2018,48 @@ function initBracketPinch(){
       e.preventDefault();
     }
   },{passive:false});
+
+  // ── Mouse wheel zoom (desktop) ──
+  scroll.addEventListener('wheel',e=>{
+    if(!e.ctrlKey&&!e.metaKey&&Math.abs(e.deltaY)<50&&Math.abs(e.deltaX)>0)return; // allow horizontal trackpad scroll
+    e.preventDefault();
+    const delta=e.ctrlKey||e.metaKey?e.deltaY:e.deltaY*0.5;
+    const factor=1-delta*0.001;
+    // Zoom toward the cursor position
+    const rect=scroll.getBoundingClientRect();
+    const cx=e.clientX-rect.left, cy=e.clientY-rect.top;
+    const oldZoom=BRACKET_ZOOM;
+    const newZoom=Math.max(0.2,Math.min(3,oldZoom*factor));
+    const ratio=newZoom/oldZoom;
+    setBracketZoom(newZoom);
+    // Shift scroll so the point under cursor stays fixed
+    requestAnimationFrame(()=>{
+      scroll.scrollLeft=(scroll.scrollLeft+cx)*ratio-cx;
+      scroll.scrollTop=(scroll.scrollTop+cy)*ratio-cy;
+    });
+  },{passive:false});
+
+  // ── Mouse drag to pan (desktop) ──
+  let dragging=false,dragStartX=0,dragStartY=0,dragScrollX=0,dragScrollY=0;
+  scroll.addEventListener('mousedown',e=>{
+    if(e.button!==0)return;
+    dragging=true;
+    dragStartX=e.clientX; dragStartY=e.clientY;
+    dragScrollX=scroll.scrollLeft; dragScrollY=scroll.scrollTop;
+    scroll.style.cursor='grabbing';
+    e.preventDefault();
+  });
+  window.addEventListener('mousemove',e=>{
+    if(!dragging)return;
+    scroll.scrollLeft=dragScrollX-(e.clientX-dragStartX);
+    scroll.scrollTop=dragScrollY-(e.clientY-dragStartY);
+  });
+  window.addEventListener('mouseup',()=>{
+    if(!dragging)return;
+    dragging=false;
+    scroll.style.cursor='grab';
+  });
+  scroll.style.cursor='grab';
 }
 function koTreeHtml(){
   return `<div class="bracketScroll" dir="ltr"><div class="bracketZoomWrap"><div class="bracketTree">
