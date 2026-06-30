@@ -309,10 +309,10 @@
       align-items: center; gap: 18px;
       margin: 10px 0;
     }
-    .team { display: flex; align-items: center; gap: 8px; min-width: 0; justify-content: flex-end; flex-direction: row; }
-    .team.away { justify-content: flex-start; flex-direction: row-reverse; }
+    .team { display: flex; align-items: center; gap: 8px; min-width: 0; width: 100%; justify-content: flex-end; flex-direction: row; }
+    .team.away { justify-content: flex-end; flex-direction: row-reverse; }
     body[dir=rtl] .team       { flex-direction: row-reverse; justify-content: flex-end; }
-    body[dir=rtl] .team.away  { flex-direction: row; justify-content: flex-start; }
+    body[dir=rtl] .team.away  { flex-direction: row; justify-content: flex-end; }
     .flagImg {
       width: 26px; height: 18px; flex-shrink: 0;
       border-radius: 3px; object-fit: cover;
