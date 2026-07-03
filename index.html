@@ -2950,14 +2950,17 @@ applyTheme(THEME);
 applyLang();init();
 setInterval(checkAppVersion,5*60*1000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkAppVersion();});
-// Silent live refresh — fires every 3 minutes, only does work when a live match is detected
+// Silent live refresh — fires every minute, only does work when a live match is
+// detected. Uses the lightweight getLive endpoint (live scores + results only,
+// no spreadsheet work server-side) instead of a full getState, so many clients
+// polling during a match no longer queue up behind Apps Script's limits.
 setInterval(async()=>{
   if(!STATE||DIRTY||SAVING)return;
   const hasLive=STATE.liveScores&&Object.keys(STATE.liveScores).length>0;
   if(!hasLive)return;
-  const r=await call('getState',SESSION&&SESSION.id,SESSION&&SESSION.pin);
-  if(!r||r.needsSetup||!Array.isArray(r.matches))return;
-  STATE.results=r.results||{}; STATE.liveScores=r.liveScores||{};
+  const r=await call('getLive');
+  if(!r||!r.ok||!r.results)return;
+  STATE.results=r.results; STATE.liveScores=r.liveScores||{};
   if(ACTIVE==='pred')renderMatches();
   if(ACTIVE==='bracket')renderBracket();
 },60*1000);
