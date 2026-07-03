@@ -1362,6 +1362,10 @@ function applyLang(){document.documentElement.lang=LANG;document.body.dir=LANG==
 const STATE_CACHE_KEY='wc26stateCache_v1';
 function saveStateCache(){try{if(!STATE||STATE.needsSetup)return;localStorage.setItem(STATE_CACHE_KEY,JSON.stringify({t:Date.now(),sid:(SESSION&&SESSION.id)||0,state:STATE}))}catch(e){}}
 function loadStateCache(){try{const c=JSON.parse(localStorage.getItem(STATE_CACHE_KEY)||'null');if(!c||!c.state||!Array.isArray(c.state.matches))return null;if(((SESSION&&SESSION.id)||0)!==c.sid)return null;if(Date.now()-c.t>24*3600*1000)return null;return c.state}catch(e){return null}}
+// Same idea for the per-tab payloads (odds / leaderboard / betting): paint the
+// last fetched payload instantly, then replace it when the fresh one arrives.
+function tabCacheGet(key){try{const c=JSON.parse(localStorage.getItem('wc26tab_'+key)||'null');if(!c||!c.r)return null;if(Date.now()-c.t>24*3600*1000)return null;return c.r}catch(e){return null}}
+function tabCacheSet(key,r){try{localStorage.setItem('wc26tab_'+key,JSON.stringify({t:Date.now(),r:r}))}catch(e){}}
 function applyState(st){
   STATE=st;
   STATE.matches=(STATE.matches||[]).slice().sort((a,b)=>(new Date(a.iso||'2999').getTime()||9e15)-(new Date(b.iso||'2999').getTime()||9e15));
@@ -1735,9 +1739,17 @@ function flushBeacon(){if(!SESSION||!DIRTY)return;try{syncDomToPreds();var body=
 document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')flushBeacon();});
 window.addEventListener('pagehide',flushBeacon);
 async function loadOdds(showAll){
-  $('oddsBox').innerHTML=`<div class="spinner">${LANG==='ar'?'جاري التحميل…':'Loading…'}</div>`;
-  let r=await call('getOdds',!!showAll);
-  if(!r.ok)return $('oddsBox').innerHTML=`<p class="muted">${esc(r.msg)}</p>`;
+  showAll=!!showAll;
+  const ck='odds_'+(showAll?'all':'active');
+  const cached=tabCacheGet(ck);
+  if(cached)renderOdds(cached,showAll); // instant paint from last fetch
+  else $('oddsBox').innerHTML=`<div class="spinner">${LANG==='ar'?'جاري التحميل…':'Loading…'}</div>`;
+  const r=await call('getOdds',showAll);
+  if(!r.ok){if(!cached)$('oddsBox').innerHTML=`<p class="muted">${esc(r.msg)}</p>`;return}
+  tabCacheSet(ck,r);
+  if(ACTIVE==='odds')renderOdds(r,showAll);
+}
+function renderOdds(r,showAll){
   let oddsList=matchOrderKey(r.odds||[]);
   const hiddenCount=Number(r.hiddenCompletedCount||0);
   const completedCount=Number(r.completedCount||0);
@@ -1781,10 +1793,19 @@ function updateThroneCount(){const el=document.getElementById('throneInput');if(
 async function postThroneMsg(){const el=document.getElementById('throneInput');if(!el||!SESSION)return;const r=await call('saveLeaderMessage',SESSION.id,SESSION.pin,el.value.trim());if(!r.ok){alert(r.msg);return;}loadBoard();}
 
 async function loadBoard(){
-  $('leaderboard').innerHTML=`<div class="spinner">${LANG==='ar'?'جاري التحميل…':'Loading…'}</div>`;
+  const cached=tabCacheGet('board');
+  if(cached)renderBoard(cached); // instant paint from last fetch
+  else $('leaderboard').innerHTML=`<div class="spinner">${LANG==='ar'?'جاري التحميل…':'Loading…'}</div>`;
   const r=await call('getLeaderboard');
+  if(!r.ok){if(!cached)$('leaderboard').innerHTML=`<p class="muted">${esc(r.msg)}</p>`;return}
+  tabCacheSet('board',r);
+  if(ACTIVE!=='board')return;
+  const ae=document.activeElement;
+  if(ae&&ae.id==='throneInput')return; // don't wipe a throne message mid-typing
+  renderBoard(r);
+}
+function renderBoard(r){
   const msgR={ok:true,messages:r.messages||{}};
-  if(!r.ok)return $('leaderboard').innerHTML=`<p class="muted">${esc(r.msg)}</p>`;
   const table=r.table||[];
   if(!table.length){$('leaderboard').innerHTML=`<p class="muted">${LANG==='ar'?'لا يوجد بيانات بعد':'No data yet'}</p>`;return;}
   const leader=table[0].total;
@@ -2676,17 +2697,17 @@ async function loadPredCardBetting(force){
   if(PRED_BETTING_LOADING)return;
   if(PRED_BETTING_LOADED&&!force)return;
   PRED_BETTING_LOADING=true;
+  const ck='betting_'+((SESSION&&SESSION.id)||0);
+  // Instant bet boxes from the last fetched pools while the fresh ones load
+  if(!PRED_BETTING_LOADED){
+    const c=tabCacheGet(ck);
+    if(c){applyBettingPayload(c);const ae=document.activeElement;if(ACTIVE==='pred'&&!(ae&&ae.closest&&ae.closest('#matches')))renderMatches();}
+  }
   const r=SESSION?await call('getBettingState',SESSION.id,SESSION.pin):await call('getBettingState',0,'');
   PRED_BETTING_LOADING=false;
   if(!r||!r.ok)return;
-  BETS_STATE.pools=r.pools||{};
-  if(SESSION){
-    BETS_STATE.myBets=r.myBets||{};
-    BETS_STATE.balance=r.balance??null;
-  }else{
-    BETS_STATE.myBets={};
-    BETS_STATE.balance=null;
-  }
+  tabCacheSet(ck,r);
+  applyBettingPayload(r);
   PRED_BETTING_LOADED=true;
   if(ACTIVE==='pred')renderMatches();
 }
@@ -2726,7 +2747,24 @@ function predCardBetHtml(m,L,res){
   return `<div class="betBox"><div class="tiny" style="margin-bottom:4px">🎲 ${tr('betting')}</div>${meter}<div class="row" style="margin-top:8px"><select id="predBetTeam_${m.no}" style="flex:1"><option value="">${tr('placeBet')}…</option><option value="H">${esc(m.h)}</option><option value="A">${esc(m.a)}</option></select><input id="predBetAmt_${m.no}" type="number" min="1" max="${maxBet}" placeholder="1–${maxBet}" style="width:90px"><button class="primary" onclick="doPlaceBet(${m.no},false,'pred')">${tr('placeBet')}</button></div>${isFinal?`<button class="danger wide" style="margin-top:6px;background:rgba(232,80,80,.15);color:var(--bad)" onclick="doPlaceBet(${m.no},true,'pred')">${tr('allIn')} (${BETS_STATE.balance||0} pts)</button>`:''}</div>`;
 }
 function betOddsHtml(pool,mh,ma){const total=pool.total||0,bettors=pool.bettors||0,hPct=total?Math.round(pool.h/total*100):50,aPct=100-hPct,hOdds=pool.h>0?(total/pool.h).toFixed(2):'—',aOdds=pool.a>0?(total/pool.a).toFixed(2):'—';return `<div class="tiny" style="margin:4px 0">🎲 <b>${bettors}</b> ${LANG==='ar'?'لاعب رهن':'players bet'} &nbsp;·&nbsp; ${tr('pool')}: <b>${total}</b> pts</div><div class="tiny" style="margin:2px 0">${esc(mh)} <b>${hOdds}x</b> &nbsp;·&nbsp; ${esc(ma)} <b>${aOdds}x</b></div><div class="betOddsBar"><div class="betOddsH" style="width:${hPct}%"></div><div class="betOddsA" style="width:${aPct}%"></div></div><div class="row tiny" style="justify-content:space-between;margin-top:2px"><span>${esc(mh)} ${hPct}%</span><span>${aPct}% ${esc(ma)}</span></div>`}
-async function loadBetting(){const box=$('bettingBox');if(!box||!STATE)return;if(!bettingRevealOpen()){const balEl=$('balanceDisplay');if(balEl){balEl.classList.add('hidden');balEl.style.display='none';}box.innerHTML=`<div class="card soft"><p class="muted">${bettingRevealMsg()}</p></div>`;return;}box.innerHTML=`<div class="spinner">${LANG==='ar'?'جاري التحميل…':'Loading…'}</div>`;const r=SESSION?await call('getBettingState',SESSION.id,SESSION.pin):await call('getBettingState',0,'');if(!r.ok){box.innerHTML=`<p class="muted">${esc(r.msg)}</p>`;return;}BETS_STATE.pools=r.pools||{};if(SESSION){BETS_STATE.myBets=r.myBets||{};BETS_STATE.balance=r.balance??null;}const balEl=$('balanceDisplay');if(balEl&&SESSION&&BETS_STATE.balance!==null){balEl.style.display='';balEl.textContent='⚽ '+tr('points')+': '+BETS_STATE.balance+' pts';balEl.classList.remove('hidden');}const koMatches=(STATE.matches||[]).filter(m=>m.no>=89);if(!koMatches.length){box.innerHTML=`<p class="muted">${LANG==='ar'?'لا توجد مباريات إقصائية بعد':'No knockout matches yet'}</p>`;return;}let html='<div class="grid">';koMatches.forEach(m=>{const res=STATE.results&&STATE.results[m.no],pool=BETS_STATE.pools[m.no]||{h:0,a:0,total:0},myBet=SESSION?(BETS_STATE.myBets[m.no]||null):null,L=locked(m),isFinal=m.no===104;let betContent='';if(myBet){const teamName=myBet.team==='H'?m.h:m.a;let tagCls='pending',tag=tr('betPending');if(myBet.settled){const net=myBet.payout-myBet.amount;tagCls=net>=0?'won':'lost';tag=(net>=0?'+':'')+net+' pts';}betContent=`<div class="betBox hasBet"><div class="between"><span class="tiny">${tr('yourBet')}: ${teamHtml(teamName)} <b>${myBet.amount} pts</b></span><span class="betTag ${tagCls}">${tag}</span></div>${betOddsHtml(pool,m.h,m.a)}${!L&&!myBet.settled?`<button class="ghost danger wide" style="margin-top:6px" onclick="doCancelBet(${m.no})">${tr('cancelBet')}</button>`:''}</div>`;}else if(!teamsConfirmed(m)){betContent=`<div class="betBox">${betOddsHtml(pool,m.h,m.a)}<p class="tiny warnTag pill" style="margin-top:6px">${LANG==='ar'?'الرهان يفتح بعد تأكيد الفريقين':'Betting opens after both teams are confirmed'}</p></div>`;}else if(!L&&SESSION&&!res){const maxBet=isFinal?(BETS_STATE.balance||0):Math.floor((BETS_STATE.balance||0)*0.5);betContent=`<div class="betBox"><p class="tiny warnTag pill" style="margin-bottom:8px">${tr('betForfeits')}</p>${betOddsHtml(pool,m.h,m.a)}<div class="row" style="margin-top:8px"><select id="betTeam_${m.no}" style="flex:1"><option value="">${tr('placeBet')}…</option><option value="H">${esc(m.h)}</option><option value="A">${esc(m.a)}</option></select><input id="betAmt_${m.no}" type="number" min="1" max="${maxBet}" placeholder="1–${maxBet}" style="width:90px"><button class="primary" onclick="doPlaceBet(${m.no},false)">${tr('placeBet')}</button></div>${isFinal?`<button class="danger wide" style="margin-top:6px;background:rgba(232,80,80,.15);color:var(--bad)" onclick="doPlaceBet(${m.no},true)">${tr('allIn')} (${BETS_STATE.balance||0} pts)</button>`:''}</div>`;}else{betContent=`<div class="betBox">${betOddsHtml(pool,m.h,m.a)}</div>`;}html+=`<div class="card soft"><div class="matchBadges"><span class="pill">#${dispNo(m)}</span>${stageBadge(m)}${res?`<span class="pill statusTag done">${tr('completed')}</span>`:L?`<span class="pill statusTag locked">${tr('locked')}</span>`:`<span class="pill statusTag open">${tr('open')}</span>`}</div><div class="teams">${teamHtml(m.h)}<span class="vs">VS</span>${teamHtml(m.a,'away')}</div><div class="tiny">${localTime(m.iso)}</div>${res?`<div class="tiny" style="margin-top:4px">⚽ ${res.hg}–${res.ag}${res.pen?' (pens)':''}</div>`:''} ${betContent}</div>`;});box.innerHTML=html+'</div>';}
+function applyBettingPayload(r){BETS_STATE.pools=r.pools||{};if(SESSION){BETS_STATE.myBets=r.myBets||{};BETS_STATE.balance=r.balance??null;}else{BETS_STATE.myBets={};BETS_STATE.balance=null;}}
+async function loadBetting(){
+  const box=$('bettingBox');if(!box||!STATE)return;
+  if(!bettingRevealOpen()){const balEl=$('balanceDisplay');if(balEl){balEl.classList.add('hidden');balEl.style.display='none';}box.innerHTML=`<div class="card soft"><p class="muted">${bettingRevealMsg()}</p></div>`;return;}
+  const ck='betting_'+((SESSION&&SESSION.id)||0);
+  const cached=tabCacheGet(ck);
+  if(cached){applyBettingPayload(cached);renderBetting();} // instant paint from last fetch
+  else box.innerHTML=`<div class="spinner">${LANG==='ar'?'جاري التحميل…':'Loading…'}</div>`;
+  const r=SESSION?await call('getBettingState',SESSION.id,SESSION.pin):await call('getBettingState',0,'');
+  if(!r.ok){if(!cached)box.innerHTML=`<p class="muted">${esc(r.msg)}</p>`;return;}
+  tabCacheSet(ck,r);
+  applyBettingPayload(r);
+  if(ACTIVE!=='betting')return;
+  const ae=document.activeElement;
+  if(ae&&ae.closest&&ae.closest('#bettingBox'))return; // don't wipe an in-progress bet entry
+  renderBetting();
+}
+function renderBetting(){const box=$('bettingBox');if(!box||!STATE)return;const balEl=$('balanceDisplay');if(balEl&&SESSION&&BETS_STATE.balance!==null){balEl.style.display='';balEl.textContent='⚽ '+tr('points')+': '+BETS_STATE.balance+' pts';balEl.classList.remove('hidden');}const koMatches=(STATE.matches||[]).filter(m=>m.no>=89);if(!koMatches.length){box.innerHTML=`<p class="muted">${LANG==='ar'?'لا توجد مباريات إقصائية بعد':'No knockout matches yet'}</p>`;return;}let html='<div class="grid">';koMatches.forEach(m=>{const res=STATE.results&&STATE.results[m.no],pool=BETS_STATE.pools[m.no]||{h:0,a:0,total:0},myBet=SESSION?(BETS_STATE.myBets[m.no]||null):null,L=locked(m),isFinal=m.no===104;let betContent='';if(myBet){const teamName=myBet.team==='H'?m.h:m.a;let tagCls='pending',tag=tr('betPending');if(myBet.settled){const net=myBet.payout-myBet.amount;tagCls=net>=0?'won':'lost';tag=(net>=0?'+':'')+net+' pts';}betContent=`<div class="betBox hasBet"><div class="between"><span class="tiny">${tr('yourBet')}: ${teamHtml(teamName)} <b>${myBet.amount} pts</b></span><span class="betTag ${tagCls}">${tag}</span></div>${betOddsHtml(pool,m.h,m.a)}${!L&&!myBet.settled?`<button class="ghost danger wide" style="margin-top:6px" onclick="doCancelBet(${m.no})">${tr('cancelBet')}</button>`:''}</div>`;}else if(!teamsConfirmed(m)){betContent=`<div class="betBox">${betOddsHtml(pool,m.h,m.a)}<p class="tiny warnTag pill" style="margin-top:6px">${LANG==='ar'?'الرهان يفتح بعد تأكيد الفريقين':'Betting opens after both teams are confirmed'}</p></div>`;}else if(!L&&SESSION&&!res){const maxBet=isFinal?(BETS_STATE.balance||0):Math.floor((BETS_STATE.balance||0)*0.5);betContent=`<div class="betBox"><p class="tiny warnTag pill" style="margin-bottom:8px">${tr('betForfeits')}</p>${betOddsHtml(pool,m.h,m.a)}<div class="row" style="margin-top:8px"><select id="betTeam_${m.no}" style="flex:1"><option value="">${tr('placeBet')}…</option><option value="H">${esc(m.h)}</option><option value="A">${esc(m.a)}</option></select><input id="betAmt_${m.no}" type="number" min="1" max="${maxBet}" placeholder="1–${maxBet}" style="width:90px"><button class="primary" onclick="doPlaceBet(${m.no},false)">${tr('placeBet')}</button></div>${isFinal?`<button class="danger wide" style="margin-top:6px;background:rgba(232,80,80,.15);color:var(--bad)" onclick="doPlaceBet(${m.no},true)">${tr('allIn')} (${BETS_STATE.balance||0} pts)</button>`:''}</div>`;}else{betContent=`<div class="betBox">${betOddsHtml(pool,m.h,m.a)}</div>`;}html+=`<div class="card soft"><div class="matchBadges"><span class="pill">#${dispNo(m)}</span>${stageBadge(m)}${res?`<span class="pill statusTag done">${tr('completed')}</span>`:L?`<span class="pill statusTag locked">${tr('locked')}</span>`:`<span class="pill statusTag open">${tr('open')}</span>`}</div><div class="teams">${teamHtml(m.h)}<span class="vs">VS</span>${teamHtml(m.a,'away')}</div><div class="tiny">${localTime(m.iso)}</div>${res?`<div class="tiny" style="margin-top:4px">⚽ ${res.hg}–${res.ag}${res.pen?' (pens)':''}</div>`:''} ${betContent}</div>`;});box.innerHTML=html+'</div>';}
 async function doPlaceBet(matchNo,allIn,source){if(!SESSION)return toast(tr('loginFirst'),true);const prefix=source==='pred'?'predBet':'bet';const teamSel=$(prefix+'Team_'+matchNo),amtEl=$(prefix+'Amt_'+matchNo),team=teamSel?teamSel.value:'',amount=allIn?-1:(amtEl?Number(amtEl.value):0);if(!team)return toast(LANG==='ar'?'اختر الفريق':'Choose a team',true);if(!allIn&&amount<1)return toast(LANG==='ar'?'أدخل مبلغاً':'Enter an amount',true);const r=await call('placeBet',SESSION.id,SESSION.pin,matchNo,team,amount);if(!r.ok)return toast(r.msg,true);toast((LANG==='ar'?'تم الرهان ✓ رصيدك: ':'Bet placed ✓ Balance: ')+r.balance+' pts');BETS_STATE.balance=r.balance;PRED_BETTING_LOADED=false;if(ACTIVE==='pred')loadPredCardBetting(true);else loadBetting();}
 async function doCancelBet(matchNo){if(!SESSION)return;if(!confirm(LANG==='ar'?'إلغاء الرهان؟':'Cancel this bet?'))return;const r=await call('cancelBet',SESSION.id,SESSION.pin,matchNo);if(!r.ok)return toast(r.msg,true);toast(LANG==='ar'?'تم الإلغاء':'Cancelled');PRED_BETTING_LOADED=false;if(ACTIVE==='pred')loadPredCardBetting(true);else loadBetting();}
 
