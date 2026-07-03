@@ -1743,7 +1743,13 @@ async function loadOdds(showAll){
   const ck='odds_'+(showAll?'all':'active');
   const cached=tabCacheGet(ck);
   if(cached)renderOdds(cached,showAll); // instant paint from last fetch
-  else $('oddsBox').innerHTML=`<div class="spinner">${LANG==='ar'?'جاري التحميل…':'Loading…'}</div>`;
+  else{
+    const box=$('oddsBox');
+    // Toggling completed-view with content on screen: keep it, add a slim
+    // loading bar instead of wiping the page back to a full spinner.
+    if(box.querySelector('.card'))box.insertAdjacentHTML('afterbegin',`<div class="spinner" style="padding:12px 16px">${LANG==='ar'?'جاري التحميل…':'Loading…'}</div>`);
+    else box.innerHTML=`<div class="spinner">${LANG==='ar'?'جاري التحميل…':'Loading…'}</div>`;
+  }
   const r=await call('getOdds',showAll);
   if(!r.ok){if(!cached)$('oddsBox').innerHTML=`<p class="muted">${esc(r.msg)}</p>`;return}
   tabCacheSet(ck,r);
@@ -2697,13 +2703,13 @@ async function loadPredCardBetting(force){
   if(PRED_BETTING_LOADING)return;
   if(PRED_BETTING_LOADED&&!force)return;
   PRED_BETTING_LOADING=true;
-  const ck='betting_'+((SESSION&&SESSION.id)||0);
+  const ck='betting_pools';
   // Instant bet boxes from the last fetched pools while the fresh ones load
   if(!PRED_BETTING_LOADED){
     const c=tabCacheGet(ck);
     if(c){applyBettingPayload(c);const ae=document.activeElement;if(ACTIVE==='pred'&&!(ae&&ae.closest&&ae.closest('#matches')))renderMatches();}
   }
-  const r=SESSION?await call('getBettingState',SESSION.id,SESSION.pin):await call('getBettingState',0,'');
+  const r=await call('getBettingState',0,''); // pools only — personal data comes from getState
   PRED_BETTING_LOADING=false;
   if(!r||!r.ok)return;
   tabCacheSet(ck,r);
@@ -2747,15 +2753,20 @@ function predCardBetHtml(m,L,res){
   return `<div class="betBox"><div class="tiny" style="margin-bottom:4px">🎲 ${tr('betting')}</div>${meter}<div class="row" style="margin-top:8px"><select id="predBetTeam_${m.no}" style="flex:1"><option value="">${tr('placeBet')}…</option><option value="H">${esc(m.h)}</option><option value="A">${esc(m.a)}</option></select><input id="predBetAmt_${m.no}" type="number" min="1" max="${maxBet}" placeholder="1–${maxBet}" style="width:90px"><button class="primary" onclick="doPlaceBet(${m.no},false,'pred')">${tr('placeBet')}</button></div>${isFinal?`<button class="danger wide" style="margin-top:6px;background:rgba(232,80,80,.15);color:var(--bad)" onclick="doPlaceBet(${m.no},true,'pred')">${tr('allIn')} (${BETS_STATE.balance||0} pts)</button>`:''}</div>`;
 }
 function betOddsHtml(pool,mh,ma){const total=pool.total||0,bettors=pool.bettors||0,hPct=total?Math.round(pool.h/total*100):50,aPct=100-hPct,hOdds=pool.h>0?(total/pool.h).toFixed(2):'—',aOdds=pool.a>0?(total/pool.a).toFixed(2):'—';return `<div class="tiny" style="margin:4px 0">🎲 <b>${bettors}</b> ${LANG==='ar'?'لاعب رهن':'players bet'} &nbsp;·&nbsp; ${tr('pool')}: <b>${total}</b> pts</div><div class="tiny" style="margin:2px 0">${esc(mh)} <b>${hOdds}x</b> &nbsp;·&nbsp; ${esc(ma)} <b>${aOdds}x</b></div><div class="betOddsBar"><div class="betOddsH" style="width:${hPct}%"></div><div class="betOddsA" style="width:${aPct}%"></div></div><div class="row tiny" style="justify-content:space-between;margin-top:2px"><span>${esc(mh)} ${hPct}%</span><span>${aPct}% ${esc(ma)}</span></div>`}
-function applyBettingPayload(r){BETS_STATE.pools=r.pools||{};if(SESSION){BETS_STATE.myBets=r.myBets||{};BETS_STATE.balance=r.balance??null;}else{BETS_STATE.myBets={};BETS_STATE.balance=null;}}
+// Pools are the only thing worth fetching here: they're identical for everyone
+// and served from a shared server cache with no computation. Personal bets and
+// balance already arrive with getState/login (STATE.myBets/myBalance) and are
+// updated locally by doPlaceBet/doCancelBet — so betting views never trigger
+// the expensive per-player balance recompute on the server.
+function applyBettingPayload(r){BETS_STATE.pools=r.pools||{};if(r.myBets)BETS_STATE.myBets=r.myBets;if(r.balance!=null)BETS_STATE.balance=r.balance;}
 async function loadBetting(){
   const box=$('bettingBox');if(!box||!STATE)return;
   if(!bettingRevealOpen()){const balEl=$('balanceDisplay');if(balEl){balEl.classList.add('hidden');balEl.style.display='none';}box.innerHTML=`<div class="card soft"><p class="muted">${bettingRevealMsg()}</p></div>`;return;}
-  const ck='betting_'+((SESSION&&SESSION.id)||0);
+  const ck='betting_pools';
   const cached=tabCacheGet(ck);
   if(cached){applyBettingPayload(cached);renderBetting();} // instant paint from last fetch
   else box.innerHTML=`<div class="spinner">${LANG==='ar'?'جاري التحميل…':'Loading…'}</div>`;
-  const r=SESSION?await call('getBettingState',SESSION.id,SESSION.pin):await call('getBettingState',0,'');
+  const r=await call('getBettingState',0,'');
   if(!r.ok){if(!cached)box.innerHTML=`<p class="muted">${esc(r.msg)}</p>`;return;}
   tabCacheSet(ck,r);
   applyBettingPayload(r);
@@ -2765,8 +2776,8 @@ async function loadBetting(){
   renderBetting();
 }
 function renderBetting(){const box=$('bettingBox');if(!box||!STATE)return;const balEl=$('balanceDisplay');if(balEl&&SESSION&&BETS_STATE.balance!==null){balEl.style.display='';balEl.textContent='⚽ '+tr('points')+': '+BETS_STATE.balance+' pts';balEl.classList.remove('hidden');}const koMatches=(STATE.matches||[]).filter(m=>m.no>=89);if(!koMatches.length){box.innerHTML=`<p class="muted">${LANG==='ar'?'لا توجد مباريات إقصائية بعد':'No knockout matches yet'}</p>`;return;}let html='<div class="grid">';koMatches.forEach(m=>{const res=STATE.results&&STATE.results[m.no],pool=BETS_STATE.pools[m.no]||{h:0,a:0,total:0},myBet=SESSION?(BETS_STATE.myBets[m.no]||null):null,L=locked(m),isFinal=m.no===104;let betContent='';if(myBet){const teamName=myBet.team==='H'?m.h:m.a;let tagCls='pending',tag=tr('betPending');if(myBet.settled){const net=myBet.payout-myBet.amount;tagCls=net>=0?'won':'lost';tag=(net>=0?'+':'')+net+' pts';}betContent=`<div class="betBox hasBet"><div class="between"><span class="tiny">${tr('yourBet')}: ${teamHtml(teamName)} <b>${myBet.amount} pts</b></span><span class="betTag ${tagCls}">${tag}</span></div>${betOddsHtml(pool,m.h,m.a)}${!L&&!myBet.settled?`<button class="ghost danger wide" style="margin-top:6px" onclick="doCancelBet(${m.no})">${tr('cancelBet')}</button>`:''}</div>`;}else if(!teamsConfirmed(m)){betContent=`<div class="betBox">${betOddsHtml(pool,m.h,m.a)}<p class="tiny warnTag pill" style="margin-top:6px">${LANG==='ar'?'الرهان يفتح بعد تأكيد الفريقين':'Betting opens after both teams are confirmed'}</p></div>`;}else if(!L&&SESSION&&!res){const maxBet=isFinal?(BETS_STATE.balance||0):Math.floor((BETS_STATE.balance||0)*0.5);betContent=`<div class="betBox"><p class="tiny warnTag pill" style="margin-bottom:8px">${tr('betForfeits')}</p>${betOddsHtml(pool,m.h,m.a)}<div class="row" style="margin-top:8px"><select id="betTeam_${m.no}" style="flex:1"><option value="">${tr('placeBet')}…</option><option value="H">${esc(m.h)}</option><option value="A">${esc(m.a)}</option></select><input id="betAmt_${m.no}" type="number" min="1" max="${maxBet}" placeholder="1–${maxBet}" style="width:90px"><button class="primary" onclick="doPlaceBet(${m.no},false)">${tr('placeBet')}</button></div>${isFinal?`<button class="danger wide" style="margin-top:6px;background:rgba(232,80,80,.15);color:var(--bad)" onclick="doPlaceBet(${m.no},true)">${tr('allIn')} (${BETS_STATE.balance||0} pts)</button>`:''}</div>`;}else{betContent=`<div class="betBox">${betOddsHtml(pool,m.h,m.a)}</div>`;}html+=`<div class="card soft"><div class="matchBadges"><span class="pill">#${dispNo(m)}</span>${stageBadge(m)}${res?`<span class="pill statusTag done">${tr('completed')}</span>`:L?`<span class="pill statusTag locked">${tr('locked')}</span>`:`<span class="pill statusTag open">${tr('open')}</span>`}</div><div class="teams">${teamHtml(m.h)}<span class="vs">VS</span>${teamHtml(m.a,'away')}</div><div class="tiny">${localTime(m.iso)}</div>${res?`<div class="tiny" style="margin-top:4px">⚽ ${res.hg}–${res.ag}${res.pen?' (pens)':''}</div>`:''} ${betContent}</div>`;});box.innerHTML=html+'</div>';}
-async function doPlaceBet(matchNo,allIn,source){if(!SESSION)return toast(tr('loginFirst'),true);const prefix=source==='pred'?'predBet':'bet';const teamSel=$(prefix+'Team_'+matchNo),amtEl=$(prefix+'Amt_'+matchNo),team=teamSel?teamSel.value:'',amount=allIn?-1:(amtEl?Number(amtEl.value):0);if(!team)return toast(LANG==='ar'?'اختر الفريق':'Choose a team',true);if(!allIn&&amount<1)return toast(LANG==='ar'?'أدخل مبلغاً':'Enter an amount',true);const r=await call('placeBet',SESSION.id,SESSION.pin,matchNo,team,amount);if(!r.ok)return toast(r.msg,true);toast((LANG==='ar'?'تم الرهان ✓ رصيدك: ':'Bet placed ✓ Balance: ')+r.balance+' pts');BETS_STATE.balance=r.balance;PRED_BETTING_LOADED=false;if(ACTIVE==='pred')loadPredCardBetting(true);else loadBetting();}
-async function doCancelBet(matchNo){if(!SESSION)return;if(!confirm(LANG==='ar'?'إلغاء الرهان؟':'Cancel this bet?'))return;const r=await call('cancelBet',SESSION.id,SESSION.pin,matchNo);if(!r.ok)return toast(r.msg,true);toast(LANG==='ar'?'تم الإلغاء':'Cancelled');PRED_BETTING_LOADED=false;if(ACTIVE==='pred')loadPredCardBetting(true);else loadBetting();}
+async function doPlaceBet(matchNo,allIn,source){if(!SESSION)return toast(tr('loginFirst'),true);const prefix=source==='pred'?'predBet':'bet';const teamSel=$(prefix+'Team_'+matchNo),amtEl=$(prefix+'Amt_'+matchNo),team=teamSel?teamSel.value:'',amount=allIn?-1:(amtEl?Number(amtEl.value):0);if(!team)return toast(LANG==='ar'?'اختر الفريق':'Choose a team',true);if(!allIn&&amount<1)return toast(LANG==='ar'?'أدخل مبلغاً':'Enter an amount',true);const r=await call('placeBet',SESSION.id,SESSION.pin,matchNo,team,amount);if(!r.ok)return toast(r.msg,true);toast((LANG==='ar'?'تم الرهان ✓ رصيدك: ':'Bet placed ✓ Balance: ')+r.balance+' pts');BETS_STATE.balance=r.balance;BETS_STATE.myBets[matchNo]={playerId:SESSION.id,matchNo:Number(matchNo),team:team,amount:Number(r.amount||amount),settled:false,payout:0};if(STATE){STATE.myBets=BETS_STATE.myBets;STATE.myBalance=r.balance;}saveStateCache();PRED_BETTING_LOADED=false;if(ACTIVE==='pred')loadPredCardBetting(true);else loadBetting();}
+async function doCancelBet(matchNo){if(!SESSION)return;if(!confirm(LANG==='ar'?'إلغاء الرهان؟':'Cancel this bet?'))return;const r=await call('cancelBet',SESSION.id,SESSION.pin,matchNo);if(!r.ok)return toast(r.msg,true);toast(LANG==='ar'?'تم الإلغاء':'Cancelled');const b=BETS_STATE.myBets[matchNo]||BETS_STATE.myBets[String(matchNo)];if(b&&BETS_STATE.balance!=null)BETS_STATE.balance+=Number(b.amount||0);delete BETS_STATE.myBets[matchNo];delete BETS_STATE.myBets[String(matchNo)];if(STATE){STATE.myBets=BETS_STATE.myBets;STATE.myBalance=BETS_STATE.balance;}saveStateCache();PRED_BETTING_LOADED=false;if(ACTIVE==='pred')loadPredCardBetting(true);else loadBetting();}
 
 async function adminAdjustUI() {
   $('adminContent').innerHTML = `<div class="spinner">${LANG==='ar'?'جاري التحميل…':'Loading…'}</div>`;
