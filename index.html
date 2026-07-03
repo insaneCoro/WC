@@ -16,6 +16,7 @@
   <title>WC '26 Prediction League</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://flagcdn.com">
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500;600&family=Noto+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     /* ═══════════════════════════════════════════════════════
@@ -1272,14 +1273,23 @@ async function checkAppVersion(){
   try{
     const r=await call('getAppVersion');
     if(!r||!r.ok||!r.version)return;
-    const serverV=Number(r.version);
+    noteAppVersion(Number(r.version),r.message);
+  }catch(e){}
+}
+// Version handling shared by the dedicated check and by payloads that carry
+// `v` for free (getState / getLive) — saves a separate Apps Script call on open.
+function noteAppVersion(serverV,msg){
+  try{
+    serverV=Number(serverV||0); if(!serverV)return;
     let clientV=Number(localStorage.getItem(WC26_VERSION_KEY)||0);
     // First run after installing this feature: accept the current server version.
     if(!clientV){localStorage.setItem(WC26_VERSION_KEY,String(serverV));return;}
     // If we reloaded with ?v=<server version>, mark this loaded session as current.
     const urlV=Number(new URL(location.href).searchParams.get('v')||0);
     if(urlV&&urlV===serverV){localStorage.setItem(WC26_VERSION_KEY,String(serverV));removeUpdateBanner();return;}
-    if(serverV!==clientV){WC26_REFRESH_VERSION=serverV;showUpdateBanner(r.message||'New update available. Please refresh or reopen the app.');}
+    // Strictly newer only: a version from a slightly stale cached payload must
+    // never re-show the banner right after the player already refreshed.
+    if(serverV>clientV){WC26_REFRESH_VERSION=serverV;showUpdateBanner(msg||'New update available. Please refresh or reopen the app.');}
   }catch(e){}
 }
 function removeUpdateBanner(){const old=document.getElementById('updateBanner');if(old)old.remove();}
@@ -1378,7 +1388,7 @@ function applyState(st){
   if(!(ae&&ae.closest&&ae.closest('#matches')))renderAll();
 }
 async function init(){
-  applyLang();checkAppVersion();
+  applyLang(); // version check rides along on getState (fresh.v) — no extra call
   const cached=loadStateCache();
   if(cached){
     $('setup').classList.add('hidden');$('app').classList.remove('hidden');
@@ -1397,6 +1407,7 @@ async function init(){
   $('setup').classList.add('hidden');$('app').classList.remove('hidden');
   applyState(fresh);
   saveStateCache();
+  noteAppVersion(fresh.v); // only from FRESH payloads — cached ones may carry an old v
 }function refresh(){const s=LANG==='ar'?'جاري التحميل…':'Loading…';$('matches').innerHTML=`<div class="spinner">${s}</div>`;if(ACTIVE==='board')$('leaderboard').innerHTML=`<div class="spinner">${s}</div>`;if(ACTIVE==='odds')$('oddsBox').innerHTML=`<div class="spinner">${s}</div>`;if(ACTIVE==='champion')$('championBox').innerHTML=`<div class="spinner">${s}</div>`;init()}async function setupLeague(){let r=await call('setupLeague',$('setupPin').value.trim());if(!r.ok)return toast(r.msg,true);toast('OK');init()}
 
 function statTile(label,value,sub,main){return `<div class="stat ${main?'main':''}"><span class="tiny">${label}</span><b>${value}</b>${sub?`<span class="tiny">${sub}</span>`:''}</div>`}
@@ -3048,6 +3059,7 @@ setInterval(async()=>{
   if(!hasLive)return;
   const r=await call('getLive');
   if(!r||!r.ok||!r.results)return;
+  noteAppVersion(r.v);
   STATE.results=r.results; STATE.liveScores=r.liveScores||{};
   if(ACTIVE==='pred')renderMatches();
   if(ACTIVE==='bracket')renderBracket();
