@@ -1757,7 +1757,7 @@ async function manualSave(){await savePreds(true)}
 // "unchanged". Sending the whole PREDS object (old behavior) let a device with
 // stale data (old cache, second phone, iOS PWA vs Safari) silently revert
 // picks the player had saved elsewhere.
-async function savePreds(manual){if(!SESSION){if(manual)toast(tr('loginFirst'),true);return}syncDomToPreds();const sent=Array.from(TOUCHED);const payload=touchedPayload();SAVING=true;updateSaveStatus();let r=await call('savePreds',SESSION.id,SESSION.pin,payload);SAVING=false;if(!r.ok){DIRTY=true;toast(r.msg,true)}else{DIRTY=false;sent.forEach(no=>TOUCHED.delete(no));PREDS=r.preds||PREDS;STATE.myPreds=PREDS;saveStateCache();if(r.rejected&&r.rejected.length)toast((LANG==='ar'?'مقفلة: ':'Locked: ')+r.rejected.join(', '),true);else if(manual)toast('OK')}updateSaveStatus();renderStats()}function updateSaveStatus(){let el=$('saveStatus');if(!el)return;el.className='saveBadge '+(SAVING?'warn':DIRTY?'bad':'good');el.textContent=SAVING?tr('saving'):DIRTY?tr('unsaved'):tr('saved')}window.addEventListener('beforeunload',e=>{if(DIRTY){e.preventDefault();e.returnValue=''}});
+async function savePreds(manual){if(!SESSION){if(manual)toast(tr('loginFirst'),true);return}syncDomToPreds();const sent=Array.from(TOUCHED);const payload=touchedPayload();SAVING=true;updateSaveStatus();let r=await call('savePreds',SESSION.id,SESSION.pin,payload);SAVING=false;if(!r.ok){DIRTY=true;toast(r.msg,true)}else{DIRTY=false;sent.forEach(no=>TOUCHED.delete(no));PREDS=r.preds||PREDS;STATE.myPreds=PREDS;saveStateCache();if(r.cancelledBets&&r.cancelledBets.length){r.cancelledBets.forEach(cb=>{delete BETS_STATE.myBets[cb.matchNo];delete BETS_STATE.myBets[String(cb.matchNo)];});if(STATE)STATE.myBets=BETS_STATE.myBets;PRED_BETTING_LOADED=false;const names=r.cancelledBets.map(cb=>'#'+cb.matchNo).join(', ');toast((LANG==='ar'?'تم إلغاء رهانك على المباراة لأنك غيّرت توقعك: ':'Your bet was cancelled because you changed your prediction: ')+names,true);if(ACTIVE==='pred')loadPredCardBetting(true);else if(ACTIVE==='betting')loadBetting();}if(r.rejected&&r.rejected.length)toast((LANG==='ar'?'مقفلة: ':'Locked: ')+r.rejected.join(', '),true);else if(manual&&!(r.cancelledBets&&r.cancelledBets.length))toast('OK')}updateSaveStatus();renderStats()}function updateSaveStatus(){let el=$('saveStatus');if(!el)return;el.className='saveBadge '+(SAVING?'warn':DIRTY?'bad':'good');el.textContent=SAVING?tr('saving'):DIRTY?tr('unsaved'):tr('saved')}window.addEventListener('beforeunload',e=>{if(DIRTY){e.preventDefault();e.returnValue=''}});
 /* Last-ditch save when the tab is hidden or closed (mobile often kills the page
    before the 1.2s debounce fires). sendBeacon delivers the POST even during unload;
    we can't read its reply, so the normal debounced save still runs the confirmable path. */
@@ -2743,6 +2743,16 @@ async function loadPredCardBetting(force){
   PRED_BETTING_LOADED=true;
   if(ACTIVE==='pred')renderMatches();
 }
+// Mirrors the server's _predictedWinner(): derives H/A from the player's own
+// saved prediction for a match, so betting UI can lock onto the same team
+// the server will enforce in placeBet.
+function myPredWinner(matchNo){
+  const p=(STATE&&STATE.myPreds&&(STATE.myPreds[matchNo]||STATE.myPreds[String(matchNo)]))||null;
+  if(!p)return '';
+  if(p.hg>p.ag)return 'H';
+  if(p.ag>p.hg)return 'A';
+  return (p.w==='H'||p.w==='A')?p.w:'';
+}
 function betOddsMeterOnlyHtml(pool,mh,ma){
   const total=pool.total||0,h=pool.h||0,a=pool.a||0;
   const hPct=total?Math.round(h/total*100):50;
@@ -2774,9 +2784,14 @@ function predCardBetHtml(m,L,res){
   if(L||res){
     return `<div class="betBox"><div class="tiny" style="margin-bottom:4px">🎲 ${tr('betting')}</div>${meter}</div>`;
   }
+  const predTeam=myPredWinner(m.no);
+  if(predTeam!=='H'&&predTeam!=='A'){
+    return `<div class="betBox"><div class="tiny" style="margin-bottom:4px">🎲 ${tr('betting')}</div>${meter}<p class="tiny warnTag pill" style="margin-top:6px">${LANG==='ar'?'توقع هذه المباراة أولاً لتتمكن من الرهان':'Predict this match first to unlock betting'}</p></div>`;
+  }
   const isFinal=Number(m.no)===104;
   const maxBet=myBetMaxAllowed(isFinal);
-  return `<div class="betBox"><div class="tiny" style="margin-bottom:4px">🎲 ${tr('betting')}</div>${meter}<div class="row" style="margin-top:8px"><select id="predBetTeam_${m.no}" style="flex:1"><option value="">${tr('placeBet')}…</option><option value="H">${esc(m.h)}</option><option value="A">${esc(m.a)}</option></select><input id="predBetAmt_${m.no}" type="number" min="1" max="${maxBet}" placeholder="1–${maxBet}" style="width:90px"><button class="primary" onclick="doPlaceBet(${m.no},false,'pred')">${tr('placeBet')}</button></div>${isFinal?`<button class="danger wide" style="margin-top:6px;background:rgba(232,80,80,.15);color:var(--bad)" onclick="doPlaceBet(${m.no},true,'pred')">${tr('allIn')} (${BETS_STATE.balance||0} pts)</button>`:''}</div>`;
+  const predTeamName=predTeam==='H'?m.h:m.a;
+  return `<div class="betBox"><div class="tiny" style="margin-bottom:4px">🎲 ${tr('betting')}</div>${meter}<div class="tiny" style="margin-top:6px">${LANG==='ar'?'رهانك على':'Betting on'}: <b>${esc(predTeamName)}</b> ${LANG==='ar'?'(حسب توقعك)':'(from your prediction)'}</div><input type="hidden" id="predBetTeam_${m.no}" value="${predTeam}"><div class="row" style="margin-top:8px"><input id="predBetAmt_${m.no}" type="number" min="1" max="${maxBet}" placeholder="1–${maxBet}" style="flex:1"><button class="primary" onclick="doPlaceBet(${m.no},false,'pred')">${tr('placeBet')}</button></div>${isFinal?`<button class="danger wide" style="margin-top:6px;background:rgba(232,80,80,.15);color:var(--bad)" onclick="doPlaceBet(${m.no},true,'pred')">${tr('allIn')} (${BETS_STATE.balance||0} pts)</button>`:''}</div>`;
 }
 function betOddsHtml(pool,mh,ma){const total=pool.total||0,bettors=pool.bettors||0,hPct=total?Math.round(pool.h/total*100):50,aPct=100-hPct,hOdds=pool.h>0?(total/pool.h).toFixed(2):'—',aOdds=pool.a>0?(total/pool.a).toFixed(2):'—';return `<div class="tiny" style="margin:4px 0">🎲 <b>${bettors}</b> ${LANG==='ar'?'لاعب رهن':'players bet'} &nbsp;·&nbsp; ${tr('pool')}: <b>${total}</b> pts</div><div class="tiny" style="margin:2px 0">${esc(mh)} <b>${hOdds}x</b> &nbsp;·&nbsp; ${esc(ma)} <b>${aOdds}x</b></div><div class="betOddsBar"><div class="betOddsH" style="width:${hPct}%"></div><div class="betOddsA" style="width:${aPct}%"></div></div><div class="row tiny" style="justify-content:space-between;margin-top:2px"><span>${esc(mh)} ${hPct}%</span><span>${aPct}% ${esc(ma)}</span></div>`}
 // Pools are the only thing worth fetching here: they're identical for everyone
@@ -2817,7 +2832,7 @@ async function loadBetting(){
   if(ae&&ae.closest&&ae.closest('#bettingBox'))return; // don't wipe an in-progress bet entry
   renderBetting();
 }
-function renderBetting(){const box=$('bettingBox');if(!box||!STATE)return;const balEl=$('balanceDisplay');if(balEl&&SESSION&&BETS_STATE.balance!==null){balEl.style.display='';balEl.textContent='⚽ '+tr('points')+': '+BETS_STATE.balance+' pts';balEl.classList.remove('hidden');}const koMatches=(STATE.matches||[]).filter(m=>m.no>=89);if(!koMatches.length){box.innerHTML=`<p class="muted">${LANG==='ar'?'لا توجد مباريات إقصائية بعد':'No knockout matches yet'}</p>`;return;}let html='<div class="grid">';koMatches.forEach(m=>{const res=STATE.results&&STATE.results[m.no],pool=BETS_STATE.pools[m.no]||{h:0,a:0,total:0},myBet=SESSION?(BETS_STATE.myBets[m.no]||null):null,L=locked(m),isFinal=m.no===104;let betContent='';if(myBet){const teamName=myBet.team==='H'?m.h:m.a;let tagCls='pending',tag=tr('betPending');if(myBet.settled){const net=myBet.payout-myBet.amount;tagCls=net>=0?'won':'lost';tag=(net>=0?'+':'')+net+' pts';}betContent=`<div class="betBox hasBet"><div class="between"><span class="tiny">${tr('yourBet')}: ${teamHtml(teamName)} <b>${myBet.amount} pts</b></span><span class="betTag ${tagCls}">${tag}</span></div>${betOddsHtml(pool,m.h,m.a)}${!L&&!myBet.settled?`<button class="ghost danger wide" style="margin-top:6px" onclick="doCancelBet(${m.no})">${tr('cancelBet')}</button>`:''}</div>`;}else if(!teamsConfirmed(m)){betContent=`<div class="betBox">${betOddsHtml(pool,m.h,m.a)}<p class="tiny warnTag pill" style="margin-top:6px">${LANG==='ar'?'الرهان يفتح بعد تأكيد الفريقين':'Betting opens after both teams are confirmed'}</p></div>`;}else if(!L&&SESSION&&!res){const maxBet=myBetMaxAllowed(isFinal);betContent=`<div class="betBox"><p class="tiny warnTag pill" style="margin-bottom:8px">${tr('betForfeits')}</p>${betOddsHtml(pool,m.h,m.a)}<div class="row" style="margin-top:8px"><select id="betTeam_${m.no}" style="flex:1"><option value="">${tr('placeBet')}…</option><option value="H">${esc(m.h)}</option><option value="A">${esc(m.a)}</option></select><input id="betAmt_${m.no}" type="number" min="1" max="${maxBet}" placeholder="1–${maxBet}" style="width:90px"><button class="primary" onclick="doPlaceBet(${m.no},false)">${tr('placeBet')}</button></div>${isFinal?`<button class="danger wide" style="margin-top:6px;background:rgba(232,80,80,.15);color:var(--bad)" onclick="doPlaceBet(${m.no},true)">${tr('allIn')} (${BETS_STATE.balance||0} pts)</button>`:''}</div>`;}else{betContent=`<div class="betBox">${betOddsHtml(pool,m.h,m.a)}</div>`;}html+=`<div class="card soft"><div class="matchBadges"><span class="pill">#${dispNo(m)}</span>${stageBadge(m)}${res?`<span class="pill statusTag done">${tr('completed')}</span>`:L?`<span class="pill statusTag locked">${tr('locked')}</span>`:`<span class="pill statusTag open">${tr('open')}</span>`}</div><div class="teams">${teamHtml(m.h)}<span class="vs">VS</span>${teamHtml(m.a,'away')}</div><div class="tiny">${localTime(m.iso)}</div>${res?`<div class="tiny" style="margin-top:4px">⚽ ${res.hg}–${res.ag}${res.pen?' (pens)':''}</div>`:''} ${betContent}</div>`;});box.innerHTML=html+'</div>';}
+function renderBetting(){const box=$('bettingBox');if(!box||!STATE)return;const balEl=$('balanceDisplay');if(balEl&&SESSION&&BETS_STATE.balance!==null){balEl.style.display='';balEl.textContent='⚽ '+tr('points')+': '+BETS_STATE.balance+' pts';balEl.classList.remove('hidden');}const koMatches=(STATE.matches||[]).filter(m=>m.no>=89);if(!koMatches.length){box.innerHTML=`<p class="muted">${LANG==='ar'?'لا توجد مباريات إقصائية بعد':'No knockout matches yet'}</p>`;return;}let html='<div class="grid">';koMatches.forEach(m=>{const res=STATE.results&&STATE.results[m.no],pool=BETS_STATE.pools[m.no]||{h:0,a:0,total:0},myBet=SESSION?(BETS_STATE.myBets[m.no]||null):null,L=locked(m),isFinal=m.no===104;let betContent='';if(myBet){const teamName=myBet.team==='H'?m.h:m.a;let tagCls='pending',tag=tr('betPending');if(myBet.settled){const net=myBet.payout-myBet.amount;tagCls=net>=0?'won':'lost';tag=(net>=0?'+':'')+net+' pts';}betContent=`<div class="betBox hasBet"><div class="between"><span class="tiny">${tr('yourBet')}: ${teamHtml(teamName)} <b>${myBet.amount} pts</b></span><span class="betTag ${tagCls}">${tag}</span></div>${betOddsHtml(pool,m.h,m.a)}${!L&&!myBet.settled?`<button class="ghost danger wide" style="margin-top:6px" onclick="doCancelBet(${m.no})">${tr('cancelBet')}</button>`:''}</div>`;}else if(!teamsConfirmed(m)){betContent=`<div class="betBox">${betOddsHtml(pool,m.h,m.a)}<p class="tiny warnTag pill" style="margin-top:6px">${LANG==='ar'?'الرهان يفتح بعد تأكيد الفريقين':'Betting opens after both teams are confirmed'}</p></div>`;}else if(!L&&SESSION&&!res){const predTeam=myPredWinner(m.no);if(predTeam!=='H'&&predTeam!=='A'){betContent=`<div class="betBox">${betOddsHtml(pool,m.h,m.a)}<p class="tiny warnTag pill" style="margin-top:6px">${LANG==='ar'?'توقع هذه المباراة أولاً لتتمكن من الرهان':'Predict this match first to unlock betting'}</p></div>`;}else{const maxBet=myBetMaxAllowed(isFinal);const predTeamName=predTeam==='H'?m.h:m.a;betContent=`<div class="betBox"><p class="tiny warnTag pill" style="margin-bottom:8px">${tr('betForfeits')}</p>${betOddsHtml(pool,m.h,m.a)}<div class="tiny" style="margin-bottom:6px">${LANG==='ar'?'رهانك على':'Betting on'}: <b>${esc(predTeamName)}</b> ${LANG==='ar'?'(حسب توقعك)':'(from your prediction)'}</div><input type="hidden" id="betTeam_${m.no}" value="${predTeam}"><div class="row" style="margin-top:8px"><input id="betAmt_${m.no}" type="number" min="1" max="${maxBet}" placeholder="1–${maxBet}" style="flex:1"><button class="primary" onclick="doPlaceBet(${m.no},false)">${tr('placeBet')}</button></div>${isFinal?`<button class="danger wide" style="margin-top:6px;background:rgba(232,80,80,.15);color:var(--bad)" onclick="doPlaceBet(${m.no},true)">${tr('allIn')} (${BETS_STATE.balance||0} pts)</button>`:''}</div>`;}}else{betContent=`<div class="betBox">${betOddsHtml(pool,m.h,m.a)}</div>`;}html+=`<div class="card soft"><div class="matchBadges"><span class="pill">#${dispNo(m)}</span>${stageBadge(m)}${res?`<span class="pill statusTag done">${tr('completed')}</span>`:L?`<span class="pill statusTag locked">${tr('locked')}</span>`:`<span class="pill statusTag open">${tr('open')}</span>`}</div><div class="teams">${teamHtml(m.h)}<span class="vs">VS</span>${teamHtml(m.a,'away')}</div><div class="tiny">${localTime(m.iso)}</div>${res?`<div class="tiny" style="margin-top:4px">⚽ ${res.hg}–${res.ag}${res.pen?' (pens)':''}</div>`:''} ${betContent}</div>`;});box.innerHTML=html+'</div>';}
 // If the bet/cancel request looks like it failed, verify against the server
 // before trusting that — a slow connection or dropped response right at lock
 // time can make the CLIENT give up (30s timeout) even though Apps Script kept
@@ -3037,7 +3052,13 @@ async function adminBets(){
   const byMatch={};
   bets.forEach(b=>{if(!byMatch[b.matchNo])byMatch[b.matchNo]={info:b,bets:[]};byMatch[b.matchNo].bets.push(b);});
   let html='';
-  if(!bets.length){html=`<p class="muted">${tr('noBets')}</p>`;}
+  if(r.mismatchCount>0){
+    html+=`<div class="card soft" style="margin-bottom:10px;border:1px solid var(--bad);background:rgba(232,80,80,.08)">
+      <b style="color:var(--bad)">⚠️ ${r.mismatchCount} ${ar?'رهان لا يطابق التوقع الحالي':"bet(s) no longer match the player's current prediction"}</b>
+      <p class="tiny muted" style="margin-top:4px">${ar?'رهانات قديمة من قبل هذه القاعدة، أو توقع تم تغييره بعد قفل المباراة. مظللة بالأسفل — راجعها يدوياً.':'These predate the "bet only on your predicted team" rule, or the prediction changed after the match locked. Flagged below — review manually.'}</p>
+    </div>`;
+  }
+  if(!bets.length){html+=`<p class="muted">${tr('noBets')}</p>`;}
   else{
     Object.keys(byMatch).sort((a,b)=>Number(a)-Number(b)).forEach(no=>{
       const {info,bets:mb}=byMatch[no];
@@ -3053,9 +3074,10 @@ async function adminBets(){
         const tn=b.team==='H'?b.h:b.a;
         const tag=!b.settled?'pending':b.payout>=b.amount?'won':'lost';
         const net=b.net!=null?(b.net>=0?'+'+b.net:String(b.net)):'—';
-        html+=`<tr>
+        const predName=b.predTeam==='H'?b.h:b.predTeam==='A'?b.a:(ar?'لا يوجد':'none');
+        html+=`<tr${b.mismatch?' style="background:rgba(232,80,80,.12)"':''}>
           <td>${esc(b.playerName)}</td>
-          <td>${esc(tn)}</td>
+          <td>${esc(tn)}${b.mismatch?`<div class="tiny" style="color:var(--bad)">⚠️ ${ar?'التوقع الحالي':'now predicts'}: ${esc(predName)}</div>`:''}</td>
           <td>${b.amount}</td>
           <td><span class="betTag ${tag}">${b.settled?(b.payout>=b.amount?tr('betWon'):tr('betLost')):tr('betPending')}</span></td>
           <td>${net}</td>
