@@ -1661,18 +1661,18 @@ function teamHtmlCode(t){const c=flagCode(t);const emoji=flagEmoji(c);const img=
 function teamHtml(t,cls=''){let c=flagCode(t);let emoji=flagEmoji(c);let img=c?`<img class="flagImg" loading="lazy" decoding="async" alt="${esc(t)} flag" src="https://flagcdn.com/w40/${c}.png" onerror="this.style.display='none';this.nextElementSibling.style.display='inline'"><span class="flagFallback" style="display:none">${emoji}</span>`:`<span class="flagFallback">${emoji}</span>`;return `<span class="team ${cls}">${img}<span class="teamName">${esc(t||'TBD')}</span></span>`}
 
 function _scoreOnClient(pred, result, matchNo, stage) {
-  // Mirrors server _scoreOne but client-side for card display
+  // Mirrors server _scoreOne but client-side for card display.
   if (!pred || !result) return null;
   const ko = matchNo >= 73;
   const hg = Number(pred.hg), ag = Number(pred.ag);
-  if (isNaN(hg) || isNaN(ag)) return null;
+  if (!Number.isFinite(hg) || !Number.isFinite(ag)) return null;
   const rhg = Number(result.hg), rag = Number(result.ag);
   const scoreExact = hg === rhg && ag === rag;
-  const predW = hg > ag ? 'H' : ag > hg ? 'A' : (pred.w || 'D');
-  const resW  = rhg > rag ? 'H' : rag > rhg ? 'A' : (result.w || 'D');
+  const predW = hg > ag ? 'H' : ag > hg ? 'A' : (pred.w === 'H' || pred.w === 'A' ? pred.w : 'D');
+  const resW  = rhg > rag ? 'H' : rag > rhg ? 'A' : (result.w === 'H' || result.w === 'A' ? result.w : 'D');
   const correctQ = resW !== 'D' && predW === resW;
   if (!ko) {
-    if (scoreExact) return {cls:'exact',   pts: 2};
+    if (scoreExact) return {cls:'exact', pts: 2};
     if (predW === resW) return {cls:'outcome', pts: 1};
     return {cls:'wrong', pts: 0};
   }
@@ -1683,14 +1683,23 @@ function _scoreOnClient(pred, result, matchNo, stage) {
                matchNo>=97   ? {e:12,o:6, w:-6}  :   // Quarter-finals (97–100)
                matchNo>=89   ? {e:8, o:4, w:-4}  :   // Round of 16 (89–96)
                                {e:6, o:3, w:-3};     // Round of 32 (73–88)
-  if (!correctQ) return {cls:'wrong',   pts: vals.w};
+  if (resW !== 'H' && resW !== 'A') return {cls:'nopred', pts:0, label:LANG==='ar'?'النتيجة ناقصة':'Incomplete result'};
+
+  // Historical protection: if an old KO draw was saved without a qualifier,
+  // never show it as a wrong-team penalty on the card. It can only receive the
+  // scoreline-only part when the 120-minute score is exact.
+  if (predW !== 'H' && predW !== 'A') {
+    const scoreOnlyPts = scoreExact ? Math.max(0, vals.e - vals.o) : 0;
+    return {cls:scoreExact?'outcome':'nopred', pts:scoreOnlyPts, label:LANG==='ar'?'نتيجة فقط':'Score only'};
+  }
+
+  if (!correctQ) return {cls:'wrong', pts: vals.w};
   if (result.pen) {
     const penEx = scoreExact && (pred.pen || (hg === ag && !!pred.w)) && pred.w === result.w;
     return penEx ? {cls:'exact', pts:vals.e} : {cls:'outcome', pts:vals.o};
   }
   return scoreExact ? {cls:'exact', pts:vals.e} : {cls:'outcome', pts:vals.o};
 }
-
 
 const URGENT_MS=2*60*60*1000;
 function timeUntilLock(m){if(!m.iso)return Infinity;return new Date(m.iso).getTime()-5*60*1000-Date.now();}
@@ -1742,26 +1751,202 @@ function renderMatches(){let q=($('search')?.value||'').toLowerCase();let today=
       resCls = ' res-'+sc.cls;
       const ptStr = sc.pts > 0 ? '+'+sc.pts : String(sc.pts);
       const labMap = {exact:{en:'✓ Exact',ar:'✓ صحيحة'},outcome:{en:'✓ Winner',ar:'✓ فائز'},wrong:{en:'✗ Wrong',ar:'✗ خطأ'}};
-      const lab = (labMap[sc.cls]||{})[LANG]||sc.cls;
+      const lab = sc.label || (labMap[sc.cls]||{})[LANG] || sc.cls;
       resBadge = `<span class="resultBadge ${sc.cls}">${lab} ${ptStr}pts</span>`;
     } else if (res) {
       resBadge = `<span class="resultBadge nopred">${LANG==='ar'?'لا توقع':'No pick'}</span>`;
     }
   }
   const urgentMatch=SESSION&&isUrgent(m)&&!hasPickForMatch(m);const urgentCls=urgentMatch?' urgent':'';const msUntil=timeUntilLock(m);const cdHtml=urgentMatch?`<span class="countdownPill">⏱ ${fmtCountdown(msUntil)}</span>`:'';const predBetHtml=predCardBetHtml(m,L,res);const koHasScore=p.hg!==''&&p.hg!=null&&p.ag!==''&&p.ag!=null;const koDraw=koHasScore&&Number(p.hg)===Number(p.ag);const koExtraDisabled=L||!SESSION||!koDraw;const koChoiceHidden=koDraw?'':' hidden';html+=`<article class="card match ${L?'locked':''}${resCls}${urgentCls}"><div class="matchHead"><div class="between"><div class="matchBadges"><span class="pill">#${dispNo(m)}</span>${stageBadge(m)}<span class="pill statusTag ${statusClass(m)}">${matchStatus(m)}</span></div>${matchTimeHtml(m)}</div>${resBadge}${cdHtml}</div><div class="matchBody"><div class="matchStageLine">${esc(stageLabel(m))}</div><div class="teams">${teamHtml(m.h)}<span class="vs">VS</span>${teamHtml(m.a,'away')}</div><div class="scorebox"><input data-pick="${m.no}" data-k="hg" type="number" min="0" max="30" value="${p.hg??''}" ${L||!SESSION?'disabled':''} oninput="scheduleSave(this)"><span class="scoreDash"></span><input data-pick="${m.no}" data-k="ag" type="number" min="0" max="30" value="${p.ag??''}" ${L||!SESSION?'disabled':''} oninput="scheduleSave(this)"></div>${ko?`<div class="koBox row${koChoiceHidden}" data-ko-choice="${m.no}"><span class="pill koPenaltyText">${tr('predictPens')}</span><span class="koWinnerLabel">${LANG==='ar'?'المتأهل هو':'Winner is'}</span><select data-pick="${m.no}" data-k="w" ${koExtraDisabled?'disabled':''} onchange="scheduleSave(this)"><option value="">${tr('winner')}</option><option value="H" ${koDraw&&p.w==='H'?'selected':''}>${esc(m.h)}</option><option value="A" ${koDraw&&p.w==='A'?'selected':''}>${esc(m.a)}</option></select></div>`:''}${res?`<div class="resultDisplay"><div class="resultTeams"><span class="resultName">${esc(m.h)}</span><span class="resultScore">${res.hg} – ${res.ag}${res.pen?` <span class="resultPen">${LANG==='ar'?'ر.ت':'PEN'}</span>`:''}</span><span class="resultName right">${esc(m.a)}</span></div>${res.w&&m.no>=73?`<div class="resultWinner">✓ ${esc(res.w==='H'?m.h:m.a)} ${LANG==='ar'?'تأهل':'advances'}</div>`:''}</div>`:''}${predBetHtml}</div></article>`});$('matches').innerHTML=html;updateKoChoiceState();refreshKoWarns()}
-function updateKoChoiceState(){document.querySelectorAll('#matches .koBox').forEach(box=>{let sel=box.querySelector('select[data-k="w"]');if(!sel)return;let no=sel.dataset.pick||box.dataset.koChoice;let hgEl=document.querySelector(`#matches [data-pick="${no}"][data-k="hg"]`);let agEl=document.querySelector(`#matches [data-pick="${no}"][data-k="ag"]`);let hg=hgEl?hgEl.value:'',ag=agEl?agEl.value:'';let hasScore=hg!==''&&hg!=null&&ag!==''&&ag!=null;let draw=hasScore&&Number(hg)===Number(ag);let lockedCard=!!(box.closest('.match')&&box.closest('.match').classList.contains('locked'));box.classList.toggle('hidden',!draw);if(!draw){sel.value='';let warn=box.querySelector('.koWarn');if(warn)warn.remove();}sel.disabled=lockedCard||!SESSION||!draw})}function syncDomToPreds(){updateKoChoiceState();document.querySelectorAll('#matches [data-pick]').forEach(i=>{let no=i.dataset.pick,k=i.dataset.k;PREDS[no]=PREDS[no]||{};PREDS[no][k]=i.value});Object.keys(PREDS).forEach(no=>{let p=PREDS[no];if(!p)return;let hasScore=p.hg!==''&&p.hg!=null&&p.ag!==''&&p.ag!=null;let draw=hasScore&&Number(p.hg)===Number(p.ag);if(Number(no)>=73&&draw){p.pen=true}else{p.pen=false;p.w=''}})}function refreshKoWarns(){document.querySelectorAll('#matches .koBox').forEach(box=>{let sel=box.querySelector('select[data-k="w"]');if(!sel)return;let no=sel.dataset.pick,p=PREDS[no]||PREDS[String(no)]||{};let hasScore=p.hg!==''&&p.hg!=null&&p.ag!==''&&p.ag!=null;let draw=hasScore&&Number(p.hg)===Number(p.ag);let warn=box.querySelector('.koWarn');if(draw&&!p.w){if(!warn){warn=document.createElement('span');warn.className='pill warnTag koWarn';warn.textContent=LANG==='ar'?'اختر المتأهل':'Pick the winner';box.appendChild(warn)}}else if(warn)warn.remove()})}let TOUCHED=new Set(); // match numbers actually edited on THIS device this session
-function scheduleSave(el){if(!SESSION)return;if(el&&el.dataset&&el.dataset.pick)TOUCHED.add(String(el.dataset.pick));syncDomToPreds();refreshKoWarns();DIRTY=true;updateSaveStatus();clearTimeout(SAVE_TIMER);SAVE_TIMER=setTimeout(savePreds,1200)}
-function touchedPayload(){const p={};TOUCHED.forEach(no=>{if(PREDS[no]!=null)p[no]=PREDS[no]});return p}
-async function manualSave(){await savePreds(true)}
+function updateKoChoiceState(){
+  document.querySelectorAll('#matches .koBox').forEach(box=>{
+    let sel=box.querySelector('select[data-k="w"]');
+    if(!sel)return;
+    let no=sel.dataset.pick||box.dataset.koChoice;
+    let hgEl=document.querySelector(`#matches [data-pick="${no}"][data-k="hg"]`);
+    let agEl=document.querySelector(`#matches [data-pick="${no}"][data-k="ag"]`);
+    let hg=hgEl?hgEl.value:'', ag=agEl?agEl.value:'';
+    let hasScore=hg!==''&&hg!=null&&ag!==''&&ag!=null;
+    let draw=hasScore&&Number(hg)===Number(ag);
+    let lockedCard=!!(box.closest('.match')&&box.closest('.match').classList.contains('locked'));
+    box.classList.toggle('hidden',!draw);
+    if(!draw){sel.value='';let warn=box.querySelector('.koWarn');if(warn)warn.remove();}
+    sel.disabled=lockedCard||!SESSION||!draw;
+  });
+}
+
+function syncDomToPreds(){
+  updateKoChoiceState();
+  document.querySelectorAll('#matches [data-pick]').forEach(i=>{
+    let no=i.dataset.pick,k=i.dataset.k;
+    PREDS[no]=PREDS[no]||{};
+    PREDS[no][k]=i.value;
+  });
+  Object.keys(PREDS).forEach(no=>{
+    let p=PREDS[no]; if(!p)return;
+    let hasScore=p.hg!==''&&p.hg!=null&&p.ag!==''&&p.ag!=null;
+    let draw=hasScore&&Number(p.hg)===Number(p.ag);
+    if(Number(no)>=73&&draw){p.pen=true;}
+    else{p.pen=false;p.w='';}
+  });
+}
+
+function refreshKoWarns(){
+  document.querySelectorAll('#matches .koBox').forEach(box=>{
+    let sel=box.querySelector('select[data-k="w"]');
+    if(!sel)return;
+    let no=sel.dataset.pick,p=PREDS[no]||PREDS[String(no)]||{};
+    let hasScore=p.hg!==''&&p.hg!=null&&p.ag!==''&&p.ag!=null;
+    let draw=hasScore&&Number(p.hg)===Number(p.ag);
+    let warn=box.querySelector('.koWarn');
+    if(draw&&!p.w){
+      if(!warn){warn=document.createElement('span');warn.className='pill warnTag koWarn';warn.textContent=LANG==='ar'?'اختر المتأهل':'Pick the winner';box.appendChild(warn);}
+    }else if(warn)warn.remove();
+  });
+}
+
+let TOUCHED=new Set(); // match numbers actually edited on THIS device this session
+let SAVE_AGAIN=false; // user changed something while a save request was still in flight
+
+function hasCompleteScore(p){return !!p&&p.hg!==''&&p.hg!=null&&p.ag!==''&&p.ag!=null&&Number.isFinite(Number(p.hg))&&Number.isFinite(Number(p.ag));}
+function isKODrawMissingWinner(no,p){return Number(no)>=73&&hasCompleteScore(p)&&Number(p.hg)===Number(p.ag)&&p.w!=='H'&&p.w!=='A';}
+function pickForSend(no,p){
+  if(!hasCompleteScore(p))return null;
+  const out={hg:p.hg,ag:p.ag};
+  if(Number(no)>=73&&Number(p.hg)===Number(p.ag)){
+    out.pen=true;
+    if(p.w==='H'||p.w==='A')out.w=p.w;
+  }
+  return out;
+}
+function pickComparable(p){
+  if(!p)return null;
+  const out={hg:String(p.hg??''),ag:String(p.ag??'')};
+  if(p.pen)out.pen=true;
+  if(p.w==='H'||p.w==='A')out.w=p.w;
+  return out;
+}
+function samePick(a,b){return JSON.stringify(pickComparable(a))===JSON.stringify(pickComparable(b));}
+function cloneObj(o){try{return JSON.parse(JSON.stringify(o||{}));}catch(e){return {};}}
+function invalidKODrawMessage(list){
+  const nums=list.map(n=>'#'+dispNo({no:Number(n)})).join(', ');
+  return (LANG==='ar'?'اختر المتأهل في مباراة الإقصاء المتعادلة قبل الحفظ: ':'Choose the qualifying team for the knockout draw before saving: ')+nums;
+}
+function incompleteScoreMessage(){return LANG==='ar'?'أكمل نتيجة الفريقين قبل الحفظ':'Complete both scores before saving';}
+
+function scheduleSave(el){
+  if(!SESSION)return;
+  if(el&&el.dataset&&el.dataset.pick)TOUCHED.add(String(el.dataset.pick));
+  syncDomToPreds();
+  refreshKoWarns();
+  DIRTY=true;
+  updateSaveStatus();
+  clearTimeout(SAVE_TIMER);
+  SAVE_TIMER=setTimeout(()=>savePreds(false),1200);
+}
+
+function touchedPayload(){
+  const p={};
+  TOUCHED.forEach(no=>{
+    const out=pickForSend(no,PREDS[no]||PREDS[String(no)]);
+    // Do not send partial scores. This protects saved picks from being erased
+    // when autosave fires between typing home and away score.
+    if(out)p[no]=out;
+  });
+  return p;
+}
+function findInvalidKODraws(payload){return Object.keys(payload||{}).filter(no=>isKODrawMissingWinner(no,payload[no]));}
+async function manualSave(){await savePreds(true);}
+
 // Send ONLY the picks edited on this device — the server treats absent keys as
 // "unchanged". Sending the whole PREDS object (old behavior) let a device with
 // stale data (old cache, second phone, iOS PWA vs Safari) silently revert
 // picks the player had saved elsewhere.
-async function savePreds(manual){if(!SESSION){if(manual)toast(tr('loginFirst'),true);return}syncDomToPreds();const sent=Array.from(TOUCHED);const payload=touchedPayload();SAVING=true;updateSaveStatus();let r=await call('savePreds',SESSION.id,SESSION.pin,payload);SAVING=false;if(!r.ok){DIRTY=true;toast(r.msg,true)}else{DIRTY=false;sent.forEach(no=>TOUCHED.delete(no));PREDS=r.preds||PREDS;STATE.myPreds=PREDS;saveStateCache();if(r.cancelledBets&&r.cancelledBets.length){r.cancelledBets.forEach(cb=>{delete BETS_STATE.myBets[cb.matchNo];delete BETS_STATE.myBets[String(cb.matchNo)];});if(STATE)STATE.myBets=BETS_STATE.myBets;PRED_BETTING_LOADED=false;const names=r.cancelledBets.map(cb=>'#'+cb.matchNo).join(', ');toast((LANG==='ar'?'تم إلغاء رهانك على المباراة لأنك غيّرت توقعك: ':'Your bet was cancelled because you changed your prediction: ')+names,true);if(ACTIVE==='pred')loadPredCardBetting(true);else if(ACTIVE==='betting')loadBetting();}if(r.rejected&&r.rejected.length)toast((LANG==='ar'?'مقفلة: ':'Locked: ')+r.rejected.join(', '),true);else if(manual&&!(r.cancelledBets&&r.cancelledBets.length))toast('OK')}updateSaveStatus();renderStats()}function updateSaveStatus(){let el=$('saveStatus');if(!el)return;el.className='saveBadge '+(SAVING?'warn':DIRTY?'bad':'good');el.textContent=SAVING?tr('saving'):DIRTY?tr('unsaved'):tr('saved')}window.addEventListener('beforeunload',e=>{if(DIRTY){e.preventDefault();e.returnValue=''}});
+async function savePreds(manual){
+  if(!SESSION){if(manual)toast(tr('loginFirst'),true);return;}
+
+  // Prevent overlapping saves. Without this, an older save can return after a
+  // newer edit and falsely change the badge to "Saved" while the newer edit is
+  // still not saved.
+  if(SAVING){SAVE_AGAIN=true;return;}
+
+  syncDomToPreds();
+  const payload=touchedPayload();
+  const invalid=findInvalidKODraws(payload);
+  if(invalid.length){
+    DIRTY=true;SAVING=false;updateSaveStatus();refreshKoWarns();
+    if(manual)toast(invalidKODrawMessage(invalid),true);
+    return;
+  }
+  const keys=Object.keys(payload);
+  if(!keys.length){
+    SAVING=false;
+    DIRTY=TOUCHED.size>0;
+    updateSaveStatus();
+    if(manual)toast(DIRTY?incompleteScoreMessage():'OK',!!DIRTY);
+    return;
+  }
+
+  const sentPayload=cloneObj(payload);
+  const sentNos=Object.keys(sentPayload);
+  SAVING=true;updateSaveStatus();
+  let r=await call('savePreds',SESSION.id,SESSION.pin,payload);
+  const localAfterRequest=cloneObj(PREDS);
+  SAVING=false;
+
+  if(!r.ok){DIRTY=true;toast(r.msg,true);updateSaveStatus();return;}
+
+  const rejectedSet=new Set((r.rejected||[]).map(String));
+  const invalidSet=new Set((r.invalidKODraws||[]).map(String));
+
+  // Start from the server-confirmed truth, then restore only genuinely unsaved
+  // local edits that happened while the request was in flight.
+  if(r.preds)PREDS=r.preds;
+  TOUCHED.forEach(no=>{
+    const changedDuringSave=sentPayload[no]?!samePick(localAfterRequest[no],sentPayload[no]):true;
+    if(invalidSet.has(String(no))||changedDuringSave){
+      if(localAfterRequest[no])PREDS[no]=localAfterRequest[no];
+    }
+  });
+
+  sentNos.forEach(no=>{
+    const changedDuringSave=!samePick(localAfterRequest[no],sentPayload[no]);
+    if(invalidSet.has(String(no)))return;        // still needs qualifier
+    if(rejectedSet.has(String(no))){TOUCHED.delete(String(no));return;} // locked: discard local edit
+    if(!changedDuringSave)TOUCHED.delete(String(no));
+  });
+
+  STATE.myPreds=PREDS;
+  saveStateCache();
+
+  if(r.cancelledBets&&r.cancelledBets.length){
+    r.cancelledBets.forEach(cb=>{delete BETS_STATE.myBets[cb.matchNo];delete BETS_STATE.myBets[String(cb.matchNo)];});
+    if(STATE)STATE.myBets=BETS_STATE.myBets;
+    PRED_BETTING_LOADED=false;
+    const names=r.cancelledBets.map(cb=>'#'+cb.matchNo).join(', ');
+    toast((LANG==='ar'?'تم إلغاء رهانك على المباراة لأنك غيّرت توقعك: ':'Your bet was cancelled because you changed your prediction: ')+names,true);
+    if(ACTIVE==='pred')loadPredCardBetting(true);else if(ACTIVE==='betting')loadBetting();
+  }
+  if(invalidSet.size){toast(invalidKODrawMessage(Array.from(invalidSet)),true);}
+  else if(rejectedSet.size){toast((LANG==='ar'?'مقفلة: ':'Locked: ')+Array.from(rejectedSet).join(', '),true);}
+  else if(manual&&!(r.cancelledBets&&r.cancelledBets.length))toast('OK');
+
+  DIRTY=TOUCHED.size>0;
+  updateSaveStatus();
+  renderStats();
+  if(rejectedSet.size&&!invalidSet.size&&ACTIVE==='pred')renderMatches();
+
+  if(SAVE_AGAIN){
+    SAVE_AGAIN=false;
+    if(DIRTY){clearTimeout(SAVE_TIMER);SAVE_TIMER=setTimeout(()=>savePreds(false),350);}
+  }
+}
+function updateSaveStatus(){let el=$('saveStatus');if(!el)return;el.className='saveBadge '+(SAVING?'warn':DIRTY?'bad':'good');el.textContent=SAVING?tr('saving'):DIRTY?tr('unsaved'):tr('saved');}
+window.addEventListener('beforeunload',e=>{if(DIRTY){e.preventDefault();e.returnValue=''}});
 /* Last-ditch save when the tab is hidden or closed (mobile often kills the page
    before the 1.2s debounce fires). sendBeacon delivers the POST even during unload;
    we can't read its reply, so the normal debounced save still runs the confirmable path. */
-function flushBeacon(){if(!SESSION||!DIRTY)return;try{syncDomToPreds();var tp=touchedPayload();if(!Object.keys(tp).length)return;var body=JSON.stringify({fn:'savePreds',args:[SESSION.id,SESSION.pin,tp]});navigator.sendBeacon(GAS_URL,new Blob([body],{type:'text/plain;charset=utf-8'}));}catch(e){}}
+function flushBeacon(){if(!SESSION||!DIRTY)return;try{syncDomToPreds();var tp=touchedPayload();if(!Object.keys(tp).length)return;if(findInvalidKODraws(tp).length)return;var body=JSON.stringify({fn:'savePreds',args:[SESSION.id,SESSION.pin,tp]});navigator.sendBeacon(GAS_URL,new Blob([body],{type:'text/plain;charset=utf-8'}));}catch(e){}}
 document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')flushBeacon();});
 window.addEventListener('pagehide',flushBeacon);
 async function loadOdds(showAll){
@@ -2756,8 +2941,10 @@ function fmtPts(n){
 function myPredWinner(matchNo){
   const p=(STATE&&STATE.myPreds&&(STATE.myPreds[matchNo]||STATE.myPreds[String(matchNo)]))||null;
   if(!p)return '';
-  if(p.hg>p.ag)return 'H';
-  if(p.ag>p.hg)return 'A';
+  const hg=Number(p.hg), ag=Number(p.ag);
+  if(!Number.isFinite(hg)||!Number.isFinite(ag))return '';
+  if(hg>ag)return 'H';
+  if(ag>hg)return 'A';
   return (p.w==='H'||p.w==='A')?p.w:'';
 }
 function betOddsMeterOnlyHtml(pool,mh,ma){
