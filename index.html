@@ -3042,40 +3042,21 @@ function betSettleListHtml(pool,mh,ma){
   return `<details style="margin-top:8px"><summary class="tiny" style="cursor:pointer">🎲 ${LANG==='ar'?'الرهانات':'Bets'} (${pool.list.length})</summary><div style="max-height:180px;overflow-y:auto;margin-top:6px">${rows}</div></details>`;
 }
 function renderBetting(){const box=$('bettingBox');if(!box||!STATE)return;const balEl=$('balanceDisplay');if(balEl&&SESSION&&BETS_STATE.balance!==null){balEl.style.display='';balEl.textContent='⚽ '+tr('points')+': '+fmtPts(BETS_STATE.balance)+' pts';balEl.classList.remove('hidden');}const koMatches=(STATE.matches||[]).filter(m=>m.no>=89);if(!koMatches.length){box.innerHTML=`<p class="muted">${LANG==='ar'?'لا توجد مباريات إقصائية بعد':'No knockout matches yet'}</p>`;return;}let html='<div class="grid">';koMatches.forEach(m=>{const res=STATE.results&&STATE.results[m.no],pool=BETS_STATE.pools[m.no]||{h:0,a:0,total:0},myBet=SESSION?(BETS_STATE.myBets[m.no]||null):null,L=locked(m),isFinal=m.no===104;let betContent='';if(myBet){const teamName=myBet.team==='H'?m.h:m.a;let tagCls='pending',tag=tr('betPending');if(myBet.settled){const net=myBet.payout-myBet.amount;tagCls=net>=0?'won':'lost';tag=(net>=0?'+':'')+fmtPts(net)+' pts';}betContent=`<div class="betBox hasBet"><div class="between"><span class="tiny">${tr('yourBet')}: ${teamHtml(teamName)} <b>${myBet.amount} pts</b></span><span class="betTag ${tagCls}">${tag}</span></div>${betOddsHtml(pool,m.h,m.a)}${!L&&!myBet.settled?`<button class="ghost danger wide" style="margin-top:6px" onclick="doCancelBet(${m.no})">${tr('cancelBet')}</button>`:''}</div>`;}else if(!teamsConfirmed(m)){betContent=`<div class="betBox">${betOddsHtml(pool,m.h,m.a)}<p class="tiny warnTag pill" style="margin-top:6px">${LANG==='ar'?'الرهان يفتح بعد تأكيد الفريقين':'Betting opens after both teams are confirmed'}</p></div>`;}else if(!L&&SESSION&&!res){const predTeam=myPredWinner(m.no);if(predTeam!=='H'&&predTeam!=='A'){betContent=`<div class="betBox">${betOddsHtml(pool,m.h,m.a)}<p class="tiny warnTag pill" style="margin-top:6px">${LANG==='ar'?'توقع هذه المباراة أولاً لتتمكن من الرهان':'Predict this match first to unlock betting'}</p></div>`;}else{const maxBet=myBetMaxAllowed(isFinal);const predTeamName=predTeam==='H'?m.h:m.a;betContent=`<div class="betBox"><p class="tiny warnTag pill" style="margin-bottom:8px">${tr('betForfeits')}</p>${betOddsHtml(pool,m.h,m.a)}<div class="tiny" style="margin-bottom:6px">${LANG==='ar'?'رهانك على':'Betting on'}: <b>${esc(predTeamName)}</b> ${LANG==='ar'?'(حسب توقعك)':'(from your prediction)'}</div><input type="hidden" id="betTeam_${m.no}" value="${predTeam}"><div class="row" style="margin-top:8px"><input id="betAmt_${m.no}" type="number" min="1" max="${maxBet}" placeholder="1–${maxBet}" style="flex:1"><button class="primary" onclick="doPlaceBet(${m.no},false)">${tr('placeBet')}</button></div>${isFinal?`<button class="danger wide" style="margin-top:6px;background:rgba(232,80,80,.15);color:var(--bad)" onclick="doPlaceBet(${m.no},true)">${tr('allIn')} (${fmtPts(BETS_STATE.balance||0)} pts)</button>`:''}</div>`;}}else{betContent=`<div class="betBox">${betOddsHtml(pool,m.h,m.a)}</div>`;}html+=`<div class="card soft"><div class="matchBadges"><span class="pill">#${dispNo(m)}</span>${stageBadge(m)}${res?`<span class="pill statusTag done">${tr('completed')}</span>`:L?`<span class="pill statusTag locked">${tr('locked')}</span>`:`<span class="pill statusTag open">${tr('open')}</span>`}</div><div class="teams">${teamHtml(m.h)}<span class="vs">VS</span>${teamHtml(m.a,'away')}</div><div class="tiny">${localTime(m.iso)}</div>${res?`<div class="tiny" style="margin-top:4px">⚽ ${res.hg}–${res.ag}${res.pen?' (pens)':''}</div>`:''} ${betContent}${betSettleListHtml(pool,m.h,m.a)}</div>`;});box.innerHTML=html+'</div>';}
-// Keep the Betting tab focused: show all completed betting matches (newest
-// first) plus every match that is currently open for betting. The original renderer
-// is reused so betting, settlement, cancellation, and odds behavior stay intact.
+// Show completed and currently available betting matches in their natural
+// World Cup match-number order. Reuse the original card renderer so betting,
+// settlement, cancellation, and odds behavior stay intact.
 const renderAllBettingMatches = renderBetting;
 renderBetting = function(){
   if(!STATE){ return renderAllBettingMatches(); }
   const originalMatches = STATE.matches;
-  const knockoutMatches = (originalMatches||[]).filter(m=>Number(m.no)>=89);
-  const matchTime = m=>{
-    const t = m&&m.iso ? new Date(m.iso).getTime() : NaN;
-    return Number.isFinite(t) ? t : Number.MAX_SAFE_INTEGER;
-  };
-  const completed = knockoutMatches
-    .filter(m=>STATE.results&&STATE.results[m.no])
-    .sort((a,b)=>matchTime(b)-matchTime(a)||Number(b.no)-Number(a.no));
-  const available = knockoutMatches
-    .filter(m=>!(STATE.results&&STATE.results[m.no])&&teamsConfirmed(m)&&!locked(m))
-    .sort((a,b)=>matchTime(a)-matchTime(b)||Number(a.no)-Number(b.no));
-  const focused = [];
-  completed.forEach(m=>focused.push(m));
-  available.forEach(m=>{
-    if(!focused.some(x=>Number(x.no)===Number(m.no))) focused.push(m);
-  });
-  STATE.matches = focused;
+  STATE.matches = (originalMatches||[])
+    .filter(m=>Number(m.no)>=89&&(
+      (STATE.results&&STATE.results[m.no]) ||
+      (teamsConfirmed(m)&&!locked(m))
+    ))
+    .sort((a,b)=>Number(a.no)-Number(b.no));
   try{
     renderAllBettingMatches();
-    const cards = document.querySelectorAll('#bettingBox .grid > .card');
-    if(completed.length&&cards[0]){
-      cards[0].insertAdjacentHTML('afterbegin',`<div class="tiny" style="font-weight:800;margin-bottom:7px;color:var(--muted)">${LANG==='ar'?'المباريات السابقة':'PREVIOUS MATCHES'}</div>`);
-    }
-    const availableIndex = completed.length;
-    if(available.length&&cards[availableIndex]){
-      cards[availableIndex].insertAdjacentHTML('afterbegin',`<div class="tiny" style="font-weight:800;margin-bottom:7px;color:var(--muted)">${LANG==='ar'?'المباريات المتاحة':'AVAILABLE MATCHES'}</div>`);
-    }
   } finally {
     STATE.matches = originalMatches;
   }
