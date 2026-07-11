@@ -1,7 +1,7 @@
 {
   "name": "WC '26 Prediction League",
   "short_name": "WC'26 Picks",
-  "description": "World Cup 2026 prediction league — predict scores, track standings.",
+  "description": "World Cup 2026 prediction league - predict scores, track standings, place bets.",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
