@@ -3118,12 +3118,12 @@ renderBetting = function(){
   const completed=(originalMatches||[])
     .filter(m=>Number(m.no)>=89&&STATE.results&&STATE.results[m.no])
     .sort((a,b)=>(new Date(b.iso||0).getTime()-new Date(a.iso||0).getTime())||Number(b.no)-Number(a.no));
-  const available=(originalMatches||[])
-    .filter(m=>Number(m.no)>=89&&!(STATE.results&&STATE.results[m.no])&&teamsConfirmed(m)&&!locked(m))
+  const current=(originalMatches||[])
+    .filter(m=>Number(m.no)>=89&&!(STATE.results&&STATE.results[m.no]))
     .sort((a,b)=>Number(a.no)-Number(b.no));
   STATE.matches=BETTING_SHOW_COMPLETED
     ? completed
-    : (completed.length?[completed[0]].concat(available):available);
+    : (completed.length?[completed[0]].concat(current):current);
   try{
     renderAllBettingMatches();
     const box=$('bettingBox');
