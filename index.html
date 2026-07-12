@@ -871,12 +871,10 @@
     .podiumCard{z-index:2}
     .podiumCard.p1{animation:leaderGlow 3.2s ease-in-out infinite}
     @keyframes leaderGlow{0%,100%{box-shadow:0 0 0 2px rgba(255,225,119,.10),0 16px 34px rgba(0,0,0,.25),0 0 22px rgba(212,165,32,.14)}50%{box-shadow:0 0 0 2px rgba(255,225,119,.18),0 18px 38px rgba(0,0,0,.28),0 0 36px rgba(255,205,49,.28)}}
-    .podiumBase{width:calc(100% + 28px);margin:8px -14px -18px;padding:7px 5px 6px;font:1000 11px/1 var(--font-display);letter-spacing:.12em;text-align:center;color:#211500;text-shadow:0 1px rgba(255,255,255,.35);box-shadow:inset 0 1px rgba(255,255,255,.32)}
+    .podiumBase{width:calc(100% + 28px);height:11px;margin:8px -14px -18px;box-shadow:inset 0 1px rgba(255,255,255,.32)}
     .p1 .podiumBase{background:linear-gradient(90deg,#a86c00,#ffe585,#c78906)}
     .p2 .podiumBase{background:linear-gradient(90deg,#7f8790,#eef2f5,#9ca4ad)}
     .p3 .podiumBase{background:linear-gradient(90deg,#86491f,#e4a16a,#9c5728)}
-    .podiumRaceBar{width:88%;height:5px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:2px}
-    .podiumRaceBar span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--gold),#ffe788);box-shadow:0 0 9px rgba(255,215,80,.30)}
     .championRibbon{position:absolute;z-index:4;top:13px;inset-inline-start:-37px;width:145px;padding:6px 0;transform:rotate(-38deg);background:linear-gradient(90deg,#a86c00,#ffe588,#c88908);color:#2b1900;font:1000 9px/1 var(--font-display);letter-spacing:.10em;text-align:center;box-shadow:0 4px 13px rgba(0,0,0,.28)}
     html[dir="rtl"] .championRibbon{transform:rotate(38deg)}
 
@@ -884,7 +882,7 @@
     .boardList{padding:4px 8px!important;border-radius:18px!important;background:linear-gradient(180deg,rgba(255,255,255,.02),transparent),var(--panel)!important}
     .boardRow {
       display: flex; align-items: center; gap: 10px;
-      padding: 12px 10px 15px; border-bottom: 1px solid var(--line2);border-radius:11px;position:relative;overflow:hidden;
+      padding: 12px 10px; border-bottom: 1px solid var(--line2);border-radius:11px;position:relative;overflow:hidden;
     }
     .boardRow:last-child { border-bottom: none; }
     .boardRow.myRow { background:linear-gradient(90deg,rgba(212,165,32,.16),rgba(212,165,32,.04));box-shadow:inset 3px 0 0 var(--gold) }
@@ -896,8 +894,6 @@
     .boardPts  { font-family: var(--font-display); font-weight: 900; font-size: 20px; color: var(--gold2); flex-shrink: 0; text-align: end; }
     .boardGap  { font-size: 11px; color: var(--bad); flex-shrink: 0; text-align: end; min-width: 28px; }
     .boardScore{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0}
-    .rowRaceBar{position:absolute;left:10px;right:10px;bottom:5px;height:3px;border-radius:99px;background:rgba(255,255,255,.045);overflow:hidden}
-    .rowRaceBar span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,rgba(212,165,32,.45),var(--gold));opacity:.78}
     .myRaceStrip{display:none;position:sticky;bottom:8px;z-index:12;margin:10px 0;padding:10px 12px;border-radius:14px;background:linear-gradient(135deg,rgba(80,53,5,.97),rgba(13,34,23,.97));border:1px solid rgba(255,216,84,.58);box-shadow:0 10px 28px rgba(0,0,0,.35);align-items:center;gap:10px}
     .myRaceStrip .boardMain{color:#fff}.myRaceStrip .boardPts{color:#ffe16f}.myRaceStrip .boardRank{color:#ffe7a0}
     .youBadge  { font-size: 10px; font-family: var(--font-display); font-weight: 700; color: var(--gold2); background: rgba(212,165,32,.15); border: 1px solid rgba(212,165,32,.30); border-radius: 99px; padding: 1px 6px; flex-shrink: 0; }
@@ -920,7 +916,7 @@
     .bannerText{font-size:13px;color:var(--bad);font-weight:600}
     .bannerSub{font-size:12px;color:var(--muted)}
     @media(prefers-reduced-motion:reduce){.match.urgent,.countdownPill{animation:none!important}}
-    @media(max-width:640px){.raceHero{padding:17px 16px}.raceHero::before{font-size:78px;inset-inline-end:8px}.raceTitle{max-width:82%;font-size:25px}.raceMetrics{gap:6px}.raceMetric{min-width:76px;padding:7px 9px}.podium{grid-template-columns:1fr 1fr;gap:8px;padding:34px 9px 15px}.podiumCard{min-height:132px;padding:14px 9px}.podiumCard.p1{grid-column:1/-1;order:-1;min-height:154px;transform:none}.podiumCard.p2{order:0}.podiumCard.p3{order:1}.podiumCard.p1 .podiumMedal{font-size:39px}.podiumName{font-size:14px}.podiumBase{width:calc(100% + 18px);margin-inline:-9px}.throneBox{padding:8px}.boardRow{padding:11px 7px 14px}.boardSub{gap:7px}}
+    @media(max-width:640px){.raceHero{padding:17px 16px}.raceHero::before{font-size:78px;inset-inline-end:8px}.raceTitle{max-width:82%;font-size:25px}.raceMetrics{gap:6px}.raceMetric{min-width:76px;padding:7px 9px}.podium{grid-template-columns:1fr 1fr;gap:8px;padding:34px 9px 15px}.podiumCard{min-height:132px;padding:14px 9px}.podiumCard.p1{grid-column:1/-1;order:-1;min-height:154px;transform:none}.podiumCard.p2{order:0}.podiumCard.p3{order:1}.podiumCard.p1 .podiumMedal{font-size:39px}.podiumName{font-size:14px}.podiumBase{width:calc(100% + 18px);margin-inline:-9px}.throneBox{padding:8px}.boardRow{padding:11px 7px}.boardSub{gap:7px}}
 
   
     /* ── In-card result display ── */
@@ -2169,17 +2165,10 @@ function enhanceBoardVisuals(table,leader){
   podiumCards.forEach((card,pos)=>{
     const idx=visualOrder[pos],p=table[idx];if(!p)return;
     const gap=Number(p.total)-Number(leader);
-    const pct=leader>0?Math.max(0,Math.min(100,Number(p.total)/Number(leader)*100)):100;
     const gapHtml=gap===0
       ? `<span class="podiumLead">👑 ${LANG==='ar'?'المتصدر':'Leader'}</span>`
       : `<span class="podiumGap">−${fmtPts(Math.abs(gap))} ${LANG==='ar'?'عن الصدارة':'behind'}</span>`;
-    card.insertAdjacentHTML('beforeend',`${gapHtml}<div class="podiumRaceBar"><span style="width:${pct}%"></span></div><div class="podiumBase">#${idx+1}</div>${finalDone&&gap===0?`<span class="championRibbon">${LANG==='ar'?'بطل البطولة':'CHAMPION'}</span>`:''}`);
-  });
-  const rows=Array.from(document.querySelectorAll('#leaderboard .boardRow'));
-  rows.forEach((row,i)=>{
-    const p=table[i+3];if(!p)return;
-    const pct=leader>0?Math.max(0,Math.min(100,Number(p.total)/Number(leader)*100)):100;
-    row.insertAdjacentHTML('beforeend',`<div class="rowRaceBar"><span style="width:${pct}%"></span></div>`);
+    card.insertAdjacentHTML('beforeend',`${gapHtml}<div class="podiumBase"></div>${finalDone&&gap===0?`<span class="championRibbon">${LANG==='ar'?'بطل البطولة':'CHAMPION'}</span>`:''}`);
   });
 }
 function renderBoard(r){
