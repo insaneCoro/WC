@@ -830,31 +830,49 @@
 
   
     /* ── Leaderboard ── */
-    .podium { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 16px; }
+    .raceHero{position:relative;overflow:hidden;isolation:isolate;margin-bottom:22px;padding:20px 22px;border-radius:20px;border:1px solid rgba(212,165,32,.34);background:radial-gradient(circle at 82% 0,rgba(255,220,99,.20),transparent 38%),linear-gradient(135deg,rgba(11,48,29,.97),rgba(31,30,13,.96));box-shadow:0 16px 38px rgba(0,0,0,.24),0 0 24px rgba(212,165,32,.10)}
+    .raceHero::before{content:'🏆';position:absolute;z-index:-1;inset-inline-end:22px;top:50%;transform:translateY(-50%);font-size:100px;opacity:.10;filter:drop-shadow(0 10px 18px rgba(0,0,0,.35))}
+    .raceHero.finalStage{border-color:rgba(255,218,91,.72);background:radial-gradient(circle at 78% 0,rgba(255,229,135,.32),transparent 40%),linear-gradient(135deg,rgba(82,51,4,.98),rgba(17,31,22,.98) 56%,rgba(76,47,3,.96));box-shadow:0 18px 44px rgba(0,0,0,.30),0 0 34px rgba(244,190,45,.22)}
+    .raceEyebrow{font:900 11px/1 var(--font-display);letter-spacing:.16em;text-transform:uppercase;color:#ffe28a;margin-bottom:8px}
+    .raceTitle{font:1000 clamp(23px,4vw,38px)/1.05 var(--font-display);color:#fff9df;margin:0;max-width:72%;text-shadow:0 4px 18px rgba(0,0,0,.32)}
+    .raceLead{font-size:13px;color:rgba(255,255,255,.72);margin-top:8px}
+    .raceLead b{color:#fff1b5;font-size:15px}
+    .raceMetrics{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+    .raceMetric{min-width:92px;padding:8px 11px;border-radius:12px;background:rgba(0,0,0,.20);border:1px solid rgba(255,231,149,.16);backdrop-filter:blur(4px)}
+    .raceMetric b{display:block;font:900 18px/1 var(--font-display);color:#ffe172}
+    .raceMetric span{font-size:10px;color:rgba(255,255,255,.62);text-transform:uppercase;letter-spacing:.07em}
+    .podium { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin:0 0 18px; padding-top:12px; align-items:end; }
     .podiumCard {
-      border-radius: var(--r); padding: 16px 12px; text-align: center;
+      border-radius: 18px; padding: 18px 14px; text-align: center;
       border: 1px solid var(--line); background: var(--panel);
       display: flex; flex-direction: column; align-items: center; gap: 6px;
-      position: relative; overflow: hidden;
+      position: relative; overflow: hidden;min-height:150px;justify-content:center;
+      box-shadow:0 10px 24px rgba(0,0,0,.15);transition:transform .2s,box-shadow .2s;
     }
-    .podiumCard.p1 { border-color: rgba(212,165,32,.50); background: linear-gradient(160deg,rgba(212,165,32,.12),var(--panel)); }
+    .podiumCard::before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.055),transparent 64%)}
+    .podiumCard.p1 { min-height:178px;transform:translateY(-10px);border:2px solid rgba(255,213,75,.78); background:radial-gradient(circle at 50% 0,rgba(255,224,110,.24),transparent 45%),linear-gradient(160deg,rgba(112,73,4,.60),var(--panel) 70%);box-shadow:0 0 0 2px rgba(255,225,119,.10),0 16px 34px rgba(0,0,0,.25),0 0 26px rgba(212,165,32,.18) }
     .podiumCard.p2 { border-color: rgba(180,180,200,.35); background: linear-gradient(160deg,rgba(180,180,200,.08),var(--panel)); }
     .podiumCard.p3 { border-color: rgba(180,120,60,.35);  background: linear-gradient(160deg,rgba(180,120,60,.08),var(--panel)); }
     .podiumCard.me { box-shadow: 0 0 0 2px var(--gold); }
-    .podiumMedal { font-size: 28px; line-height: 1; }
-    .podiumName { font-family: var(--font-display); font-weight: 700; font-size: 15px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; }
-    .podiumPts { font-family: var(--font-display); font-weight: 900; font-size: 28px; color: var(--gold2); line-height: 1; }
+    .podiumMedal { font-size: 34px; line-height: 1;filter:drop-shadow(0 5px 9px rgba(0,0,0,.28)) }
+    .podiumCard.p1 .podiumMedal{font-size:44px}
+    .podiumName { font-family: var(--font-display); font-weight: 900; font-size: 16px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; }
+    .podiumPts { font-family: var(--font-display); font-weight: 1000; font-size: 31px; color: var(--gold2); line-height: 1; }
+    .podiumPts::after{content:' pts';font-size:10px;font-weight:700;color:var(--muted)}
+    html[lang="ar"] .podiumPts::after{content:' نقطة'}
     .podiumCard.p2 .podiumPts, .podiumCard.p3 .podiumPts { color: var(--text); font-size: 24px; }
     .podiumSub { font-size: 11px; color: var(--muted); line-height: 1.4; }
-    .podiumGap { font-size: 11px; color: var(--bad); }
+    .podiumGap { font-size: 11px; color:#ffb6b6;background:rgba(232,80,80,.10);border-radius:999px;padding:3px 8px }
+    .podiumLead{font-size:11px;color:#ffe28a;background:rgba(212,165,32,.13);border:1px solid rgba(212,165,32,.24);border-radius:999px;padding:3px 9px}
 
     /* Rest-of-board row cards */
+    .boardList{padding:4px 8px!important;border-radius:18px!important;background:linear-gradient(180deg,rgba(255,255,255,.02),transparent),var(--panel)!important}
     .boardRow {
       display: flex; align-items: center; gap: 10px;
-      padding: 11px 14px; border-bottom: 1px solid var(--line2);
+      padding: 12px 10px; border-bottom: 1px solid var(--line2);border-radius:11px;
     }
     .boardRow:last-child { border-bottom: none; }
-    .boardRow.myRow { background: rgba(212,165,32,.06); }
+    .boardRow.myRow { background:linear-gradient(90deg,rgba(212,165,32,.16),rgba(212,165,32,.04));box-shadow:inset 3px 0 0 var(--gold) }
     .boardRank { font-family: var(--font-display); font-weight: 900; font-size: 17px; color: var(--muted); min-width: 26px; text-align: center; flex-shrink: 0; }
     .boardMain { flex: 1; min-width: 0; }
     .boardName { font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
@@ -862,6 +880,9 @@
     .boardSubItem { display: flex; align-items: center; gap: 3px; }
     .boardPts  { font-family: var(--font-display); font-weight: 900; font-size: 20px; color: var(--gold2); flex-shrink: 0; text-align: end; }
     .boardGap  { font-size: 11px; color: var(--bad); flex-shrink: 0; text-align: end; min-width: 28px; }
+    .boardScore{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0}
+    .myRaceStrip{display:none;position:sticky;bottom:8px;z-index:12;margin:10px 0;padding:10px 12px;border-radius:14px;background:linear-gradient(135deg,rgba(80,53,5,.97),rgba(13,34,23,.97));border:1px solid rgba(255,216,84,.58);box-shadow:0 10px 28px rgba(0,0,0,.35);align-items:center;gap:10px}
+    .myRaceStrip .boardMain{color:#fff}.myRaceStrip .boardPts{color:#ffe16f}.myRaceStrip .boardRank{color:#ffe7a0}
     .youBadge  { font-size: 10px; font-family: var(--font-display); font-weight: 700; color: var(--gold2); background: rgba(212,165,32,.15); border: 1px solid rgba(212,165,32,.30); border-radius: 99px; padding: 1px 6px; flex-shrink: 0; }
     /* Podium sub stats — also use W/L/P */
     .podiumSub { font-size: 11px; color: var(--muted); line-height: 1.5; }
@@ -882,7 +903,7 @@
     .bannerText{font-size:13px;color:var(--bad);font-weight:600}
     .bannerSub{font-size:12px;color:var(--muted)}
     @media(prefers-reduced-motion:reduce){.match.urgent,.countdownPill{animation:none!important}}
-    @media(max-width:400px){.podium{grid-template-columns:1fr 1fr}.podiumCard.p1{grid-column:1/-1;order:-1}.podiumCard.p2{order:0}.podiumCard.p3{order:1}}
+    @media(max-width:640px){.raceHero{padding:17px 16px}.raceHero::before{font-size:78px;inset-inline-end:8px}.raceTitle{max-width:82%;font-size:25px}.raceMetrics{gap:6px}.raceMetric{min-width:76px;padding:7px 9px}.podium{grid-template-columns:1fr 1fr;gap:8px;padding-top:0}.podiumCard{min-height:132px;padding:14px 9px}.podiumCard.p1{grid-column:1/-1;order:-1;min-height:154px;transform:none}.podiumCard.p2{order:0}.podiumCard.p3{order:1}.podiumCard.p1 .podiumMedal{font-size:39px}.podiumName{font-size:14px}.throneBox{padding:8px}.boardRow{padding:11px 7px}.boardSub{gap:7px}.myRaceStrip{display:flex}}
 
   
     /* ── In-card result display ── */
@@ -2130,6 +2151,17 @@ function renderBoard(r){
   if(!table.length){$('leaderboard').innerHTML=`<p class="muted">${LANG==='ar'?'لا يوجد بيانات بعد':'No data yet'}</p>`;return;}
   const leader=table[0].total;
   const myId=SESSION?SESSION.id:null;
+  const leaders=(r.leaderIds&&r.leaderIds.length?r.leaderIds:table.filter(p=>p.total===leader).map(p=>p.id));
+  const leaderNames=table.filter(p=>leaders.includes(p.id)).slice(0,3).map(p=>p.name);
+  const finalDone=!!(STATE&&STATE.results&&STATE.results[104]);
+  const semiMatch=(STATE&&STATE.matches||[]).find(m=>Number(m.no)===101);
+  const semiStarted=!!(STATE&&STATE.results&&(STATE.results[101]||STATE.results[102]))||(semiMatch&&Date.now()>new Date(semiMatch.iso||'2999').getTime());
+  const phase=finalDone?'final':(semiStarted?'finalRace':'semiRace');
+  const phaseLabel=phase==='final'?(LANG==='ar'?'الترتيب النهائي':'FINAL STANDINGS'):(phase==='finalRace'?(LANG==='ar'?'سباق النهائي':'FINAL TITLE RACE'):(LANG==='ar'?'سباق نصف النهائي':'SEMI-FINAL TITLE RACE'));
+  const raceTitle=leaders.length>1?(LANG==='ar'?`${leaders.length} في صدارة مشتركة`:`${leaders.length} tied at the top`):(finalDone?(LANG==='ar'?`البطل: ${leaderNames[0]||''}`:`Champion: ${leaderNames[0]||''}`):(leaderNames[0]||''));
+  const nextGap=table.length>1?Math.max(0,leader-table[1].total):0;
+  const contenders=table.filter(p=>leader-p.total<=10).length;
+  const hero=`<div class="raceHero ${finalDone?'finalStage':''}"><div class="raceEyebrow">${phaseLabel}</div><h3 class="raceTitle">${esc(raceTitle)}</h3><div class="raceLead">${leaders.length>1?(LANG==='ar'?'الحسم ما زال مفتوحاً بين المتصدرين':'The title is still level between the leaders'):(LANG==='ar'?`يتصدر بـ <b>${fmtPts(leader)}</b> نقطة`:`Leads with <b>${fmtPts(leader)}</b> points`)}</div><div class="raceMetrics"><div class="raceMetric"><b>${fmtPts(leader)}</b><span>${LANG==='ar'?'نقاط المتصدر':'Leader points'}</span></div><div class="raceMetric"><b>${fmtPts(nextGap)}</b><span>${LANG==='ar'?'الفارق للثاني':'Gap to second'}</span></div><div class="raceMetric"><b>${contenders}</b><span>${LANG==='ar'?'ضمن ١٠ نقاط':'Within 10 pts'}</span></div></div></div>`;
 
   // Medal labels
   const medals=['🥇','🥈','🥉'];
@@ -2186,12 +2218,15 @@ function renderBoard(r){
           <span class="boardSubItem">P${pl}</span>
         </div>
       </div>
-      <div class="boardPts">${fmtPts(p.total)}</div>
+      <div class="boardScore"><div class="boardPts">${fmtPts(p.total)}</div><div class="boardGap">${gap<0?'−'+fmtPts(Math.abs(gap)):''}</div></div>
     </div>`;
   });
-  const rest=rows?`<div class="card" style="padding:0;overflow:hidden;margin-top:0">${rows}</div>`:'';
+  const rest=rows?`<div class="card boardList" style="padding:0;overflow:hidden;margin-top:0">${rows}</div>`:'';
+  const myIndex=myId?table.findIndex(p=>p.id===myId):-1;
+  let myStrip='';
+  if(myIndex>=3){const p=table[myIndex],gap=p.total-leader;myStrip=`<div class="myRaceStrip"><span class="boardRank">#${myIndex+1}</span><div class="boardMain"><div class="boardName">${esc(p.name)} <span class="youBadge">${tr('youLabel')}</span></div><div class="boardSub">${gap<0?'−'+fmtPts(Math.abs(gap))+' '+(LANG==='ar'?'عن الصدارة':'behind leader'):(LANG==='ar'?'في الصدارة':'Leading')}</div></div><div class="boardPts">${fmtPts(p.total)}</div></div>`;}
 
-  $('leaderboard').innerHTML=podium+rest;
+  $('leaderboard').innerHTML=hero+podium+myStrip+rest;
 }
 
 function toggleThirdRanking(){
