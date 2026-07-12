@@ -2151,17 +2151,6 @@ function renderBoard(r){
   if(!table.length){$('leaderboard').innerHTML=`<p class="muted">${LANG==='ar'?'لا يوجد بيانات بعد':'No data yet'}</p>`;return;}
   const leader=table[0].total;
   const myId=SESSION?SESSION.id:null;
-  const leaders=(r.leaderIds&&r.leaderIds.length?r.leaderIds:table.filter(p=>p.total===leader).map(p=>p.id));
-  const leaderNames=table.filter(p=>leaders.includes(p.id)).slice(0,3).map(p=>p.name);
-  const finalDone=!!(STATE&&STATE.results&&STATE.results[104]);
-  const semiMatch=(STATE&&STATE.matches||[]).find(m=>Number(m.no)===101);
-  const semiStarted=!!(STATE&&STATE.results&&(STATE.results[101]||STATE.results[102]))||(semiMatch&&Date.now()>new Date(semiMatch.iso||'2999').getTime());
-  const phase=finalDone?'final':(semiStarted?'finalRace':'semiRace');
-  const phaseLabel=phase==='final'?(LANG==='ar'?'الترتيب النهائي':'FINAL STANDINGS'):(phase==='finalRace'?(LANG==='ar'?'سباق النهائي':'FINAL TITLE RACE'):(LANG==='ar'?'سباق نصف النهائي':'SEMI-FINAL TITLE RACE'));
-  const raceTitle=leaders.length>1?(LANG==='ar'?`${leaders.length} في صدارة مشتركة`:`${leaders.length} tied at the top`):(finalDone?(LANG==='ar'?`البطل: ${leaderNames[0]||''}`:`Champion: ${leaderNames[0]||''}`):(leaderNames[0]||''));
-  const nextGap=table.length>1?Math.max(0,leader-table[1].total):0;
-  const contenders=table.filter(p=>leader-p.total<=10).length;
-  const hero=`<div class="raceHero ${finalDone?'finalStage':''}"><div class="raceEyebrow">${phaseLabel}</div><h3 class="raceTitle">${esc(raceTitle)}</h3><div class="raceLead">${leaders.length>1?(LANG==='ar'?'الحسم ما زال مفتوحاً بين المتصدرين':'The title is still level between the leaders'):(LANG==='ar'?`يتصدر بـ <b>${fmtPts(leader)}</b> نقطة`:`Leads with <b>${fmtPts(leader)}</b> points`)}</div><div class="raceMetrics"><div class="raceMetric"><b>${fmtPts(leader)}</b><span>${LANG==='ar'?'نقاط المتصدر':'Leader points'}</span></div><div class="raceMetric"><b>${fmtPts(nextGap)}</b><span>${LANG==='ar'?'الفارق للثاني':'Gap to second'}</span></div><div class="raceMetric"><b>${contenders}</b><span>${LANG==='ar'?'ضمن ١٠ نقاط':'Within 10 pts'}</span></div></div></div>`;
 
   // Medal labels
   const medals=['🥇','🥈','🥉'];
@@ -2222,11 +2211,8 @@ function renderBoard(r){
     </div>`;
   });
   const rest=rows?`<div class="card boardList" style="padding:0;overflow:hidden;margin-top:0">${rows}</div>`:'';
-  const myIndex=myId?table.findIndex(p=>p.id===myId):-1;
-  let myStrip='';
-  if(myIndex>=3){const p=table[myIndex],gap=p.total-leader;myStrip=`<div class="myRaceStrip"><span class="boardRank">#${myIndex+1}</span><div class="boardMain"><div class="boardName">${esc(p.name)} <span class="youBadge">${tr('youLabel')}</span></div><div class="boardSub">${gap<0?'−'+fmtPts(Math.abs(gap))+' '+(LANG==='ar'?'عن الصدارة':'behind leader'):(LANG==='ar'?'في الصدارة':'Leading')}</div></div><div class="boardPts">${fmtPts(p.total)}</div></div>`;}
 
-  $('leaderboard').innerHTML=hero+podium+myStrip+rest;
+  $('leaderboard').innerHTML=podium+rest;
 }
 
 function toggleThirdRanking(){
