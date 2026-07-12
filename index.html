@@ -1044,7 +1044,7 @@
     .koBoardCard.done{border-color:rgba(82,201,122,.30)}
     .koBoardCard.open{border-color:rgba(82,201,122,.20)}
     .koBoardCard.locked{border-color:rgba(232,160,32,.22)}
-    .koBoardCard.final{width:138px;height:78px;min-height:0;border-color:var(--gold);border-width:1.3px;background:linear-gradient(180deg,rgba(212,165,32,.10),rgba(0,0,0,.08)),var(--panel);box-shadow:0 0 0 1px var(--gold-line),0 7px 22px var(--gold-glow),0 6px 18px rgba(0,0,0,.22);padding:6px}
+    .koBoardCard.final{width:196px;height:120px;min-height:0;border-color:var(--gold);border-width:1.3px;background:linear-gradient(180deg,rgba(212,165,32,.10),rgba(0,0,0,.08)),var(--panel);box-shadow:0 0 0 1px var(--gold-line),0 7px 22px var(--gold-glow),0 6px 18px rgba(0,0,0,.22);padding:6px}
     .koBoardCard.third{width:124px;height:62px;opacity:.82;border-style:dashed;background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(0,0,0,.04)),var(--panel)}
     .koMiniTop{display:flex;align-items:center;justify-content:space-between;gap:4px;margin-bottom:2px}
     .koMiniNo{font:450 8.5px/1 var(--font-body);background:rgba(255,255,255,.035);border:1px solid var(--line2);border-radius:999px;padding:2px 5px;color:var(--muted);letter-spacing:0}
@@ -1067,6 +1067,30 @@
     .koMiniTeam.lose{opacity:.50}
     .koSlotMini{font:450 8.5px/1.2 var(--font-body);letter-spacing:0;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;max-width:70px;background:rgba(255,255,255,.035);border:1px solid var(--line2);border-radius:999px;padding:2px 5px}
     .koBoardCard.final .koSlotMini{max-width:116px;color:var(--gold2);border-color:var(--gold-line);background:rgba(212,165,32,.10)}
+    /* Premium bracket Final — large enough to read on desktop and phone */
+    .koBoardCard.final{
+      overflow:hidden;border-radius:18px!important;border:2px solid #f3c94f!important;padding:10px 11px!important;
+      background:
+        radial-gradient(circle at 50% -10%,rgba(255,235,155,.34),transparent 42%),
+        linear-gradient(145deg,rgba(98,63,3,.96),rgba(18,30,22,.98) 52%,rgba(73,47,3,.96))!important;
+      box-shadow:0 0 0 2px rgba(255,224,117,.16),0 15px 34px rgba(0,0,0,.38),0 0 34px rgba(244,190,45,.32)!important;
+    }
+    .koBoardCard.final::before{content:'🏆';position:absolute;z-index:0;left:50%;top:51%;transform:translate(-50%,-50%);font-size:76px;opacity:.09;filter:drop-shadow(0 8px 14px rgba(0,0,0,.5));pointer-events:none}
+    .koBoardCard.final::after{content:'';position:absolute;z-index:1;inset:-70% -45%;background:linear-gradient(110deg,transparent 43%,rgba(255,255,255,.16) 50%,transparent 57%);animation:koFinalShine 4.8s ease-in-out infinite;pointer-events:none}
+    .koBoardCard.final>*{position:relative;z-index:2}
+    .koBoardCard.final .koMiniTop{margin-bottom:7px}
+    .koBoardCard.final .koMiniNo{font-size:11px;padding:4px 9px;box-shadow:0 3px 10px rgba(0,0,0,.24)}
+    .koBoardCard.final .koMiniState{font-size:10px;max-width:100px;color:#ffe994;font-weight:800}
+    .koBoardCard.final .koMiniTeam{min-height:31px;padding:5px 7px;border-radius:10px;background:rgba(0,0,0,.16)}
+    .koBoardCard.final .koMiniTeam+.koMiniTeam{margin-top:4px}
+    .koBoardCard.final .koMiniTeam .teamName,.koBoardCard.final .koMiniTeam .teamCode{font-size:13px;font-weight:900;color:#fff7d4;max-width:116px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .koBoardCard.final .koMiniTeam .flagImg{width:27px;height:19px;box-shadow:0 2px 7px rgba(0,0,0,.30)}
+    .koBoardCard.final .koMiniScore{font-size:20px;min-width:23px;color:#ffe06a;font-weight:1000}
+    .koBoardCard.final.done .koMiniTeam.win{background:linear-gradient(90deg,rgba(82,201,122,.25),rgba(255,215,82,.13));box-shadow:inset 0 0 0 1px rgba(255,226,120,.18)}
+    .koBoardCard.final.done .koMiniTeam.win::after{content:'🏆';font-size:14px;margin-inline-start:3px}
+    .koFinalHalo{width:330px;height:270px;background:radial-gradient(circle,rgba(255,210,66,.25),rgba(212,165,32,.09) 42%,transparent 73%)}
+    .koFinalLabel{font-size:18px;font-weight:1000;padding:6px 18px;border-color:rgba(255,218,91,.72);box-shadow:0 0 26px rgba(244,190,45,.30)}
+    @keyframes koFinalShine{0%,58%{transform:translateX(-42%)}88%,100%{transform:translateX(42%)}}
     .koBoardNote{display:none}
     /* ── Phone half-bracket tree view (≤700px) ── */
     .koPhoneTree{padding:2px 0 8px}
@@ -1091,7 +1115,7 @@
     .koBoardCard.ko-sf .koMiniTeam .flagImg{width:19px;height:14px}
     .koBoardCard.ko-sf .koMiniTeam,.koBoardCard.ko-qf .koMiniTeam{min-height:18px}
 
-    @media(max-width:700px){.bracketZoomCtrl{align-items:flex-start;flex-direction:column;gap:6px}.bracketZoomBtns{width:100%;overflow-x:auto;flex-wrap:nowrap}.koBoard{border-radius:14px}.koBoardCard{box-shadow:0 2px 8px rgba(0,0,0,.16)}.koRoundTitle{top:10px;font-size:9.5px}.koFinalLabel{font-size:13px}.koBoard::before{font-size:82px;opacity:.04}}
+    @media(max-width:700px){.bracketZoomCtrl{align-items:flex-start;flex-direction:column;gap:6px}.bracketZoomBtns{width:100%;overflow-x:auto;flex-wrap:nowrap}.koBoard{border-radius:14px}.koBoardCard{box-shadow:0 2px 8px rgba(0,0,0,.16)}.koRoundTitle{top:10px;font-size:9.5px}.koFinalLabel{font-size:15px;padding:5px 14px}.koBoard::before{font-size:82px;opacity:.04}.koBoardCard.final{border-radius:16px!important}.koBoardCard.final .koMiniTeam .teamName,.koBoardCard.final .koMiniTeam .teamCode{font-size:12.5px;max-width:112px}.koBoardCard.final .koMiniScore{font-size:19px}.koFinalHalo{width:270px;height:230px}.koHalfScroll{scroll-padding-inline:28px}}
 
   </style>
 </head>
@@ -1805,8 +1829,21 @@ function renderMatches(){let q=($('search')?.value||'').toLowerCase();let today=
     }
   }
   const urgentMatch=SESSION&&isUrgent(m)&&!hasPickForMatch(m);const urgentCls=urgentMatch?' urgent':'';const msUntil=timeUntilLock(m);const cdHtml=urgentMatch?`<span class="countdownPill">⏱ ${fmtCountdown(msUntil)}</span>`:'';const predBetHtml=predCardBetHtml(m,L,res);const koHasScore=p.hg!==''&&p.hg!=null&&p.ag!==''&&p.ag!=null;const koDraw=koHasScore&&Number(p.hg)===Number(p.ag);const koExtraDisabled=L||!SESSION||!koDraw;const koChoiceHidden=koDraw?'':' hidden';html+=`<article class="card match ${L?'locked':''}${resCls}${urgentCls}"><div class="matchHead"><div class="between"><div class="matchBadges"><span class="pill">#${dispNo(m)}</span>${stageBadge(m)}<span class="pill statusTag ${statusClass(m)}">${matchStatus(m)}</span></div>${matchTimeHtml(m)}</div>${resBadge}${cdHtml}</div><div class="matchBody"><div class="matchStageLine">${esc(stageLabel(m))}</div><div class="teams">${teamHtml(m.h)}<span class="vs">VS</span>${teamHtml(m.a,'away')}</div><div class="scorebox"><input data-pick="${m.no}" data-k="hg" type="number" min="0" max="30" value="${p.hg??''}" ${L||!SESSION?'disabled':''} oninput="scheduleSave(this)"><span class="scoreDash"></span><input data-pick="${m.no}" data-k="ag" type="number" min="0" max="30" value="${p.ag??''}" ${L||!SESSION?'disabled':''} oninput="scheduleSave(this)"></div>${ko?`<div class="koBox row${koChoiceHidden}" data-ko-choice="${m.no}"><span class="pill koPenaltyText">${tr('predictPens')}</span><span class="koWinnerLabel">${LANG==='ar'?'المتأهل هو':'Winner is'}</span><select data-pick="${m.no}" data-k="w" ${koExtraDisabled?'disabled':''} onchange="scheduleSave(this)"><option value="">${tr('winner')}</option><option value="H" ${koDraw&&p.w==='H'?'selected':''}>${esc(m.h)}</option><option value="A" ${koDraw&&p.w==='A'?'selected':''}>${esc(m.a)}</option></select></div>`:''}${res?`<div class="resultDisplay"><div class="resultTeams"><span class="resultName">${esc(m.h)}</span><span class="resultScore">${res.hg} – ${res.ag}${res.pen?` <span class="resultPen">${LANG==='ar'?'ر.ت':'PEN'}</span>`:''}</span><span class="resultName right">${esc(m.a)}</span></div>${res.w&&m.no>=73?`<div class="resultWinner">✓ ${esc(res.w==='H'?m.h:m.a)} ${LANG==='ar'?'تأهل':'advances'}</div>`:''}</div>`:''}${predBetHtml}</div></article>`});$('matches').innerHTML=html;updateKoChoiceState();refreshKoWarns()}
-// Prediction main view keeps only the latest completed match; the existing
-// Completed filter is the archive and is ordered newest first.
+const RESULT_MAIN_WINDOW_MS=6*60*60*1000;
+function resultFinishedAt(m){
+  const saved=Number(STATE&&STATE.resultTimes&&STATE.resultTimes[m.no]);
+  if(saved>0)return saved;
+  const kickoff=new Date(m&&m.iso||'').getTime();
+  return Number.isFinite(kickoff)?kickoff+(3*60*60*1000):0;
+}
+function resultStaysOnMain(m){
+  if(Number(m&&m.no)===104)return true;
+  const finished=resultFinishedAt(m);
+  return finished>0&&Date.now()<finished+RESULT_MAIN_WINDOW_MS;
+}
+
+// Prediction main view keeps completed matches for six hours after the result;
+// the existing Completed filter is the archive and is ordered newest first.
 const renderPredictionMatches = renderMatches;
 renderMatches = function(){
   if(!STATE) return renderPredictionMatches();
@@ -1817,9 +1854,8 @@ renderMatches = function(){
   if(FILTER==='completed'){
     STATE.matches=completed;
   }else{
-    const latestNo=completed.length?Number(completed[0].no):null;
     STATE.matches=(originalMatches||[]).filter(m=>
-      !(STATE.results&&STATE.results[m.no])||Number(m.no)===latestNo
+      !(STATE.results&&STATE.results[m.no])||resultStaysOnMain(m)
     );
   }
   try{return renderPredictionMatches();}
@@ -2017,8 +2053,10 @@ window.addEventListener('beforeunload',e=>{if(DIRTY){e.preventDefault();e.return
 function flushBeacon(){if(!SESSION||!DIRTY)return;try{syncDomToPreds();var tp=touchedPayload();if(!Object.keys(tp).length)return;if(findInvalidKODraws(tp).length)return;var body=JSON.stringify({fn:'savePreds',args:[SESSION.id,SESSION.pin,tp]});navigator.sendBeacon(GAS_URL,new Blob([body],{type:'text/plain;charset=utf-8'}));}catch(e){}}
 document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')flushBeacon();});
 window.addEventListener('pagehide',flushBeacon);
+let ODDS_SHOW_COMPLETED=false;
 async function loadOdds(showAll){
-  showAll=!!showAll;
+  showAll=typeof showAll==='undefined'?ODDS_SHOW_COMPLETED:!!showAll;
+  ODDS_SHOW_COMPLETED=showAll;
   const ck='odds_v5_'+(showAll?'completed':'current');
   const cached=tabCacheGet(ck);
   if(cached)renderOdds(cached,showAll); // instant paint from last fetch
@@ -2485,6 +2523,7 @@ function koBoardPositions(){
   return obj;
 }
 function koMiniSlot(slot){var team=koResolve(slot);if(team)return teamHtmlCode(team);return `<span class="koSlotMini">${esc(koSlotLabel(slot))}</span>`;}
+function koFinalSlot(slot){var team=koResolve(slot);if(team)return teamHtml(team);return `<span class="koSlotMini">${esc(koSlotLabel(slot))}</span>`;}
 function koBoardCard(no){
   if(!koStageAllowed(no))return '';
   const pos=koBoardPositions()[no],m=KO_BY_NO[no]; if(!pos||!m)return '';
@@ -2495,8 +2534,8 @@ function koBoardCard(no){
   const status=done?(LANG==='ar'?'انتهت':'FT'):(STATE.liveScores&&STATE.liveScores[no])?`${STATE.liveScores[no].hg}–${STATE.liveScores[no].ag}`:koShortTime(m.iso);
   return `<div class="koBoardCard ${done?'done':(L?'locked':'open')}${special}${koRoundCls(no)}" style="left:${pos.x}px;top:${pos.y}px;width:${pos.w}px;height:${pos.h}px" aria-label="Match ${dispNoFromNo(no)}">
     <div class="koMiniTop"><span class="koMiniNo">#${dispNoFromNo(no)}</span>${r&&r.pen?`<span class="koPen">PEN</span>`:''}<span class="koMiniState">${esc(status)}</span></div>
-    <div class="koMiniTeam ${hCls}">${koMiniSlot(m.h)}<span class="koMiniScore">${done?r.hg:''}</span></div>
-    <div class="koMiniTeam ${aCls}">${koMiniSlot(m.a)}<span class="koMiniScore">${done?r.ag:''}</span></div>
+    <div class="koMiniTeam ${hCls}">${no===104?koFinalSlot(m.h):koMiniSlot(m.h)}<span class="koMiniScore">${done?r.hg:''}</span></div>
+    <div class="koMiniTeam ${aCls}">${no===104?koFinalSlot(m.a):koMiniSlot(m.a)}<span class="koMiniScore">${done?r.ag:''}</span></div>
   </div>`;
 }
 function koBoardTitle(col){
@@ -2563,7 +2602,7 @@ function koIsPhone(){return !!(window.matchMedia&&window.matchMedia('(max-width:
 function setKoPhoneSide(k){KO_PHONE_SIDE=k;localStorage.setItem('wc26KoPhoneSide',k);renderBracket();}
 const KO_HALF_C={a:81,b:157,c:233,d:309,e:405,f:481,g:557,h:633,r1:119,r2:271,r3:459,r4:611,q1:195,q2:535,s:365,fin:331,third:535};
 function koCardSize(no){
-  if(no===104)return{w:138,h:80};   // final (premium peak)
+  if(no===104)return{w:196,h:120};  // final (premium peak, desktop + phone)
   if(no===103)return{w:124,h:62};   // third place
   const st=koStageForNo(no);        // gentle gradient toward the final
   if(st==='sf')return{w:118,h:70};
@@ -2633,8 +2672,8 @@ function koSideCard(no,pos){
   const status=done?(LANG==='ar'?'انتهت':'FT'):(live?`${live.hg}–${live.ag}`:koShortTime(m.iso));
   return `<div class="koBoardCard ${done?'done':(L?'locked':'open')}${special}${koRoundCls(no)}" style="left:${p.x}px;top:${p.y}px;width:${p.w}px;height:${p.h}px" aria-label="Match ${dispNoFromNo(no)}">
     <div class="koMiniTop"><span class="koMiniNo">#${dispNoFromNo(no)}</span>${r&&r.pen?`<span class="koPen">PEN</span>`:''}<span class="koMiniState">${esc(status)}</span></div>
-    <div class="koMiniTeam ${hCls}">${koMiniSlot(m.h)}<span class="koMiniScore">${done?r.hg:''}</span></div>
-    <div class="koMiniTeam ${aCls}">${koMiniSlot(m.a)}<span class="koMiniScore">${done?r.ag:''}</span></div>
+    <div class="koMiniTeam ${hCls}">${no===104?koFinalSlot(m.h):koMiniSlot(m.h)}<span class="koMiniScore">${done?r.hg:''}</span></div>
+    <div class="koMiniTeam ${aCls}">${no===104?koFinalSlot(m.a):koMiniSlot(m.a)}<span class="koMiniScore">${done?r.ag:''}</span></div>
   </div>`;
 }
 function koHalfTitle(col){return `<div class="koRoundTitle ${col.cls||''}" style="left:${col.x}px;width:${col.w}px;pointer-events:none">${col.label}</div>`;}
@@ -3119,11 +3158,11 @@ renderBetting = function(){
     .filter(m=>Number(m.no)>=89&&STATE.results&&STATE.results[m.no])
     .sort((a,b)=>(new Date(b.iso||0).getTime()-new Date(a.iso||0).getTime())||Number(b.no)-Number(a.no));
   const current=(originalMatches||[])
-    .filter(m=>Number(m.no)>=89&&!(STATE.results&&STATE.results[m.no]))
+    .filter(m=>Number(m.no)>=89&&(!(STATE.results&&STATE.results[m.no])||resultStaysOnMain(m)))
     .sort((a,b)=>Number(a.no)-Number(b.no));
   STATE.matches=BETTING_SHOW_COMPLETED
     ? completed
-    : (completed.length?[completed[0]].concat(current):current);
+    : current;
   try{
     renderAllBettingMatches();
     const box=$('bettingBox');
@@ -3469,11 +3508,14 @@ setInterval(async()=>{
   const r=await call('getLive');
   if(!r||!r.ok||!r.results)return;
   noteAppVersion(r.v);
-  STATE.results=r.results; STATE.liveScores=r.liveScores||{};
+  STATE.results=r.results; STATE.resultTimes=r.resultTimes||STATE.resultTimes||{}; STATE.liveScores=r.liveScores||{};
   if(ACTIVE==='pred')renderMatches();
   if(ACTIVE==='bracket')renderBracket();
 },60*1000);
 setInterval(()=>{if(!STATE||ACTIVE!=='pred')return;if(DIRTY||SAVING)return;let ae=document.activeElement;if(ae&&ae.closest&&ae.closest('#matches'))return;renderMatches();refreshKoWarns()},60000);
+// Keep the six-hour result window accurate while a tab remains open.
+setInterval(()=>{if(!STATE||ACTIVE!=='betting')return;let ae=document.activeElement;if(ae&&ae.closest&&ae.closest('#bettingBox'))return;renderBetting();},60000);
+setInterval(()=>{if(!STATE||ACTIVE!=='odds'||ODDS_SHOW_COMPLETED)return;loadOdds(false);},5*60*1000);
 if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');
 </script>
 </body>
