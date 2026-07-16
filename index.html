@@ -1061,7 +1061,7 @@
     .koBoard::before{content:'🏆';position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);font-size:104px;line-height:1;opacity:.055;filter:drop-shadow(0 8px 20px rgba(0,0,0,.50));pointer-events:none;z-index:0}
     .koFinalHalo{position:absolute;transform:translate(-50%,-50%);width:250px;height:220px;border-radius:38px;background:radial-gradient(circle,rgba(212,165,32,.17),rgba(212,165,32,.07) 34%,transparent 72%);filter:blur(.2px);opacity:.65;z-index:0;pointer-events:none}
     .koFinalLabel{position:absolute;transform:translateX(-50%);z-index:3;padding:4px 14px;border-radius:999px;background:linear-gradient(135deg,rgba(212,165,32,.22),rgba(240,200,66,.08));border:1px solid var(--gold-line);font-family:var(--font-display);font-weight:700;font-size:16px;letter-spacing:.09em;text-transform:uppercase;color:var(--gold2);box-shadow:0 0 18px var(--gold-glow);pointer-events:none}
-    .koThirdLabel{position:absolute;transform:translateX(-50%);z-index:3;font-family:var(--font-display);font-weight:600;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);opacity:.80;pointer-events:none}
+    .koThirdLabel{position:absolute;transform:translateX(-50%);z-index:3;padding:3px 11px;border-radius:999px;background:rgba(190,112,42,.12);border:1px solid rgba(224,151,74,.34);font-family:var(--font-display);font-weight:800;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#e7b879;opacity:1;pointer-events:none}
     .koBoardSvg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
     .koWire{fill:none;stroke:var(--gold-line);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;opacity:.72;filter:drop-shadow(0 0 2px rgba(0,0,0,.18))}
     .koWire.dim{stroke:var(--line);opacity:.50}
@@ -1078,8 +1078,20 @@
     .koBoardCard.done{border-color:rgba(82,201,122,.30)}
     .koBoardCard.open{border-color:rgba(82,201,122,.20)}
     .koBoardCard.locked{border-color:rgba(232,160,32,.22)}
-    .koBoardCard.final{width:196px;height:120px;min-height:0;border-color:var(--gold);border-width:1.3px;background:linear-gradient(180deg,rgba(212,165,32,.10),rgba(0,0,0,.08)),var(--panel);box-shadow:0 0 0 1px var(--gold-line),0 7px 22px var(--gold-glow),0 6px 18px rgba(0,0,0,.22);padding:6px}
-    .koBoardCard.third{width:124px;height:62px;opacity:.82;border-style:dashed;background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(0,0,0,.04)),var(--panel)}
+    .koBoardCard.final{width:216px;height:128px;min-height:0;border-color:var(--gold);border-width:1.3px;background:linear-gradient(180deg,rgba(212,165,32,.10),rgba(0,0,0,.08)),var(--panel);box-shadow:0 0 0 1px var(--gold-line),0 7px 22px var(--gold-glow),0 6px 18px rgba(0,0,0,.22);padding:6px}
+    .koBoardCard.third{width:170px;height:90px;opacity:1;overflow:hidden;border:1.5px solid rgba(224,151,74,.72);border-style:solid;background:radial-gradient(circle at 50% -20%,rgba(231,164,88,.22),transparent 48%),linear-gradient(145deg,rgba(92,48,18,.92),rgba(25,31,25,.98) 58%,rgba(69,38,19,.92));box-shadow:0 0 0 1px rgba(224,151,74,.12),0 10px 24px rgba(0,0,0,.28),0 0 20px rgba(190,112,42,.15);padding:7px 8px}
+    .koBoardCard.third::before{content:'🥉';position:absolute;left:50%;top:54%;transform:translate(-50%,-50%);font-size:58px;opacity:.075;filter:drop-shadow(0 7px 12px rgba(0,0,0,.45));pointer-events:none}
+    .koBoardCard.third>*{position:relative;z-index:1}
+    .koBoardCard.third .koMiniTop{margin-bottom:4px}
+    .koBoardCard.third .koMiniNo{background:linear-gradient(135deg,#c77732,#e5a45f);border-color:transparent;color:#24140a;font-size:10px;font-weight:900;padding:3px 7px}
+    .koBoardCard.third .koMiniState{color:#efc18f;font-size:9.5px;font-weight:750;max-width:88px}
+    .koBoardCard.third .koMiniTeam{min-height:25px;padding:3px 5px;border-radius:8px;background:rgba(0,0,0,.13)}
+    .koBoardCard.third .koMiniTeam+.koMiniTeam{margin-top:3px}
+    .koBoardCard.third .koMiniTeam .team{display:grid;grid-template-columns:23px minmax(0,1fr);align-items:center;justify-content:stretch;gap:7px;width:100%;direction:ltr}
+    .koBoardCard.third .koMiniTeam .teamName,.koBoardCard.third .koMiniTeam .teamCode{font-size:12px;font-weight:800;color:#f8e8d5;max-width:108px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .koBoardCard.third .koMiniTeam .teamName{text-align:left}
+    .koBoardCard.third .koMiniTeam .flagImg{width:23px;height:16px;box-shadow:0 2px 6px rgba(0,0,0,.28)}
+    .koBoardCard.third .koMiniScore{font-size:16px;min-width:18px;color:#efb66f;font-weight:950}
     .koMiniTop{display:flex;align-items:center;justify-content:space-between;gap:4px;margin-bottom:2px}
     .koMiniNo{font:450 8.5px/1 var(--font-body);background:rgba(255,255,255,.035);border:1px solid var(--line2);border-radius:999px;padding:2px 5px;color:var(--muted);letter-spacing:0}
     .koMiniState{font-size:7.8px;color:var(--muted);white-space:nowrap;max-width:62px;overflow:hidden;text-overflow:ellipsis}
@@ -1103,26 +1115,28 @@
     .koBoardCard.final .koSlotMini{max-width:116px;color:var(--gold2);border-color:var(--gold-line);background:rgba(212,165,32,.10)}
     /* Premium bracket Final — large enough to read on desktop and phone */
     .koBoardCard.final{
-      overflow:hidden;border-radius:18px!important;border:2px solid #f3c94f!important;padding:10px 11px!important;
+      overflow:hidden;border-radius:19px!important;border:2px solid #f3c94f!important;padding:10px 11px!important;
       background:
         radial-gradient(circle at 50% -10%,rgba(255,235,155,.34),transparent 42%),
         linear-gradient(145deg,rgba(98,63,3,.96),rgba(18,30,22,.98) 52%,rgba(73,47,3,.96))!important;
       box-shadow:0 0 0 2px rgba(255,224,117,.16),0 15px 34px rgba(0,0,0,.38),0 0 34px rgba(244,190,45,.32)!important;
     }
-    .koBoardCard.final::before{content:'🏆';position:absolute;z-index:0;left:50%;top:51%;transform:translate(-50%,-50%);font-size:76px;opacity:.09;filter:drop-shadow(0 8px 14px rgba(0,0,0,.5));pointer-events:none}
+    .koBoardCard.final::before{content:'🏆';position:absolute;z-index:0;left:50%;top:51%;transform:translate(-50%,-50%);font-size:78px;opacity:.09;filter:drop-shadow(0 8px 14px rgba(0,0,0,.5));pointer-events:none}
     .koBoardCard.final::after{content:'';position:absolute;z-index:1;inset:-70% -45%;background:linear-gradient(110deg,transparent 43%,rgba(255,255,255,.16) 50%,transparent 57%);animation:koFinalShine 4.8s ease-in-out infinite;pointer-events:none}
     .koBoardCard.final>*{position:relative;z-index:2}
     .koBoardCard.final .koMiniTop{margin-bottom:7px}
-    .koBoardCard.final .koMiniNo{font-size:11px;padding:4px 9px;box-shadow:0 3px 10px rgba(0,0,0,.24)}
-    .koBoardCard.final .koMiniState{font-size:10px;max-width:100px;color:#ffe994;font-weight:800}
-    .koBoardCard.final .koMiniTeam{min-height:31px;padding:5px 7px;border-radius:10px;background:rgba(0,0,0,.16)}
+    .koBoardCard.final .koMiniNo{font-size:11.5px;padding:4px 9px;box-shadow:0 3px 10px rgba(0,0,0,.24)}
+    .koBoardCard.final .koMiniState{font-size:10px;max-width:108px;color:#ffe994;font-weight:800}
+    .koBoardCard.final .koMiniTeam{min-height:32px;padding:5px 7px;border-radius:10px;background:rgba(0,0,0,.16)}
     .koBoardCard.final .koMiniTeam+.koMiniTeam{margin-top:4px}
-    .koBoardCard.final .koMiniTeam .teamName,.koBoardCard.final .koMiniTeam .teamCode{font-size:13px;font-weight:900;color:#fff7d4;max-width:116px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .koBoardCard.final .koMiniTeam .team{display:grid;grid-template-columns:27px minmax(0,1fr);align-items:center;justify-content:stretch;gap:8px;width:100%;direction:ltr}
+    .koBoardCard.final .koMiniTeam .teamName,.koBoardCard.final .koMiniTeam .teamCode{font-size:13.5px;font-weight:900;color:#fff7d4;max-width:132px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .koBoardCard.final .koMiniTeam .teamName{text-align:left}
     .koBoardCard.final .koMiniTeam .flagImg{width:27px;height:19px;box-shadow:0 2px 7px rgba(0,0,0,.30)}
     .koBoardCard.final .koMiniScore{font-size:20px;min-width:23px;color:#ffe06a;font-weight:1000}
     .koBoardCard.final.done .koMiniTeam.win{background:linear-gradient(90deg,rgba(82,201,122,.25),rgba(255,215,82,.13));box-shadow:inset 0 0 0 1px rgba(255,226,120,.18)}
     .koBoardCard.final.done .koMiniTeam.win::after{content:'🏆';font-size:14px;margin-inline-start:3px}
-    .koFinalHalo{width:330px;height:270px;background:radial-gradient(circle,rgba(255,210,66,.25),rgba(212,165,32,.09) 42%,transparent 73%)}
+    .koFinalHalo{width:326px;height:270px;background:radial-gradient(circle,rgba(255,210,66,.23),rgba(212,165,32,.08) 42%,transparent 73%)}
     .koFinalLabel{font-size:18px;font-weight:1000;padding:6px 18px;border-color:rgba(255,218,91,.72);box-shadow:0 0 26px rgba(244,190,45,.30)}
     @keyframes koFinalShine{0%,58%{transform:translateX(-42%)}88%,100%{transform:translateX(42%)}}
     .koBoardNote{display:none}
@@ -1149,7 +1163,7 @@
     .koBoardCard.ko-sf .koMiniTeam .flagImg{width:19px;height:14px}
     .koBoardCard.ko-sf .koMiniTeam,.koBoardCard.ko-qf .koMiniTeam{min-height:18px}
 
-    @media(max-width:700px){.bracketZoomCtrl{align-items:flex-start;flex-direction:column;gap:6px}.bracketZoomBtns{width:100%;overflow-x:auto;flex-wrap:nowrap}.koBoard{border-radius:14px}.koBoardCard{box-shadow:0 2px 8px rgba(0,0,0,.16)}.koRoundTitle{top:10px;font-size:9.5px}.koFinalLabel{font-size:15px;padding:5px 14px}.koBoard::before{font-size:82px;opacity:.04}.koBoardCard.final{border-radius:16px!important}.koBoardCard.final .koMiniTeam .teamName,.koBoardCard.final .koMiniTeam .teamCode{font-size:12.5px;max-width:112px}.koBoardCard.final .koMiniScore{font-size:19px}.koFinalHalo{width:270px;height:230px}.koHalfScroll{scroll-padding-inline:28px}}
+    @media(max-width:700px){.bracketZoomCtrl{align-items:flex-start;flex-direction:column;gap:6px}.bracketZoomBtns{width:100%;overflow-x:auto;flex-wrap:nowrap}.koBoard{border-radius:14px}.koBoardCard{box-shadow:0 2px 8px rgba(0,0,0,.16)}.koRoundTitle{top:10px;font-size:9.5px}.koFinalLabel{font-size:14px;padding:4px 12px}.koThirdLabel{font-size:11px;padding:3px 9px}.koBoard::before{font-size:70px;opacity:.035}.koBoardCard.final{border-radius:17px!important;padding:9px 10px!important}.koBoardCard.final .koMiniTeam .teamName,.koBoardCard.final .koMiniTeam .teamCode{font-size:13px;max-width:122px}.koBoardCard.final .koMiniScore{font-size:19px}.koBoardCard.third .koMiniTeam .teamName,.koBoardCard.third .koMiniTeam .teamCode{font-size:11.5px;max-width:104px}.koFinalHalo{width:260px;height:220px}.koHalfScroll{scroll-padding-inline:20px}}
 
   </style>
 </head>
@@ -2554,7 +2568,7 @@ function koBoardPositions(){
   cols.forEach(c=>{const w=koCardSize(rep[c.key]).w;colX[c.key]=x;colW[c.key]=w;x+=w+gap;});
   const boardW=x-gap+margin;
   // center coordinates — boxes grow symmetrically around these, so connector wires never move
-  const C={a:81,b:157,c:233,d:309,e:405,f:481,g:557,h:633,r1:119,r2:271,r3:459,r4:611,q1:195,q2:535,s:365,final:331,third:535};
+  const C={a:81,b:157,c:233,d:309,e:405,f:481,g:557,h:633,r1:119,r2:271,r3:459,r4:611,q1:195,q2:535,s:365,final:331,third:490};
   const raw={
     74:['l32',C.a],77:['l32',C.b],73:['l32',C.c],75:['l32',C.d],83:['l32',C.e],84:['l32',C.f],81:['l32',C.g],82:['l32',C.h],
     89:['l16',C.r1],90:['l16',C.r2],93:['l16',C.r3],94:['l16',C.r4],97:['lqf',C.q1],98:['lqf',C.q2],101:['lsf',C.s],
@@ -2564,7 +2578,7 @@ function koBoardPositions(){
   };
   let maxBottom=0, minTop=Infinity;
   const obj={__w:boardW,__cols:cols.map(c=>({key:c.key,stage:c.stage,label:c.label,cls:c.cls,x:colX[c.key],w:colW[c.key]}))};
-  Object.keys(raw).forEach(k=>{const n=Number(k),col=raw[k][0]; if(colX[col]==null)return; const sz=koCardSize(n),top=Math.round(raw[k][1]-sz.h/2); obj[n]={x:colX[col],y:top,w:sz.w,h:sz.h}; maxBottom=Math.max(maxBottom,top+sz.h); minTop=Math.min(minTop,top);});
+  Object.keys(raw).forEach(k=>{const n=Number(k),col=raw[k][0]; if(colX[col]==null)return; const sz=koCardSize(n),top=Math.round(raw[k][1]-sz.h/2),left=colX[col]+Math.round((colW[col]-sz.w)/2); obj[n]={x:left,y:top,w:sz.w,h:sz.h}; maxBottom=Math.max(maxBottom,top+sz.h); minTop=Math.min(minTop,top);});
   const fullBoard=cols.length>=7;obj.__h=fullBoard?Math.max(700,maxBottom+margin):maxBottom+margin+60;
   // Store minTop so koBoardHtml can scroll past the dead space above filtered cards
   obj.__minTop=minTop===Infinity?0:minTop;
@@ -2581,9 +2595,9 @@ function koBoardCard(no){
   const special=no===104?' final':(no===103?' third':'');
   const status=done?(LANG==='ar'?'انتهت':'FT'):(STATE.liveScores&&STATE.liveScores[no])?`${STATE.liveScores[no].hg}–${STATE.liveScores[no].ag}`:koShortTime(m.iso);
   return `<div class="koBoardCard ${done?'done':(L?'locked':'open')}${special}${koRoundCls(no)}" style="left:${pos.x}px;top:${pos.y}px;width:${pos.w}px;height:${pos.h}px" aria-label="Match ${dispNoFromNo(no)}">
-    <div class="koMiniTop"><span class="koMiniNo">#${dispNoFromNo(no)}</span>${r&&r.pen?`<span class="koPen">PEN</span>`:''}<span class="koMiniState">${esc(status)}</span></div>
-    <div class="koMiniTeam ${hCls}">${no===104?koFinalSlot(m.h):koMiniSlot(m.h)}<span class="koMiniScore">${done?r.hg:''}</span></div>
-    <div class="koMiniTeam ${aCls}">${no===104?koFinalSlot(m.a):koMiniSlot(m.a)}<span class="koMiniScore">${done?r.ag:''}</span></div>
+    <div class="koMiniTop"><span class="koMiniNo">${no===103?'🥉 ':''}#${dispNoFromNo(no)}</span>${r&&r.pen?`<span class="koPen">PEN</span>`:''}<span class="koMiniState">${esc(status)}</span></div>
+    <div class="koMiniTeam ${hCls}">${no>=103?koFinalSlot(m.h):koMiniSlot(m.h)}<span class="koMiniScore">${done?r.hg:''}</span></div>
+    <div class="koMiniTeam ${aCls}">${no>=103?koFinalSlot(m.a):koMiniSlot(m.a)}<span class="koMiniScore">${done?r.ag:''}</span></div>
   </div>`;
 }
 function koBoardTitle(col){
@@ -2648,10 +2662,10 @@ let KO_PHONE_SIDE=localStorage.getItem('wc26KoPhoneSide')||'';
 let KO_LAST_PHONE=!!(window.matchMedia&&window.matchMedia('(max-width:700px)').matches);
 function koIsPhone(){return !!(window.matchMedia&&window.matchMedia('(max-width:700px)').matches);}
 function setKoPhoneSide(k){KO_PHONE_SIDE=k;localStorage.setItem('wc26KoPhoneSide',k);renderBracket();}
-const KO_HALF_C={a:81,b:157,c:233,d:309,e:405,f:481,g:557,h:633,r1:119,r2:271,r3:459,r4:611,q1:195,q2:535,s:365,fin:331,third:535};
+const KO_HALF_C={a:81,b:157,c:233,d:309,e:405,f:481,g:557,h:633,r1:119,r2:271,r3:459,r4:611,q1:195,q2:535,s:365,fin:331,third:490};
 function koCardSize(no){
-  if(no===104)return{w:196,h:120};  // final (premium peak, desktop + phone)
-  if(no===103)return{w:124,h:62};   // third place
+  if(no===104)return koIsPhone()?{w:204,h:122}:{w:216,h:128}; // responsive Final showcase
+  if(no===103)return{w:170,h:90};   // readable bronze showcase
   const st=koStageForNo(no);        // gentle gradient toward the final
   if(st==='sf')return{w:118,h:70};
   if(st==='qf')return{w:114,h:64};
@@ -2662,6 +2676,7 @@ function koRoundCls(no){const st=koStageForNo(no);return (st==='r16'||st==='qf'|
 const KO_FEED=[[74,89],[77,89],[73,90],[75,90],[89,97],[90,97],[83,93],[84,93],[81,94],[82,94],[93,98],[94,98],[97,101],[98,101],[76,91],[78,91],[79,92],[80,92],[86,95],[88,95],[85,96],[87,96],[91,99],[92,99],[95,100],[96,100],[99,102],[100,102],[101,104],[102,104]];
 function koHalfLayout(side){
   const Y=KO_HALF_C,ar=LANG==='ar';
+  const F={s:205,fin:145,third:300}; // compact centre view for phones
   const L32=ar?'دور ٣٢':'R32',L16=ar?'دور ١٦':'R16',QF=ar?'ربع':'QF',SF=ar?'نصف':'SF',FIN=ar?'النهائي':'FINAL';
   if(side==='left')return[
     {key:'l32',label:L32,matches:[[74,Y.a],[77,Y.b],[73,Y.c],[75,Y.d],[83,Y.e],[84,Y.f],[81,Y.g],[82,Y.h]]},
@@ -2676,9 +2691,9 @@ function koHalfLayout(side){
     {key:'r16',label:L16,matches:[[91,Y.r1],[92,Y.r2],[95,Y.r3],[96,Y.r4]]},
     {key:'r32',label:L32,matches:[[76,Y.a],[78,Y.b],[79,Y.c],[80,Y.d],[86,Y.e],[88,Y.f],[85,Y.g],[87,Y.h]]}];
   return[
-    {key:'lsf',label:SF,matches:[[101,Y.s]]},
-    {key:'final',label:FIN,cls:'center',matches:[[104,Y.fin],[103,Y.third]]},
-    {key:'rsf',label:SF,matches:[[102,Y.s]]}];
+    {key:'lsf',label:SF,matches:[[101,F.s]]},
+    {key:'final',label:FIN,cls:'center',matches:[[104,F.fin],[103,F.third]]},
+    {key:'rsf',label:SF,matches:[[102,F.s]]}];
 }
 function koHalfPositions(side){
   const margin=14,gap=26;
@@ -2689,7 +2704,7 @@ function koHalfPositions(side){
     c.matches.forEach(mm=>{
       const no=mm[0],cy=mm[1],sz=koCardSize(no);
       const top=Math.round(cy-sz.h/2); // grow symmetrically around the fixed center (wires stay put)
-      pos[no]={x:x,y:top,w:sz.w,h:sz.h};maxBottom=Math.max(maxBottom,top+sz.h);
+      pos[no]={x:x+Math.round((cw-sz.w)/2),y:top,w:sz.w,h:sz.h};maxBottom=Math.max(maxBottom,top+sz.h);
     });
     x+=cw+gap;
   });
@@ -2719,9 +2734,9 @@ function koSideCard(no,pos){
   const live=STATE.liveScores&&STATE.liveScores[no];
   const status=done?(LANG==='ar'?'انتهت':'FT'):(live?`${live.hg}–${live.ag}`:koShortTime(m.iso));
   return `<div class="koBoardCard ${done?'done':(L?'locked':'open')}${special}${koRoundCls(no)}" style="left:${p.x}px;top:${p.y}px;width:${p.w}px;height:${p.h}px" aria-label="Match ${dispNoFromNo(no)}">
-    <div class="koMiniTop"><span class="koMiniNo">#${dispNoFromNo(no)}</span>${r&&r.pen?`<span class="koPen">PEN</span>`:''}<span class="koMiniState">${esc(status)}</span></div>
-    <div class="koMiniTeam ${hCls}">${no===104?koFinalSlot(m.h):koMiniSlot(m.h)}<span class="koMiniScore">${done?r.hg:''}</span></div>
-    <div class="koMiniTeam ${aCls}">${no===104?koFinalSlot(m.a):koMiniSlot(m.a)}<span class="koMiniScore">${done?r.ag:''}</span></div>
+    <div class="koMiniTop"><span class="koMiniNo">${no===103?'🥉 ':''}#${dispNoFromNo(no)}</span>${r&&r.pen?`<span class="koPen">PEN</span>`:''}<span class="koMiniState">${esc(status)}</span></div>
+    <div class="koMiniTeam ${hCls}">${no>=103?koFinalSlot(m.h):koMiniSlot(m.h)}<span class="koMiniScore">${done?r.hg:''}</span></div>
+    <div class="koMiniTeam ${aCls}">${no>=103?koFinalSlot(m.a):koMiniSlot(m.a)}<span class="koMiniScore">${done?r.ag:''}</span></div>
   </div>`;
 }
 function koHalfTitle(col){return `<div class="koRoundTitle ${col.cls||''}" style="left:${col.x}px;width:${col.w}px;pointer-events:none">${col.label}</div>`;}
