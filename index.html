@@ -406,6 +406,11 @@
       background: rgba(212,165,32,.20);
       flex-shrink: 0;
     }
+    .predCancelRow{display:flex;justify-content:center;margin:-2px 0 8px}
+    .predCancelBtn{min-height:30px;padding:5px 10px;font-size:11px;border-color:rgba(232,80,80,.28);color:var(--bad);background:rgba(232,80,80,.055)}
+    .predCancelBtn:hover{border-color:rgba(232,80,80,.50);background:rgba(232,80,80,.11)}
+    .predBetSaving{display:inline-flex;align-items:center;gap:6px}
+    .predBetSaving::before{content:'';width:10px;height:10px;border:2px solid rgba(232,160,32,.28);border-top-color:var(--warn);border-radius:50%;animation:spin .7s linear infinite}
 
     /* KO box */
     .koBox {
@@ -499,11 +504,15 @@
     }
     .ptsDrwRow:last-child { border-bottom: none; }
     .ptsDrwLabel { color: var(--muted); font-size: 11px; }
-    .ptsDrwNums { display: flex; gap: 6px; align-items: center; flex-wrap: nowrap; }
-    .ptsDrwPts { font-family: var(--font-display); font-weight: 700; font-size: 13px; color: var(--gold2); margin-inline-start: auto; }
+    .ptsDrwNums { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; min-width: 0; }
+    .ptsDrwPts { font-family: var(--font-display); font-weight: 700; font-size: 13px; color: var(--gold2); margin-inline-start: auto; white-space: nowrap; }
     .ptsDrwExact { color: var(--good);  font-family: var(--font-display); font-weight: 700; font-size: 12px; }
     .ptsDrwWin   { color: var(--done);  font-family: var(--font-display); font-weight: 700; font-size: 12px; }
     .ptsDrwWrong { color: var(--bad);   font-family: var(--font-display); font-weight: 700; font-size: 12px; }
+    .ptsDrwPending{color:var(--muted);font-family:var(--font-display);font-weight:700;font-size:12px;white-space:nowrap}
+    .ptsDrwBetRow .ptsDrwWin,.ptsDrwBetRow .ptsDrwWrong{white-space:nowrap}
+    .ptsDrwBetRow{margin-top:3px;padding-top:8px;border-top:1px solid var(--gold-line);background:linear-gradient(90deg,rgba(212,165,32,.045),transparent);border-radius:5px}
+    .ptsDrwBetRow .ptsDrwLabel{color:var(--gold2);font-weight:700}
 
     /* ── Tables ── */
     table { width: 100%; border-collapse: collapse; min-width: 580px; }
@@ -1600,16 +1609,32 @@ function togglePtsBreakdown(){
   if(tog)tog.classList.toggle('open',PTS_DRW_OPEN);
 }
 
+function computeBetBreakdown(){
+  const bets=(BETS_STATE&&BETS_STATE.myBets)||((STATE&&STATE.myBets)||{});
+  let won=0,lost=0,pending=0,settled=0,count=0;
+  Object.values(bets||{}).forEach(b=>{
+    if(!b)return;count++;
+    const amount=Number(b.amount||0);
+    if(!b.settled){pending+=amount;return;}
+    settled++;
+    const net=Number(b.payout||0)-amount;
+    if(net>=0)won+=net;else lost+=Math.abs(net);
+  });
+  return {won,lost,pending,settled,count,net:won-lost};
+}
+
 function ptsTileHtml(totalPts){
   const ar=LANG==='ar';
   const label=quickLabel('Points','النقاط');
   const breakdownRows=computeStageBreakdown();
+  const bets=computeBetBreakdown();
   const hasKO=breakdownRows.some(r=>r.key!=='grp');
-  // Only show the toggle if there's more than just group stage data
-  const showToggle=breakdownRows.length>0&&hasKO;
+  // Betting history is useful on its own; otherwise keep the old rule of only
+  // opening the detailed drawer once knockout scoring exists.
+  const showToggle=(breakdownRows.length>0&&hasKO)||bets.count>0;
   let drwHtml='';
   if(showToggle){
-    const rows=breakdownRows.map(r=>{
+    let rows=breakdownRows.map(r=>{
       const ptsStr=(r.pts>0?'+':'')+r.pts;
       const signs=[];
       if(r.exact>0)signs.push(`<span class="ptsDrwExact">${ar?'ص':'E'} ${r.exact}</span>`);
@@ -1617,6 +1642,14 @@ function ptsTileHtml(totalPts){
       if(r.wrong>0)signs.push(`<span class="ptsDrwWrong">${ar?'خ':'L'} ${r.wrong}</span>`);
       return `<div class="ptsDrwRow"><span class="ptsDrwLabel">${esc(r.label)}</span><span class="ptsDrwNums">${signs.join('')}<span class="ptsDrwPts">${ptsStr}</span></span></div>`;
     }).join('');
+    if(bets.count){
+      const signs=[];
+      if(bets.won>0)signs.push(`<span class="ptsDrwWin">${ar?'ربح':'Won'} +${fmtPts(bets.won)}</span>`);
+      if(bets.lost>0)signs.push(`<span class="ptsDrwWrong">${ar?'خسر':'Lost'} -${fmtPts(bets.lost)}</span>`);
+      if(bets.pending>0)signs.push(`<span class="ptsDrwPending">${ar?'معلّق':'Open'} ${fmtPts(bets.pending)}</span>`);
+      const netStr=(bets.net>0?'+':'')+fmtPts(bets.net);
+      rows+=`<div class="ptsDrwRow ptsDrwBetRow"><span class="ptsDrwLabel">🎲 ${ar?'الرهانات':'Bets'}</span><span class="ptsDrwNums">${signs.join('')}<span class="ptsDrwPts">${netStr}</span></span></div>`;
+    }
     drwHtml=`<div class="ptsDrw${PTS_DRW_OPEN?' open':''}" id="ptsDrw">${rows}</div>`;
   }
   const toggleBtn=showToggle
@@ -1907,8 +1940,45 @@ renderMatches = function(){
     );
   }
   try{return renderPredictionMatches();}
-  finally{STATE.matches=originalMatches;}
+  finally{STATE.matches=originalMatches;decoratePredictionEnhancements();}
 };
+
+function savedPrediction(no){
+  return (STATE&&STATE.myPreds&&(STATE.myPreds[no]||STATE.myPreds[String(no)]))||null;
+}
+function decoratePredictionEnhancements(){
+  if(!STATE)return;
+  document.querySelectorAll('#matches input[data-pick][data-k="hg"]').forEach(input=>{
+    const no=Number(input.dataset.pick),card=input.closest('.match');if(!card)return;
+    let slot=card.querySelector(`[data-pred-bet="${no}"]`);
+    if(!slot){
+      const betBox=card.querySelector('.betBox');
+      if(betBox){slot=document.createElement('div');slot.className='predBetSlot';slot.dataset.predBet=String(no);betBox.parentNode.insertBefore(slot,betBox);slot.appendChild(betBox);}
+    }
+    if(!SESSION||!savedPrediction(no))return;
+    const m=(STATE.matches||[]).find(x=>Number(x.no)===no);
+    if(!m||locked(m)||(STATE.results&&STATE.results[no]))return;
+    if(card.querySelector('.predCancelRow'))return;
+    const row=document.createElement('div');row.className='predCancelRow';
+    const btn=document.createElement('button');btn.type='button';btn.className='ghost danger predCancelBtn';
+    btn.textContent=LANG==='ar'?'✕ إلغاء التوقع':'✕ Cancel prediction';
+    btn.addEventListener('click',()=>cancelPrediction(no));row.appendChild(btn);
+    const anchor=slot||card.querySelector('.betBox');
+    if(anchor)anchor.parentNode.insertBefore(row,anchor);else card.querySelector('.matchBody')?.appendChild(row);
+  });
+}
+function refreshPredBetSlots(nos){
+  (nos||[]).forEach(rawNo=>{
+    const no=Number(rawNo),slot=document.querySelector(`#matches [data-pred-bet="${no}"]`);
+    const m=(STATE&&STATE.matches||[]).find(x=>Number(x.no)===no);if(!slot||!m)return;
+    slot.innerHTML=predCardBetHtml(m,locked(m),STATE.results&&STATE.results[no]);
+  });
+}
+function markPredBetSaving(no){
+  if(Number(no)<89||savedPrediction(no))return;
+  const slot=document.querySelector(`#matches [data-pred-bet="${Number(no)}"]`),msg=slot&&slot.querySelector('.warnTag');
+  if(msg){msg.classList.add('predBetSaving');msg.textContent=LANG==='ar'?'جارٍ حفظ التوقع…':'Saving prediction…';}
+}
 
  function updateKoChoiceState(){
   document.querySelectorAll('#matches .koBox').forEach(box=>{
@@ -1988,13 +2058,17 @@ function incompleteScoreMessage(){return LANG==='ar'?'أكمل نتيجة الف
 
 function scheduleSave(el){
   if(!SESSION)return;
-  if(el&&el.dataset&&el.dataset.pick)TOUCHED.add(String(el.dataset.pick));
+  const editedNo=el&&el.dataset&&el.dataset.pick?String(el.dataset.pick):'';
+  if(editedNo)TOUCHED.add(editedNo);
   syncDomToPreds();
   refreshKoWarns();
   DIRTY=true;
   updateSaveStatus();
   clearTimeout(SAVE_TIMER);
-  SAVE_TIMER=setTimeout(()=>savePreds(false),1200);
+  const editedPick=editedNo&&(PREDS[editedNo]||PREDS[Number(editedNo)]);
+  const ready=editedNo&&hasCompleteScore(editedPick)&&!isKODrawMissingWinner(editedNo,editedPick);
+  if(ready)markPredBetSaving(editedNo);
+  SAVE_TIMER=setTimeout(()=>savePreds(false),ready?350:1200);
 }
 
 function touchedPayload(){
@@ -2046,7 +2120,7 @@ async function savePreds(manual){
   const localAfterRequest=cloneObj(PREDS);
   SAVING=false;
 
-  if(!r.ok){DIRTY=true;toast(r.msg,true);updateSaveStatus();return;}
+  if(!r.ok){DIRTY=true;toast(r.msg,true);updateSaveStatus();refreshPredBetSlots(sentNos);return;}
 
   const rejectedSet=new Set((r.rejected||[]).map(String));
   const invalidSet=new Set((r.invalidKODraws||[]).map(String));
@@ -2070,6 +2144,11 @@ async function savePreds(manual){
 
   STATE.myPreds=PREDS;
   saveStateCache();
+  // The betting card reads only server-confirmed predictions. Refresh just the
+  // affected slots immediately instead of waiting for a full page refresh or a
+  // new betting-pool request.
+  refreshPredBetSlots(sentNos);
+  decoratePredictionEnhancements();
 
   if(r.cancelledBets&&r.cancelledBets.length){
     r.cancelledBets.forEach(cb=>{delete BETS_STATE.myBets[cb.matchNo];delete BETS_STATE.myBets[String(cb.matchNo)];});
@@ -2092,6 +2171,47 @@ async function savePreds(manual){
     SAVE_AGAIN=false;
     if(DIRTY){clearTimeout(SAVE_TIMER);SAVE_TIMER=setTimeout(()=>savePreds(false),350);}
   }
+}
+async function cancelPrediction(matchNo){
+  matchNo=Number(matchNo);
+  if(!SESSION)return toast(tr('loginFirst'),true);
+  if(SAVING)return toast(LANG==='ar'?'انتظر اكتمال الحفظ الحالي':'Wait for the current save to finish',true);
+  const m=(STATE&&STATE.matches||[]).find(x=>Number(x.no)===matchNo);
+  if(!m||locked(m)||(STATE.results&&STATE.results[matchNo]))return toast(LANG==='ar'?'التوقع مقفل ولا يمكن إلغاؤه':'This prediction is locked and cannot be cancelled',true);
+  const question=LANG==='ar'
+    ?'إلغاء توقع هذه المباراة؟ سيتم أيضاً إلغاء أي رهان مفتوح عليها وإعادة نقاطه.'
+    :'Cancel this prediction? Any open bet on it will also be cancelled and refunded.';
+  if(!confirm(question))return;
+
+  clearTimeout(SAVE_TIMER);
+  syncDomToPreds();
+  const localBefore=cloneObj(PREDS);
+  SAVING=true;updateSaveStatus();
+  const r=await call('savePreds',SESSION.id,SESSION.pin,{[matchNo]:{_delete:true}});
+  SAVING=false;
+  if(!r||!r.ok){DIRTY=true;updateSaveStatus();return toast((r&&r.msg)||'Save failed',true);}
+  if((r.rejected||[]).map(Number).includes(matchNo)){
+    DIRTY=TOUCHED.size>0;updateSaveStatus();renderMatches();
+    return toast(LANG==='ar'?'التوقع مقفل ولا يمكن إلغاؤه':'This prediction is locked and cannot be cancelled',true);
+  }
+  if(r.preds&&(r.preds[matchNo]||r.preds[String(matchNo)])){
+    DIRTY=TOUCHED.size>0;updateSaveStatus();renderMatches();
+    return toast(LANG==='ar'?'لم يتم الإلغاء — حدّث خادم التطبيق أولاً':'Cancellation was not saved — deploy the updated server first',true);
+  }
+
+  PREDS=r.preds||{};
+  TOUCHED.forEach(no=>{if(Number(no)!==matchNo&&localBefore[no])PREDS[no]=localBefore[no];});
+  delete PREDS[matchNo];delete PREDS[String(matchNo)];TOUCHED.delete(String(matchNo));
+  STATE.myPreds=PREDS;
+
+  (r.cancelledBets||[]).forEach(cb=>{
+    delete BETS_STATE.myBets[cb.matchNo];delete BETS_STATE.myBets[String(cb.matchNo)];
+    if(BETS_STATE.balance!=null)BETS_STATE.balance+=Number(cb.amount||0);
+  });
+  STATE.myBets=BETS_STATE.myBets;STATE.myBalance=BETS_STATE.balance;
+  DIRTY=TOUCHED.size>0;updateSaveStatus();saveStateCache();renderStats();renderMatches();
+  if(r.cancelledBets&&r.cancelledBets.length){PRED_BETTING_LOADED=false;loadPredCardBetting(true);}
+  toast(LANG==='ar'?'تم إلغاء التوقع':'Prediction cancelled');
 }
 function updateSaveStatus(){let el=$('saveStatus');if(!el)return;el.className='saveBadge '+(SAVING?'warn':DIRTY?'bad':'good');el.textContent=SAVING?tr('saving'):DIRTY?tr('unsaved'):tr('saved');}
 window.addEventListener('beforeunload',e=>{if(DIRTY){e.preventDefault();e.returnValue=''}});
@@ -3269,10 +3389,19 @@ doPlaceBet = async function(matchNo,allIn,source){
       return toast(LANG==='ar'?'مبلغ الرهان يجب أن يكون رقماً صحيحاً بدون كسور':'Bet amount must be a whole number',true);
     }
   }
-  return placeWholePointBet(matchNo,allIn,source);
+  const result=await placeWholePointBet(matchNo,allIn,source);
+  renderStats();
+  return result;
 };
 
 async function doCancelBet(matchNo){if(!SESSION)return;if(!confirm(LANG==='ar'?'إلغاء الرهان؟':'Cancel this bet?'))return;const r=await call('cancelBet',SESSION.id,SESSION.pin,matchNo);if(!r.ok){const confirmed=await verifyBetState(matchNo,false);if(confirmed){toast(LANG==='ar'?'تم الإلغاء بالفعل ✓':'Already cancelled ✓ (just a slow connection)');PRED_BETTING_LOADED=false;if(ACTIVE==='pred')loadPredCardBetting(true);else loadBetting();return;}return toast(r.msg,true);}toast(LANG==='ar'?'تم الإلغاء':'Cancelled');const b=BETS_STATE.myBets[matchNo]||BETS_STATE.myBets[String(matchNo)];if(b&&BETS_STATE.balance!=null)BETS_STATE.balance+=Number(b.amount||0);delete BETS_STATE.myBets[matchNo];delete BETS_STATE.myBets[String(matchNo)];if(STATE){STATE.myBets=BETS_STATE.myBets;STATE.myBalance=BETS_STATE.balance;}saveStateCache();PRED_BETTING_LOADED=false;if(ACTIVE==='pred')loadPredCardBetting(true);else loadBetting();}
+
+const cancelBetWithStats=doCancelBet;
+doCancelBet=async function(matchNo){
+  const result=await cancelBetWithStats(matchNo);
+  renderStats();
+  return result;
+};
 
 async function adminAdjustUI() {
   $('adminContent').innerHTML = `<div class="spinner">${LANG==='ar'?'جاري التحميل…':'Loading…'}</div>`;
